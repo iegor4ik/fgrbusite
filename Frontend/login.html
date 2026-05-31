@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вхід адміністратора</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <main class="login-page">
+    <img src="image.png" alt="Фонова фотографія" class="bg-placeholder" />
+    <div class="login-panel">
+      <h1>Вхід для адміністратора</h1>
+      <form id="loginForm">
+        <label>
+          Логін
+          <input type="text" name="username" placeholder="admin" required />
+        </label>
+        <label>
+          Пароль
+          <input type="password" name="password" placeholder="123" required />
+        </label>
+        <button type="submit">Увійти</button>
+      </form>
+    </div>
+  </main>
+  <script src="./JS/auth.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Федерація греко-римської боротьби України</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets\icons\fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="calendar.html">Календар</a></li>
+        <li><a href="news.html">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="section news-page">
+    <div class="container">
+      <section class="news-collection">
+        <h2 class="section-header">Документи</h2>
+        <div class="news-search-panel" style="margin-top:1rem;">
+          <div class="search-field">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="documentSearch" type="search" placeholder="Пошук документів..." />
+          </div>
+          <div class="category-scroll" id="documentCategories">
+            <button type="button" class="category-btn active" data-category="Усе">Усе</button>
+            <button type="button" class="category-btn" data-category="Регламенти">Регламенти</button>
+            <button type="button" class="category-btn" data-category="Календарі">Календарі</button>
+            <button type="button" class="category-btn" data-category="Федерація">Федерація</button>
+            <button type="button" class="category-btn" data-category="Інше">Інше</button>
+          </div>
+        </div>
+        <div id="publicDocuments" class="news-grid news-collection" style="margin-top:1rem;">
+          <!-- Documents rendered here -->
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 67 422 9004</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+            </div>
+      <a href="login.html" class="dev-login-link">Вхід для розробника</a>
+    </div>
+    </div>
+  </footer>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <!-- Icon placeholder for moon/sun -->
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/documents.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+  <html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>В розробці</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1b3d;
+            --bg-secondary: #0f4fa8;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.75);
+            --button-bg: #ffd500;
+            --button-text: #111111;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--bg-primary) 0%,
+                    #123b7a 45%,
+                    var(--bg-secondary) 100%
+                );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: rgba(255, 255, 255, 0.04);
+            filter: blur(120px);
+            border-radius: 50%;
+            top: -200px;
+            right: -150px;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 119, 255, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -100px;
+        }
+
+        .construction-container {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 760px;
+            padding: 60px 50px;
+            border-radius: 32px;
+            background: var(--card-bg);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .construction-title {
+            font-size: clamp(52px, 8vw, 88px);
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+
+        .construction-description {
+            font-size: 20px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto 45px;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 42px;
+            border-radius: 18px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.25s ease;
+            box-shadow: 0 10px 25px rgba(255, 213, 0, 0.25);
+        }
+
+        .home-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(255, 213, 0, 0.35);
+        }
+
+        .home-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .construction-container {
+                padding: 45px 28px;
+                border-radius: 24px;
+            }
+
+            .construction-description {
+                font-size: 17px;
+            }
+
+            .home-button {
+                width: 100%;
+                padding: 16px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="construction-container">
+        <h1 class="construction-title">В розробці</h1>
+
+        <p class="construction-description">
+            Сайт знаходиться у відкритому beta-тестуванні,
+            більше функцій та сторінок стане доступним з часом.
+        </p>
+
+        <a href="/" class="home-button">
+            На головну
+        </a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін - Документація</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін - Документація</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Меню</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+          <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+          <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+          <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+        </nav>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+
+      <main class="admin-main">
+        <section class="dashboard-overview">
+          <h2>Керування документацією</h2>
+          <p>Тут ви можете додавати, редагувати та видаляти документи федерації.</p>
+          <div style="margin-top:1rem; display:flex; gap:0.75rem;">
+            <button id="createBtn" class="add-album-btn">Створити документ</button>
+          </div>
+        </section>
+
+        <div class="dashboard-cards" id="documentsList" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem; margin-top:1rem;">
+          <!-- Document cards rendered by JS -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div id="docModal" class="modal" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h3 id="modalTitle">Додати документ</h3>
+      <form id="docForm" class="album-form">
+        <div class="form-group">
+          <label>Заголовок<input type="text" name="title" required></label>
+        </div>
+        <div class="form-group">
+          <label>Категорія
+            <select name="category" required>
+              <option value="Регламенти">Регламенти</option>
+              <option value="Календарі">Календарі</option>
+              <option value="Федерація">Федерація</option>
+              <option value="Інше">Інше</option>
+            </select>
+          </label>
+        </div>
+        <div id="filesContainer" class="form-group">
+          <label>PDF файл
+            <input type="file" name="files" accept="application/pdf">
+          </label>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+          <button type="button" id="addFileBtn" class="add-album-btn">Додати ще документ</button>
+          <button type="submit" class="save-btn">Зберегти</button>
+          <button type="button" id="cancelBtn" class="cancel-btn">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_documents.js" defer></script>
+</body>
+</html>

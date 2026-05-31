@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін-панель — Галерея</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін-панель</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Меню</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+          <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+          <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+          <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+          <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+        </nav>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+      <main class="admin-main">
+        <section class="gallery-management">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Адмін</p>
+              <h2>Редагування галереї</h2>
+            </div>
+            <button class="accent-btn" id="newAlbumBtn" type="button">Новий альбом</button>
+          </div>
+          <div class="admin-actions">
+            <input id="searchAlbums" type="search" placeholder="Пошук альбомів..." />
+          </div>
+          <div id="albumList" class="albums-list"></div>
+        </section>
+
+        <section class="news-form-panel hidden" id="albumFormPanel">
+          <div class="admin-panel-header">
+            <div>
+              <h3 id="albumFormTitle">Новий альбом</h3>
+            </div>
+          </div>
+          <form id="albumForm" class="album-form">
+            <input type="hidden" id="albumId" />
+            <div class="form-row">
+              <label>
+                Назва
+                <input id="albumTitle" type="text" required placeholder="Назва альбому" />
+              </label>
+              <label>
+                Категорія
+                <select id="albumCategory">
+                  <option value="competition">Змагання</option>
+                  <option value="training">Тренування</option>
+                  <option value="events">Заходи</option>
+                  <option value="other">Інше</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Опис
+                <textarea id="albumDescription" rows="3" required placeholder="Короткий опис альбому"></textarea>
+              </label>
+            </div>
+            <div class="form-row cover-row">
+              <label class="cover-label">
+                Обкладинка
+                <input id="albumCoverInput" type="file" accept="image/*" />
+              </label>
+              <img id="albumCoverPreview" class="cover-preview" alt="Preview" />
+            </div>
+            <div class="form-row cover-row">
+              <label class="cover-label">
+                Завантажити фото
+                <input id="albumPhotosInput" type="file" accept="image/*" multiple />
+              </label>
+            </div>
+            <div id="currentPhotoList" class="albums-list"></div>
+            <div class="form-actions">
+              <button class="accent-btn" type="submit">Зберегти</button>
+              <button class="cancel-btn" id="cancelAlbumBtn" type="button">Скасувати</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+      <span class="theme-icon">🌙</span>
+    </button>
+  </div>
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_gallery.js" defer></script>
+</body>
+</html>
+

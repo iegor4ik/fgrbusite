@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Альбом галереї</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets/icons/fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="calendar.html">Календар</a></li>
+        <li><a href="news.html">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="news-page">
+    <div class="container">
+      <section class="news-hero">
+        <div class="news-hero-copy">
+          <span class="eyebrow news-eyebrow">Галерея</span>
+          <h2 id="albumTitle">Завантаження альбому...</h2>
+          <p id="albumDescription"></p>
+          <p id="albumCategory" class="album-date"></p>
+          <img id="albumCoverImage" class="album-cover" alt="Обкладинка альбому" />
+        </div>
+        <div class="news-search-panel">
+          <a href="gallery.html" class="accent-btn">Повернутися до галереї</a>
+        </div>
+      </section>
+      <section class="gallery-section">
+        <div class="modal-photos-grid" id="albumPhotosGrid"></div>
+      </section>
+    </div>
+  </main>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/gallery_album.js" defer></script>
+</body>
+</html>

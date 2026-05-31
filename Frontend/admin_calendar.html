@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін-панель — Календар змагань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін-панель</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Меню</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+          <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+          <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+          <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+          <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+        </nav>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+      <main class="admin-main">
+        <section class="dashboard-overview">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Адмін</p>
+              <h2>Календар змагань</h2>
+            </div>
+            <button class="accent-btn" id="newCompetitionBtn" type="button">Нове змагання</button>
+          </div>
+          <div class="admin-actions">
+            <input id="searchCompetitions" type="search" placeholder="Пошук змагань..." />
+          </div>
+          <div id="competitionsList" class="admin-news-list"></div>
+        </section>
+
+        <section class="competition-form-panel hidden" id="competitionFormPanel">
+          <div class="admin-panel-header">
+            <div>
+              <h3 id="formTitle">Нове змагання</h3>
+            </div>
+          </div>
+          <form id="competitionForm" class="news-form">
+            <input type="hidden" id="competitionId" />
+            <div class="form-row">
+              <label>
+                Назва змагання
+                <input id="competitionTitle" type="text" required placeholder="Назва змагання" />
+              </label>
+              <label>
+                Місто
+                <input id="competitionCity" type="text" required placeholder="Місто проведення" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Категорія
+                <select id="competitionCategory" required>
+                  <option value="">Оберіть категорію</option>
+                  <option value="Ukraine">Україна</option>
+                  <option value="International">Міжнародне</option>
+                </select>
+              </label>
+              <label>
+                Статус
+                <select id="competitionStatus" required>
+                  <option value="planned">Заплановано</option>
+                  <option value="live">Йде</option>
+                  <option value="completed">Завершено</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Дата змагання
+                <input id="competitionDate" type="datetime-local" required />
+              </label>
+            </div>
+            <div class="form-row cover-row">
+              <label class="cover-label">
+                Обкладинка
+                <input id="coverInput" type="file" accept="image/*" />
+              </label>
+              <img id="coverPreview" class="cover-preview" alt="Preview" />
+            </div>
+            <div>
+              <label>
+                Опис
+                <textarea id="competitionDescription" rows="4" placeholder="Опис змагання"></textarea>
+              </label>
+            </div>
+
+            <div class="weight-categories-section">
+              <h4>Вагові категорії</h4>
+              <div id="weightCategoriesList" class="weight-categories-list"></div>
+              <button type="button" id="addWeightBtn" class="secondary-btn">+ Додати категорію</button>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="accent-btn">Зберегти</button>
+              <button type="button" id="cancelCompetitionBtn" class="secondary-btn">Скасувати</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="./JS/admin_calendar.js" defer></script>
+</body>
+</html>
+
+

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Федерація - Офіційний сайт ФГРБУ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    /* Federation Page Specific Styles */
+    .federation-hero {
+      position: relative;
+      height: calc(100vh - var(--header-height));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: var(--header-height);
+      background: linear-gradient(135deg, var(--primary) 0%, rgba(0, 87, 183, 0.7) 100%);
+    }
+
+    .federation-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26, 31, 54, 0.5);
+      z-index: 1;
+    }
+
+    .federation-hero-content {
+      position: relative;
+      text-align: center;
+      color: #fff;
+      max-width: 800px;
+      padding: 0 1rem;
+      z-index: 2;
+    }
+
+    .federation-hero-content h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .federation-hero-content p {
+      margin: 0;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .federation-section {
+      padding: clamp(5rem, 6vw, 8rem) 0;
+    }
+
+    .federation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .federation-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .federation-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .federation-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .federation-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .dark-theme .federation-card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .federation-card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .federation-card h3 {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .federation-card p {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .federation-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: gap 0.25s ease;
+    }
+
+    .federation-card-link:hover {
+      gap: 0.75rem;
+    }
+
+    .federation-card-link::after {
+      content: '→';
+      transition: transform 0.25s ease;
+    }
+
+    .federation-card-link:hover::after {
+      transform: translateX(4px);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .section-header .section-tag {
+      display: inline-flex;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+      .federation-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .federation-hero-content h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets\icons\fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="calendar.html">Календар</a></li>
+        <li><a href="news.html">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="federation-hero">
+              <img src="assets\images\Federation.jpg" alt="Драматичне фото збірної" class="hero-img">
+      <div class="federation-hero-overlay"></div>
+      <div class="federation-hero-content">
+        <h1>Федерація Греко-римської Боротьби України</h1>
+        <p>Офіційна структура розвитку, управління та координації греко-римської боротьби в Україні</p>
+      </div>
+    </section>
+
+    <!-- Federation Structure Section -->
+    <section class="federation-section section" id="federation-structure">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-tag">Структура</p>
+          <h2>Органи управління та виконавчі структури</h2>
+        </div>
+
+        <div class="federation-grid">
+          <!-- Президіум Федерації -->
+          <div class="federation-card" data-observe>
+            <div class="federation-card-icon">👔</div>
+            <h3>Президіум Федерації</h3>
+            <p>Керівний орган Федерації греко-римської боротьби України, відповідальний за стратегічні рішення, розвиток спорту та представництво інтересів федерації.</p>
+            <a href="indev.html" class="federation-card-link">Дізнатись більше</a>
+          </div>
+
+          <!-- Греко-римська боротьба в регіонах -->
+          <div class="federation-card" data-observe>
+            <div class="federation-card-icon">🗺️</div>
+            <h3>Греко-римська Боротьба в Регіонах</h3>
+            <p>Розвиток греко-римської боротьби на регіональному рівні. Координація з обласними федераціями та спортивними організаціями по всій Україні.</p>
+            <a href="indev.html" class="federation-card-link">Дізнатись більше</a>
+          </div>
+
+          <!-- Клуби -->
+          <div class="federation-card" data-observe>
+            <div class="federation-card-icon">🏛️</div>
+            <h3>Клуби та Аматорські Організації</h3>
+            <p>Мережа спортивних клубів та аматорських організацій, де тренуються борці різного рівня, від початківців до професіоналів.</p>
+            <a href="indev.html" class="federation-card-link">Дізнатись більше</a>
+          </div>
+
+          <!-- Працівники -->
+          <div class="federation-card" data-observe>
+            <div class="federation-card-icon">👥</div>
+            <h3>Персонал та Судді</h3>
+            <p>Кваліфіковані тренери, судді, медичний персонал та адміністративна команда, що забезпечують якість підготовки та проведення змагань.</p>
+            <a href="indev.html" class="federation-card-link">Дізнатись більше</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 67 422 9004</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+    </div>
+    <a href="login.html" class="dev-login-link">Вхід для розробника</a>
+  </footer>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <script src="./JS/main.js" defer></script>
+</body>
+</html>

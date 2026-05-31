@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін-панель — Новини</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін-панель</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Меню</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+          <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+          <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+          <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+          <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+        </nav>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+      <main class="admin-main">
+        <section class="dashboard-overview">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Адмін</p>
+              <h2>Керування новинами</h2>
+            </div>
+            <button class="accent-btn" id="newNewsBtn" type="button">Нова новина</button>
+          </div>
+          <div class="admin-actions">
+            <input id="searchNews" type="search" placeholder="Пошук новин..." />
+          </div>
+          <div id="newsList" class="admin-news-list"></div>
+        </section>
+
+        <section class="news-form-panel hidden" id="newsFormPanel">
+          <div class="admin-panel-header">
+            <div>
+              <h3 id="formTitle">Нова новина</h3>
+            </div>
+          </div>
+          <form id="newsForm" class="news-form">
+            <input type="hidden" id="newsId" />
+            <div class="form-row">
+              <label>
+                Назва
+                <input id="newsTitle" type="text" required placeholder="Заголовок новини" />
+              </label>
+              <label>
+                Категорія
+                <select id="newsCategory">
+                  <option>Змагання</option>
+                  <option>Збірна</option>
+                  <option>Федерація</option>
+                  <option>Медія</option>
+                  <option>Інше</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Дата новини
+                <input id="newsDate" type="date" required />
+              </label>
+              <label>
+                Короткий опис
+                <textarea id="newsShort" rows="3" required placeholder="Короткий опис для картки новини"></textarea>
+              </label>
+            </div>
+            <div class="form-row cover-row">
+              <label class="cover-label">
+                Обкладинка
+                <input id="coverInput" type="file" accept="image/*" />
+              </label>
+              <img id="coverPreview" class="cover-preview" alt="Preview" />
+            </div>
+            <div class="editor-panel">
+              <div class="editor-toolbar" id="editorToolbar">
+                <button type="button" data-action="bold">B</button>
+                <button type="button" data-action="underline">U</button>
+                <button type="button" data-action="link">Link</button>
+                <button type="button" data-action="image">Image</button>
+              </div>
+              <div id="editor" class="rich-editor" contenteditable="true"></div>
+              <input id="insertImageInput" type="file" accept="image/*" class="hidden" />
+            </div>
+            <div class="form-actions">
+              <button class="accent-btn" type="submit">Зберегти</button>
+              <button class="cancel-btn" id="cancelNewsBtn" type="button">Скасувати</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+      <span class="theme-icon">🌙</span>
+    </button>
+  </div>
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_news.js" defer></script>
+</body>
+</html>

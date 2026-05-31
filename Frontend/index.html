@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Федерація греко-римської боротьби України</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="#hero" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets\icons\fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="#hero">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="#calendar">Календар</a></li>
+        <li><a href="#news">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+        <li><a href="#about">Про нас</a></li>
+        <li><a href="#achievements">Досягнення</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section" id="hero">
+      <img src="assets/images/BNY_banner.jpg" alt="Драматичне фото боротьби" class="hero-img">
+      <div class="hero-overlay"></div>
+      <div class="container hero-content" data-observe>
+        <span class="eyebrow">Офіційний сайт</span>
+        <h2>Творимо історію на килимі. Сила, воля, перемога.</h2>
+      </div>
+    </section>
+
+    <section class="section calendar" id="calendar">
+      <div class="container section-header" data-observe>
+        <p class="section-tag">Розклад</p>
+        <h3>Календар змагань</h3>
+      </div>
+      <div class="container calendar-grid" data-observe>
+        <div id="competitionFeatured" class="calendar-featured"></div>
+        <div class="calendar-list" id="competitionList"></div>
+      </div>
+    </section>
+
+    <section class="section news" id="news">
+      <div class="container section-header" data-observe>
+        <p class="section-tag">Актуально</p>
+        <h3>Останні новини</h3>
+      </div>
+      <div class="container news-grid" data-observe>
+        <article class="news-card">
+          <div class="news-image">
+            <img src="assets\images\Zbirna.jpg" alt="Фото новини" class="resp-img-placeholder">
+          </div>
+          <div class="news-content">
+            <span class="news-date">08 травня 2026</span>
+            <h4>Збірна готується до міжнародного турніру</h4>
+            <a href="#" class="news-link">Читати далі</a>
+          </div>
+        </article>
+        <article class="news-card">
+          <div class="news-image">
+            <img src="assets\images\Wrestling.jpg" alt="Фото новини" class="resp-img-placeholder">
+          </div>
+          <div class="news-content">
+            <span class="news-date">01 травня 2026</span>
+            <h4>Підсумки чемпіонату області: нові лідери</h4>
+            <a href="#" class="news-link">Читати далі</a>
+          </div>
+        </article>
+        <article class="news-card">
+          <div class="news-image">
+            <img src="assets\images\SOW.png" alt="Фото новини" class="resp-img-placeholder">
+          </div>
+          <div class="news-content">
+            <span class="news-date">27 квітня 2026</span>
+            <h4>Федерація започатковує програму підтримки молоді</h4>
+            <a href="#" class="news-link">Читати далі</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section about" id="about">
+      <div class="container about-grid" data-observe>
+        <div class="about-copy">
+          <p class="section-tag">Місія</p>
+          <h3>Про нас</h3>
+          <p>Федерація греко-римської боротьби України об'єднує спортсменів, тренерів та вболівальників навколо цінностей сили, честі та національної гордості. Ми створюємо сучасні умови для підготовки чемпіонів та популяризації боротьби як спорту дисципліни та самовдосконалення.</p>
+          <p>Наші програми спрямовані на розвиток дитячо-юнацького спорту, національної відбору та міжнародну конкуренцію. Ми будуємо майбутнє української боротьби на принципах партнерства, професіоналізму та інноваційних тренувальних методик.</p>
+        </div>
+        <div class="about-image">
+          <img src="assets\images\ProNas.png" alt="Фото про нас" class="resp-img-placeholder">
+        </div>
+      </div>
+    </section>
+
+    <section class="section achievements" id="achievements">
+      <div class="container section-header" data-observe>
+        <p class="section-tag">Титули</p>
+        <h3>Наші досягнення</h3>
+      </div>
+      <div class="container achievements-grid" data-observe>
+        <img src="assets\icons\Block1.png" alt="Досягнення" class="achievement-img">
+        <img src="assets\icons\Block2.png" alt="Досягнення" class="achievement-img">
+        <img src="assets\icons\Block3.png" alt="Досягнення" class="achievement-img">
+        <img src="assets\icons\Block4.png" alt="Досягнення" class="achievement-img">
+      </div>
+    </section>
+
+    <section class="section cta" data-observe>
+      <div class="container cta-panel">
+        <div>
+          <p class="eyebrow cta-eyebrow">Приєднуйтесь до нас</p>
+          <h3>Станьте частиною великої борцівської родини.</h3>
+        </div>
+        <a href="indev.html" class="cta-button">Знайти секцію у вашому місті</a>
+      </div>
+    </section>
+  </main>
+
+
+    <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 67 422 9004</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+            </div>
+      <a href="login.html" class="dev-login-link">Вхід для розробника</a>
+    </div>
+    </div>
+  </footer>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <!-- Icon placeholder for moon/sun -->
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <script src="./JS/main.js" defer></script>
+</body>
+</html>
