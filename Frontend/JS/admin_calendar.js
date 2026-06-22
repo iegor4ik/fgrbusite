@@ -1,4 +1,5 @@
-const API_BASE = (window.location.origin && window.location.origin !== 'null' ? window.location.origin : 'http://localhost:4000') + '/api';
+const isLocalFileProtocol = window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null';
+const API_BASE = (isLocalFileProtocol ? 'http://localhost:4000' : window.location.origin) + '/api';
 const competitionsList = document.getElementById('competitionsList');
 const newCompetitionBtn = document.getElementById('newCompetitionBtn');
 const competitionFormPanel = document.getElementById('competitionFormPanel');
@@ -17,6 +18,40 @@ const weightCategoriesList = document.getElementById('weightCategoriesList');
 const addWeightBtn = document.getElementById('addWeightBtn');
 const cancelCompetitionBtn = document.getElementById('cancelCompetitionBtn');
 const searchInput = document.getElementById('searchCompetitions');
+
+const createEventBtn = document.getElementById('createEventBtn');
+const searchEventBtn = document.getElementById('searchEventBtn');
+const editEventBtn = document.getElementById('editEventBtn');
+const newCalendarYearBtn = document.getElementById('newCalendarYearBtn');
+
+const eventFormPanel = document.getElementById('eventFormPanel');
+const eventForm = document.getElementById('eventForm');
+const eventIdInput = document.getElementById('eventId');
+const eventTitleInput = document.getElementById('eventTitle');
+const eventTypeSelect = document.getElementById('eventType');
+const eventStartInput = document.getElementById('eventStart');
+const eventEndInput = document.getElementById('eventEnd');
+const eventLocationInput = document.getElementById('eventLocation');
+const eventResultsUrlInput = document.getElementById('eventResultsUrl');
+const eventRegulationPdfInput = document.getElementById('eventRegulationPdf');
+const eventRegulationInfo = document.getElementById('eventRegulationInfo');
+const removeRegulationLabel = document.getElementById('removeRegulationLabel');
+const removeRegulationCheckbox = document.getElementById('removeRegulationPdf');
+const eventDescriptionInput = document.getElementById('eventDescription');
+const cancelEventBtn = document.getElementById('cancelEventBtn');
+const deleteEventBtn = document.getElementById('deleteEventBtn');
+
+const eventSearchPanel = document.getElementById('eventSearchPanel');
+const eventSearchInput = document.getElementById('eventSearchInput');
+const eventSearchYear = document.getElementById('eventSearchYear');
+const eventResultsList = document.getElementById('eventResultsList');
+
+const yearFormPanel = document.getElementById('yearFormPanel');
+const yearForm = document.getElementById('yearForm');
+const yearInput = document.getElementById('yearInput');
+const yearPdfInput = document.getElementById('yearPdfInput');
+const cancelYearBtn = document.getElementById('cancelYearBtn');
+const largestYearDisplay = document.getElementById('largestYearDisplay');
 
 let competitions = [];
 let activeEditId = null;
@@ -91,6 +126,75 @@ function renderWeightCategories() {
       renderWeightCategories();
     });
   });
+}
+
+function setPanelVisibility(panelToShow) {
+  [eventFormPanel, eventSearchPanel, yearFormPanel].forEach((panel) => {
+    if (!panel) return;
+    panel.classList.toggle('hidden', panel !== panelToShow);
+  });
+}
+
+let activeCalendarYearId = null;
+let activeCalendarYearYear = null;
+const calendarYearMap = new Map();
+let editingCalendarYearId = null;
+
+function resetEventForm() {
+  eventIdInput.value = '';
+  eventTitleInput.value = '';
+  eventTypeSelect.value = '';
+  eventStartInput.value = '';
+  eventEndInput.value = '';
+  eventLocationInput.value = '';
+  eventResultsUrlInput.value = '';
+  eventRegulationPdfInput.value = '';
+  eventRegulationInfo.textContent = 'Файл не додано.';
+  removeRegulationCheckbox.checked = false;
+  removeRegulationLabel.classList.add('hidden');
+  eventDescriptionInput.value = '';
+  deleteEventBtn.classList.add('hidden');
+  editingCalendarYearId = null;
+}
+
+function setEventFormValues(event = null) {
+  resetEventForm();
+  if (!event) return;
+
+  eventIdInput.value = event.id;
+  eventTitleInput.value = event.title || '';
+  eventTypeSelect.value = event.event_type || '';
+  eventStartInput.value = event.start_date ? event.start_date.replace('Z', '') : '';
+  eventEndInput.value = event.end_date ? event.end_date.replace('Z', '') : '';
+  eventLocationInput.value = event.location || '';
+  eventResultsUrlInput.value = event.results_url || '';
+  if (event.regulation_pdf) {
+    eventRegulationInfo.textContent = 'Існуючий файл додано.';
+    removeRegulationLabel.classList.remove('hidden');
+  }
+  editingCalendarYearId = event.calendar_year_id || null;
+  eventDescriptionInput.value = event.description || '';
+  deleteEventBtn.classList.remove('hidden');
+}
+
+function buildEventCard(event) {
+  return `
+    <div class="admin-news-card">
+      <div class="news-card-head">
+        <div>
+          <p class="news-card-category">${event.event_type || 'Подія'}</p>
+          <h4>${event.title || 'Без назви'}</h4>
+          <p class="news-card-category">Рік: ${event.year || ''}</p>
+        </div>
+        <span class="news-card-date">${event.dates || ''}</span>
+      </div>
+      <p class="news-card-description">${event.location || 'Без локації'}</p>
+      <div class="admin-news-actions">
+        <button type="button" data-action="edit-event" data-id="${event.id}">Редагувати</button>
+        <button type="button" data-action="delete-event" data-id="${event.id}">Видалити</button>
+      </div>
+    </div>
+  `;
 }
 
 function renderCompetitionsList(items) {
@@ -266,5 +370,237 @@ competitionsList.addEventListener('click', (e) => {
 
 searchInput.addEventListener('input', () => renderCompetitionsList(competitions));
 
+eventSearchInput.addEventListener('input', async () => {
+  const query = eventSearchInput.value.trim();
+  await loadCalendarEvents(query, eventSearchYear.value);
+});
+
+eventSearchYear.addEventListener('change', async () => {
+  await loadCalendarEvents(eventSearchInput.value.trim(), eventSearchYear.value);
+});
+
+createEventBtn.addEventListener('click', () => {
+  setPanelVisibility(eventFormPanel);
+  resetEventForm();
+});
+
+searchEventBtn.addEventListener('click', () => {
+  setPanelVisibility(eventSearchPanel);
+});
+
+editEventBtn.addEventListener('click', () => {
+  setPanelVisibility(eventSearchPanel);
+});
+
+newCalendarYearBtn.addEventListener('click', () => {
+  setPanelVisibility(yearFormPanel);
+});
+
+cancelEventBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  setPanelVisibility(null);
+});
+
+yearForm.addEventListener('submit', saveCalendarYear);
+cancelYearBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  setPanelVisibility(null);
+});
+
+eventForm.addEventListener('submit', saveCalendarEvent);
+
+deleteEventBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const eventId = eventIdInput.value;
+  if (!eventId) return;
+  if (!confirm('Ви дійсно хочете видалити цю подію?')) return;
+  await deleteCalendarEvent(eventId);
+});
+
+async function loadCalendarYears() {
+  try {
+    const response = await fetch(`${API_BASE}/calendar/years`);
+    if (!response.ok) return;
+    const years = await response.json();
+    fillYearSelects(years);
+  } catch (error) {
+    console.error('Error loading calendar years:', error);
+  }
+}
+
+function fillYearSelects(years) {
+  calendarYearMap.clear();
+  years.forEach((year) => {
+    calendarYearMap.set(String(year.year), year.id);
+  });
+
+  if (eventSearchYear) {
+    eventSearchYear.innerHTML = '<option value="">Усі роки</option>' + years
+      .map((year) => `<option value="${year.year}">${year.year}</option>`)
+      .join('');
+  }
+  if (largestYearDisplay) {
+    const maxYearItem = years.reduce((max, item) => (item.year > max.year ? item : max), years[0] || { year: '—', id: null });
+    activeCalendarYearId = maxYearItem.id;
+    activeCalendarYearYear = maxYearItem.year;
+    largestYearDisplay.textContent = activeCalendarYearYear;
+  }
+}
+
+async function loadCalendarEvents(query = '', year = '') {
+  try {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (year) params.set('year', year);
+
+    const response = await fetch(`${API_BASE}/calendar/events/search?${params.toString()}`);
+    if (!response.ok) {
+      eventResultsList.innerHTML = '<div class="empty-state"><h3>Не вдалося завантажити події</h3></div>';
+      return;
+    }
+
+    const events = await response.json();
+    if (!events.length) {
+      eventResultsList.innerHTML = '<div class="empty-state"><h3>Подій не знайдено</h3></div>';
+      return;
+    }
+
+    eventResultsList.innerHTML = events.map(buildEventCard).join('');
+  } catch (error) {
+    console.error('Error loading calendar events:', error);
+    eventResultsList.innerHTML = '<div class="empty-state"><h3>Не вдалося завантажити події</h3></div>';
+  }
+}
+
+async function saveCalendarYear(event) {
+  event.preventDefault();
+  const yearValue = Number(yearInput.value);
+  if (!Number.isInteger(yearValue) || yearValue < 1900) {
+    alert('Вкажіть коректний рік.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('year', yearValue);
+  if (yearPdfInput.files[0]) {
+    formData.append('pdf_file', yearPdfInput.files[0]);
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/calendar/years`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.message || 'Не вдалося створити рік.');
+      return;
+    }
+
+    await loadCalendarYears();
+    setPanelVisibility(null);
+    yearForm.reset();
+  } catch (error) {
+    console.error('Error saving calendar year:', error);
+    alert('Не вдалося створити рік.');
+  }
+}
+
+async function saveCalendarEvent(event) {
+  event.preventDefault();
+  const id = eventIdInput.value;
+  const title = eventTitleInput.value.trim();
+  const eventType = eventTypeSelect.value;
+  const startDate = eventStartInput.value ? new Date(eventStartInput.value).toISOString() : '';
+  const endDate = eventEndInput.value ? new Date(eventEndInput.value).toISOString() : '';
+  const location = eventLocationInput.value.trim();
+  const resultsUrl = eventResultsUrlInput.value.trim();
+  const description = eventDescriptionInput.value.trim();
+  const calendarYearId = id ? editingCalendarYearId : (calendarYearMap.get(eventSearchYear.value) || activeCalendarYearId);
+
+  if (!title || !eventType || !calendarYearId) {
+    alert('Заповніть усі обов’язкові поля.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('event_type', eventType);
+  formData.append('start_date', startDate);
+  formData.append('end_date', endDate);
+  formData.append('location', location);
+  formData.append('results_url', resultsUrl);
+  formData.append('description', description);
+  formData.append('calendar_year_id', calendarYearId);
+  if (eventRegulationPdfInput.files[0]) {
+    formData.append('regulation_pdf', eventRegulationPdfInput.files[0]);
+  }
+  if (removeRegulationCheckbox.checked) {
+    formData.append('remove_regulation', 'true');
+  }
+
+  const method = id ? 'PUT' : 'POST';
+  const url = id ? `${API_BASE}/calendar/events/${id}` : `${API_BASE}/calendar/events`;
+
+  try {
+    const response = await fetch(url, { method, body: formData });
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.message || 'Не вдалося зберегти подію.');
+      return;
+    }
+    await loadCalendarEvents();
+    setPanelVisibility(null);
+    resetEventForm();
+  } catch (error) {
+    console.error('Error saving calendar event:', error);
+    alert('Не вдалося зберегти подію.');
+  }
+}
+
+async function deleteCalendarEvent(id) {
+  try {
+    const response = await fetch(`${API_BASE}/calendar/events/${id}`, { method: 'DELETE' });
+    if (response.ok) {
+      await loadCalendarEvents();
+      setPanelVisibility(null);
+      resetEventForm();
+    } else {
+      alert('Не вдалося видалити подію.');
+    }
+  } catch (error) {
+    console.error('Error deleting calendar event:', error);
+    alert('Не вдалося видалити подію.');
+  }
+}
+
+eventResultsList.addEventListener('click', async (e) => {
+  const action = e.target.dataset.action;
+  const id = e.target.dataset.id;
+  if (!action || !id) return;
+
+  if (action === 'edit-event') {
+    try {
+      const response = await fetch(`${API_BASE}/calendar/events/${id}`);
+      if (!response.ok) throw new Error('Event fetch failed');
+      const eventData = await response.json();
+      setEventFormValues(eventData);
+      setPanelVisibility(eventFormPanel);
+    } catch (error) {
+      console.error('Error fetching event:', error);
+      alert('Не вдалося завантажити подію.');
+    }
+  }
+
+  if (action === 'delete-event') {
+    if (!confirm('Ви дійсно хочете видалити цю подію?')) return;
+    await deleteCalendarEvent(id);
+  }
+});
+
 // Initial load
 loadCompetitions();
+loadCalendarYears().then(() => loadCalendarEvents()).catch((error) => {
+  console.error('Error initializing calendar admin:', error);
+});

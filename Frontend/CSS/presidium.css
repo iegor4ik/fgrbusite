@@ -1,0 +1,770 @@
+/* ============================================================================
+   PRESIDIUM PAGE - HIERARCHY PYRAMID LAYOUT
+   ============================================================================ */
+
+:root {
+  /* Presidium-specific color variables */
+  --presidium-bg: #031326;
+  --presidium-panel: rgba(8, 18, 46, 0.96);
+  --presidium-card-bg: rgba(7, 16, 42, 0.92);
+  --presidium-border: rgba(255, 255, 255, 0.08);
+  --presidium-text: #a8b8d2;
+  --presidium-accent: #5aa4ff;
+  --presidium-accent-strong: #1f6cff;
+  --presidium-shadow: 0 28px 90px rgba(3, 12, 42, 0.28);
+  --presidium-radius: 28px;
+  --presidium-connector-color: rgba(90, 164, 255, 0.15);
+}
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+
+.presidium-hero {
+  position: relative;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: var(--header-height);
+  box-shadow: inset 0 12px 24px rgba(26, 31, 54, 0.2);
+  background: linear-gradient(135deg, #031326 0%, #051a3d 50%, #071b2a 100%);
+}
+
+.presidium-hero .hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+}
+
+.presidium-hero .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(3, 19, 38, 0.72), rgba(8, 20, 50, 0.68), rgba(5, 15, 35, 0.75));
+}
+
+.presidium-hero .hero-copy {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+}
+
+.presidium-hero .hero-eyebrow {
+  display: inline-flex;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(90, 164, 255, 0.2), rgba(31, 108, 255, 0.15));
+  border: 1px solid rgba(90, 164, 255, 0.35);
+  color: var(--team-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.presidium-hero h1 {
+  margin: 1.5rem 0 0.75rem;
+  font-size: clamp(2.8rem, 5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.presidium-hero .hero-subtitle {
+  margin: 0;
+  max-width: 600px;
+  margin: 0.5rem auto 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   INTRO SECTION
+   ============================================================================ */
+
+.presidium-intro {
+  padding: 4rem 1.5rem;
+  background: linear-gradient(180deg, var(--team-bg) 0%, rgba(5, 15, 35, 0.95) 100%);
+  border-bottom: 1px solid var(--team-border);
+}
+
+.intro-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.intro-content h2 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  color: #fff;
+}
+
+.intro-content p {
+  margin: 0;
+  color: var(--team-muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  letter-spacing: 0.2px;
+}
+
+/* ============================================================================
+   HIERARCHY SECTION
+   ============================================================================ */
+
+.presidium-hierarchy {
+  padding: 4rem 1.5rem;
+  background: linear-gradient(180deg, rgba(5, 15, 35, 0.95) 0%, #031326 100%);
+  min-height: 100vh;
+}
+
+.hierarchy-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hierarchy-title {
+  margin: 0 0 2rem;
+  text-align: center;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================================
+   HIERARCHY WRAPPER & STRUCTURE
+   ============================================================================ */
+
+.hierarchy-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  perspective: 1000px;
+}
+
+.hierarchy-level {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.hierarchy-level[data-level="1"] {
+  animation-delay: 0.1s;
+}
+
+.hierarchy-level[data-level="2"] {
+  animation-delay: 0.2s;
+}
+
+.hierarchy-level[data-level="3"] {
+  animation-delay: 0.3s;
+}
+
+.hierarchy-level[data-level="4"] {
+  animation-delay: 0.4s;
+}
+
+.hierarchy-level[data-level="5"] {
+  animation-delay: 0.5s;
+}
+
+.hierarchy-level[data-level="6"] {
+  animation-delay: 0.6s;
+}
+
+.level-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--team-accent);
+  padding-left: 1rem;
+}
+
+/* ============================================================================
+   HIERARCHY GRID LAYOUT
+   ============================================================================ */
+
+.hierarchy-grid {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+/* Level 1 - President (1 card) */
+.hierarchy-level[data-level="1"] .hierarchy-grid {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Level 2 - First Vice President (1 card) */
+.hierarchy-level[data-level="2"] .hierarchy-grid {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Level 3 - General Secretary (1 card) */
+.hierarchy-level[data-level="3"] .hierarchy-grid {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Level 4 - Honorary Presidents (3 cards) */
+.hierarchy-level[data-level="4"] .hierarchy-grid {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Level 5 - Vice Presidents (8 cards) */
+.hierarchy-level[data-level="5"] .hierarchy-grid {
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+}
+
+/* Level 6 - Presidium Member (1 card) */
+.hierarchy-level[data-level="6"] .hierarchy-grid {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ============================================================================
+   PROFILE CARDS
+   ============================================================================ */
+
+.presidium-card {
+  width: 100%;
+  max-width: 280px;
+  background: var(--presidium-card-bg);
+  border: 1px solid var(--presidium-border);
+  border-radius: var(--presidium-radius);
+  overflow: hidden;
+  box-shadow: var(--presidium-shadow);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.presidium-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 35px 90px rgba(31, 108, 255, 0.25);
+  border-color: rgba(90, 164, 255, 0.28);
+}
+
+.presidium-card img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.presidium-card:hover img {
+  transform: scale(1.08);
+}
+
+.presidium-card-body {
+  padding: 1.4rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.presidium-card h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.presidium-card p {
+  margin: 0;
+  color: var(--presidium-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   HIERARCHY CONNECTORS
+   ============================================================================ */
+
+.hierarchy-connector {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out 0.3s forwards;
+}
+
+.hierarchy-connector::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--presidium-connector-color), transparent);
+  border-radius: 2px;
+}
+
+.hierarchy-connector::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--presidium-connector-color);
+  border-radius: 50%;
+  bottom: -6px;
+  background: rgba(31, 108, 255, 0.1);
+  box-shadow: 0 0 16px rgba(31, 108, 255, 0.2);
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================================
+   PROFILE MODAL
+   ============================================================================ */
+
+.profile-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(2, 6, 20, 0.85);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 250;
+}
+
+.profile-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.profile-card {
+  width: min(1080px, 100%);
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 1.5rem;
+  background: rgba(9, 20, 46, 0.97);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 40px 120px rgba(1, 9, 29, 0.5);
+  transform: scale(0.96);
+  transition: transform 0.35s ease;
+  position: relative;
+  padding: 2rem;
+}
+
+.profile-modal.active .profile-card {
+  transform: scale(1);
+}
+
+.profile-close {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-close:hover {
+  background: rgba(90, 164, 255, 0.18);
+  transform: scale(1.05);
+}
+
+.profile-media {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+.profile-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-info {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.profile-tag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: rgba(90, 164, 255, 0.14);
+  color: var(--team-accent);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  color: #fff;
+}
+
+.profile-position {
+  margin: 0;
+  color: var(--team-muted);
+  font-size: 1rem;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.profile-details div {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1rem 1.1rem;
+}
+
+.profile-details span {
+  display: block;
+  color: var(--team-muted);
+  font-size: 0.82rem;
+  margin-bottom: 0.35rem;
+}
+
+.profile-details strong {
+  display: block;
+  color: #f6f8ff;
+}
+
+.profile-extra {
+  margin-top: 0.5rem;
+  color: var(--team-muted);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.profile-achievements {
+  margin-top: 1rem;
+}
+
+.profile-achievements h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.profile-achievements ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--team-muted);
+  font-size: 0.9rem;
+}
+
+.profile-achievements li {
+  margin-bottom: 0.6rem;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+/* Tablet: 1120px and below */
+@media (max-width: 1120px) {
+  .hierarchy-level[data-level="4"] .hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 620px;
+  }
+
+  .hierarchy-level[data-level="5"] .hierarchy-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-card {
+    grid-template-columns: 1fr;
+  }
+
+  .presidium-card {
+    max-width: none;
+  }
+}
+
+/* Smaller tablets: 880px and below */
+@media (max-width: 880px) {
+  .hierarchy-level[data-level="4"] .hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 620px;
+  }
+
+  .hierarchy-level[data-level="5"] .hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hierarchy-level[data-level="6"] .hierarchy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .presidium-hierarchy {
+    padding: 2.5rem 1rem;
+  }
+
+  .hierarchy-wrapper {
+    gap: 2rem;
+  }
+}
+
+/* Mobile: 760px and below */
+@media (max-width: 760px) {
+  .presidium-hero {
+    min-height: 72vh;
+    padding: 0 1rem;
+  }
+
+  .presidium-hero h1 {
+    font-size: clamp(2.2rem, 8vw, 3.25rem);
+  }
+
+  .presidium-hero .hero-subtitle {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+  }
+
+  .hierarchy-level[data-level="1"] .hierarchy-grid,
+  .hierarchy-level[data-level="2"] .hierarchy-grid,
+  .hierarchy-level[data-level="3"] .hierarchy-grid,
+  .hierarchy-level[data-level="6"] .hierarchy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hierarchy-level[data-level="4"] .hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hierarchy-level[data-level="5"] .hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-modal {
+    align-items: flex-end;
+    padding: 1rem;
+  }
+
+  .profile-card {
+    border-radius: 24px;
+    padding: 1.5rem;
+  }
+
+  .profile-media {
+    min-height: 300px;
+  }
+
+  .profile-details {
+    grid-template-columns: 1fr;
+  }
+
+  .presidium-hierarchy {
+    padding: 2rem 1rem;
+  }
+
+  .hierarchy-container {
+    gap: 1.5rem;
+  }
+
+  .hierarchy-wrapper {
+    gap: 1.5rem;
+  }
+
+  .hierarchy-connector {
+    height: 30px;
+  }
+}
+
+/* Small mobile: 520px and below */
+@media (max-width: 520px) {
+  .presidium-hero {
+    min-height: 60vh;
+  }
+
+  .presidium-hero .hero-copy {
+    padding: 0 0.5rem;
+  }
+
+  .presidium-hero .hero-eyebrow {
+    font-size: 0.75rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .intro-content h2 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .intro-content p {
+    font-size: 0.95rem;
+  }
+
+  .hierarchy-title {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .hierarchy-level[data-level="4"] .hierarchy-grid,
+  .hierarchy-level[data-level="5"] .hierarchy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .presidium-card {
+    max-width: none;
+  }
+
+  .profile-close {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+
+  .profile-info h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .presidium-card,
+  .hierarchy-level,
+  .hierarchy-connector,
+  .profile-modal,
+  .profile-card,
+  .presidium-card img {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.presidium-card:focus-visible {
+  outline: 2px solid var(--team-accent);
+  outline-offset: 2px;
+}
+
+.profile-close:focus-visible {
+  outline: 2px solid var(--team-accent);
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================================================
+   DARK THEME ADJUSTMENTS
+   ============================================================================ */
+
+.dark-theme .presidium-hero {
+  background: linear-gradient(135deg, #031326 0%, #051a3d 50%, #071b2a 100%);
+}
+
+.dark-theme .presidium-intro {
+  background: linear-gradient(180deg, var(--team-bg) 0%, rgba(5, 15, 35, 0.95) 100%);
+}
+
+.dark-theme .presidium-hierarchy {
+  background: linear-gradient(180deg, rgba(5, 15, 35, 0.95) 0%, #031326 100%);
+}
+
+/* ============================================================================
+   UTILITY ANIMATIONS
+   ============================================================================ */
+
+/* For intersection observer */
+.presidium-card {
+  /* Animation applied via JavaScript */
+}
+
+.presidium-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

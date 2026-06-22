@@ -48,6 +48,142 @@
         <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
       </aside>
       <main class="admin-main">
+        <section class="calendar-admin-panel">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Календар</p>
+              <h2>Управління подіями</h2>
+            </div>
+          </div>
+          <div class="calendar-admin-actions">
+            <button type="button" id="createEventBtn" class="accent-btn">Створити подію</button>
+            <button type="button" id="searchEventBtn" class="secondary-btn">Пошук події</button>
+            <button type="button" id="editEventBtn" class="secondary-btn">Редагувати подію</button>
+            <button type="button" id="newCalendarYearBtn" class="secondary-btn">Новий рік</button>
+          </div>
+          <p class="section-note">Керування календарем змагань: створюйте події, шукайте, редагуйте та додавайте роки календаря.</p>
+        </section>
+
+        <section class="news-form-panel hidden" id="eventFormPanel">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Подія</p>
+              <h2>Створити або редагувати подію</h2>
+            </div>
+          </div>
+          <form id="eventForm" class="news-form">
+            <input type="hidden" id="eventId" />
+            <div class="form-row">
+              <label>
+                Назва події *
+                <input id="eventTitle" type="text" required placeholder="Назва події" />
+              </label>
+              <label>
+                Тип події *
+                <select id="eventType" required>
+                  <option value="">Оберіть тип</option>
+                  <option value="міжнародне">міжнародне</option>
+                  <option value="національне">національне</option>
+                  <option value="чемпіонат">чемпіонат</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Дата початку
+                <input id="eventStart" type="datetime-local" />
+              </label>
+              <label>
+                Дата завершення
+                <input id="eventEnd" type="datetime-local" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Локація
+                <input id="eventLocation" type="text" placeholder="Місто або арена" />
+              </label>
+              <label>
+                Результати (URL)
+                <input id="eventResultsUrl" type="url" placeholder="https://..." />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label class="cover-label">
+                Регламент (PDF)
+                <input id="eventRegulationPdf" type="file" accept="application/pdf" />
+              </label>
+              <div>
+                <div id="eventRegulationInfo" class="section-note">Файл не додано.</div>
+                <label class="checkbox-label hidden" id="removeRegulationLabel">
+                  <input type="checkbox" id="removeRegulationPdf" /> Видалити існуючий PDF
+                </label>
+              </div>
+            </div>
+
+
+            <div class="form-row">
+              <label>
+                Опис
+                <textarea id="eventDescription" rows="4" placeholder="Опис події"></textarea>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="accent-btn">Зберегти подію</button>
+              <button type="button" id="cancelEventBtn" class="cancel-btn">Скасувати</button>
+              <button type="button" id="deleteEventBtn" class="delete-btn hidden">Видалити подію</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="news-form-panel hidden" id="eventSearchPanel">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Пошук</p>
+              <h2>Пошук подій календаря</h2>
+            </div>
+          </div>
+          <div class="admin-actions">
+            <input id="eventSearchInput" type="search" placeholder="Пошук за назвою або локацією" />
+            <select id="eventSearchYear">
+              <option value="">Усі роки</option>
+            </select>
+          </div>
+          <div id="eventResultsList" class="admin-news-list"></div>
+        </section>
+
+        <section class="news-form-panel hidden" id="yearFormPanel">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Рік</p>
+              <h2>Новий рік календаря</h2>
+            </div>
+          </div>
+          <p class="section-note">Найбільший наявний рік: <span id="largestYearDisplay">—</span></p>
+          <form id="yearForm" class="news-form">
+            <div class="form-row">
+              <label>
+                Рік *
+                <input id="yearInput" type="number" min="1900" required />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                PDF календаря (опціонально)
+                <input id="yearPdfInput" type="file" accept="application/pdf" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="accent-btn">Створити рік</button>
+              <button type="button" id="cancelYearBtn" class="cancel-btn">Скасувати</button>
+            </div>
+          </form>
+        </section>
+
         <section class="dashboard-overview">
           <div class="admin-panel-header">
             <div>

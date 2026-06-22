@@ -36,7 +36,7 @@
       </a>
       <nav class="desktop-nav">
         <a href="federation.html">Федерація</a>
-        <a href="calendar.html">Календар</a>
+        <a href="calendar.html">Змагання</a>
         <a href="news.html">Новини</a>
         <a href="gallery.html">Галерея</a>
         <a href="nationalteam.html">Збірна</a>
@@ -64,38 +64,77 @@
   <main class="main-content">
     <div class="container">
       <h2>Календар змагань</h2>
-      
-      <section class="calendar-filters">
-        <div class="filter-block">
-          <label for="categoryFilter">Категорія:</label>
-          <select id="categoryFilter">
-            <option value="">Все</option>
-            <option value="Ukraine">Україна</option>
-            <option value="International">Міжнародне</option>
-          </select>
+
+      <section class="calendar-intro-panel">
+        <div class="calendar-meta-row">
+          <div class="year-switcher" id="yearSwitcher" aria-label="Перемикач року календаря"></div>
+          <a id="pdfOpenBtn" class="pdf-open-btn disabled" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+            <span class="pdf-icon">📄</span> Відкрити у файлі
+          </a>
         </div>
 
-        <div class="filter-block">
-          <label for="citySearch">Місто:</label>
-          <input type="text" id="citySearch" placeholder="Пошук за містом..." />
-        </div>
-
-        <div class="filter-block">
-          <label for="statusFilter">Статус:</label>
-          <select id="statusFilter">
-            <option value="">Все</option>
-            <option value="planned">Заплановано</option>
-            <option value="live">Йде</option>
-            <option value="completed">Завершено</option>
-          </select>
+        <div class="visual-calendar-panel" id="visualCalendar">
+          <div class="calendar-loading">Завантаження календаря...</div>
         </div>
       </section>
 
-      <div id="competitionsGrid" class="competitions-grid"></div>
-      
-      <div id="emptyState" class="empty-state hidden">
-        <p>Змагання не знайдено. Спробуйте змінити фільтри.</p>
+      <div class="calendar-event-modal" id="calendarEventModal" aria-hidden="true">
+        <div class="calendar-event-overlay" data-modal-close></div>
+        <div class="calendar-event-dialog" role="dialog" aria-modal="true" aria-labelledby="calendarEventTitle">
+          <button class="calendar-event-close" type="button" aria-label="Закрити подію" data-modal-close>×</button>
+          <div class="calendar-event-content">
+            <p class="event-subtitle">Змагання</p>
+            <h3 id="calendarEventTitle">Назва події</h3>
+            <span id="calendarEventType" class="event-badge type-national">Тип події</span>
+            <p class="event-detail"><strong>Дата:</strong> <span id="calendarEventDate"></span></p>
+            <p class="event-detail"><strong>Локація:</strong> <span id="calendarEventLocation"></span></p>
+          </div>
+          <div class="calendar-event-actions">
+            <a id="calendarRegulationBtn" class="modal-action-btn disabled" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+              <span>📄</span> Регламент
+            </a>
+            <a id="calendarResultsBtn" class="modal-action-btn disabled" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+              <span>🏆</span> Результати
+            </a>
+          </div>
+        </div>
       </div>
+
+      <section class="competition-feed-section">
+        <h2>Стрічка змагань</h2>
+
+        <section class="calendar-filters">
+          <div class="filter-block">
+            <label for="categoryFilter">Категорія:</label>
+            <select id="categoryFilter">
+              <option value="">Все</option>
+              <option value="Ukraine">Україна</option>
+              <option value="International">Міжнародне</option>
+            </select>
+          </div>
+
+          <div class="filter-block">
+            <label for="citySearch">Місто:</label>
+            <input type="text" id="citySearch" placeholder="Пошук за містом..." />
+          </div>
+
+          <div class="filter-block">
+            <label for="statusFilter">Статус:</label>
+            <select id="statusFilter">
+              <option value="">Все</option>
+              <option value="planned">Заплановано</option>
+              <option value="live">Йде</option>
+              <option value="completed">Завершено</option>
+            </select>
+          </div>
+        </section>
+
+        <div id="competitionsGrid" class="competitions-grid"></div>
+        
+        <div id="emptyState" class="empty-state hidden">
+          <p>Змагання не знайдено. Спробуйте змінити фільтри.</p>
+        </div>
+      </section>
     </div>
   </main>
 

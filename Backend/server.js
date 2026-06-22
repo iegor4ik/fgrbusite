@@ -17,11 +17,17 @@ const GALLERY_COVERS_ROOT = path.join(UPLOAD_ROOT, 'gallery', 'covers');
 const GALLERY_PHOTOS_ROOT = path.join(UPLOAD_ROOT, 'gallery', 'photos');
 const DOCUMENTS_ROOT = path.join(UPLOAD_ROOT, 'documents');
 const COMPETITIONS_ROOT = path.join(UPLOAD_ROOT, 'competitions');
+const CALENDAR_ROOT = path.join(UPLOAD_ROOT, 'calendar');
+const CALENDAR_YEAR_PDFS_ROOT = path.join(CALENDAR_ROOT, 'years');
+const CALENDAR_EVENT_PDFS_ROOT = path.join(CALENDAR_ROOT, 'events');
+const CALENDAR_DATA_ROOT = path.join(__dirname);
 fs.mkdirSync(NEWS_UPLOAD_ROOT, { recursive: true });
 fs.mkdirSync(GALLERY_COVERS_ROOT, { recursive: true });
 fs.mkdirSync(GALLERY_PHOTOS_ROOT, { recursive: true });
 fs.mkdirSync(DOCUMENTS_ROOT, { recursive: true });
 fs.mkdirSync(COMPETITIONS_ROOT, { recursive: true });
+fs.mkdirSync(CALENDAR_YEAR_PDFS_ROOT, { recursive: true });
+fs.mkdirSync(CALENDAR_EVENT_PDFS_ROOT, { recursive: true });
 
 const pool = new Pool({
   host: process.env.PGHOST || 'localhost',
@@ -44,6 +50,10 @@ const storage = multer.diskStorage({
       destination = NEWS_UPLOAD_ROOT;
     } else if (req.path.includes('/documents')) {
       destination = DOCUMENTS_ROOT;
+    } else if (req.path.includes('/calendar/year') || req.path.includes('/calendar/years')) {
+      destination = CALENDAR_YEAR_PDFS_ROOT;
+    } else if (req.path.includes('/calendar/events') || req.path.includes('/calendar/event')) {
+      destination = CALENDAR_EVENT_PDFS_ROOT;
     }
     cb(null, destination);
   },
@@ -66,6 +76,17 @@ const uploadDocs = multer({
     cb(null, true);
   },
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB per file
+});
+
+const uploadPdf = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== 'application/pdf') {
+      return cb(new Error('Тільки PDF файли дозволені.'));
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 12 * 1024 * 1024 },
 });
 
 function buildDocumentRow(row) {
@@ -119,6 +140,72 @@ function sanitizeContent(html) {
       }),
     },
   });
+}
+
+function buildCalendarYearRow(row) {
+  return {
+    id: row.id,
+    year: row.year,
+    pdf_file: row.pdf_file,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+function buildCalendarEventRow(row) {
+  const startDate = row.start_date ? new Date(row.start_date) : null;
+  const endDate = row.end_date ? new Date(row.end_date) : null;
+  let dates = '';
+
+  if (startDate && endDate) {
+    const startDateString = startDate.toLocaleDateString('uk-UA', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    const endDateString = endDate.toLocaleDateString('uk-UA', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    dates = startDate.toDateString() === endDate.toDateString()
+      ? startDateString
+      : `${startDateString} — ${endDateString}`;
+  } else if (startDate) {
+    dates = startDate.toLocaleDateString('uk-UA', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  } else if (endDate) {
+    dates = endDate.toLocaleDateString('uk-UA', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  }
+
+  return {
+    id: row.id,
+    calendar_year_id: row.calendar_year_id,
+    title: row.title,
+    event_type: row.event_type,
+    start_date: row.start_date,
+    end_date: row.end_date,
+    location: row.location,
+    regulation_pdf: row.regulation_pdf,
+    results_url: row.results_url,
+    description: row.description,
+    dates,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+function getMonthName(dateString) {
+  if (!dateString) return 'Інші';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('uk-UA', { month: 'long' }).toUpperCase();
 }
 
 async function ensureSchema() {
@@ -187,6 +274,29 @@ async function ensureSchema() {
     weight_name TEXT NOT NULL,
     bracket_link TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS calendar_years (
+    id SERIAL PRIMARY KEY,
+    year INTEGER NOT NULL UNIQUE,
+    pdf_file TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS calendar_events (
+    id SERIAL PRIMARY KEY,
+    calendar_year_id INTEGER NOT NULL REFERENCES calendar_years(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    event_type TEXT NOT NULL CHECK (event_type IN ('міжнародне', 'національне', 'чемпіонат')),
+    start_date TIMESTAMPTZ,
+    end_date TIMESTAMPTZ,
+    location TEXT,
+    regulation_pdf TEXT,
+    results_url TEXT,
+    description TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
 }
 
@@ -842,6 +952,322 @@ app.delete('/api/competitions/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Не вдалося видалити змагання.' });
+  }
+});
+
+app.get('/api/calendar/years', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, year, pdf_file, created_at, updated_at FROM calendar_years ORDER BY year ASC');
+    res.json(result.rows.map(buildCalendarYearRow));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні років календаря.' });
+  }
+});
+
+app.post('/api/calendar/years', uploadPdf.single('pdf_file'), async (req, res) => {
+  try {
+    const { year } = req.body;
+    const yearValue = Number(year);
+    if (!Number.isInteger(yearValue) || yearValue < 1900) {
+      return res.status(400).json({ message: 'Неправильний рік календаря.' });
+    }
+
+    const existing = await pool.query('SELECT year FROM calendar_years ORDER BY year DESC LIMIT 1');
+    if (existing.rows.length) {
+      const maxYear = existing.rows[0].year;
+      if (yearValue !== maxYear + 1) {
+        return res.status(400).json({ message: `Допустимий рік лише ${maxYear + 1}.` });
+      }
+    }
+
+    const pdfFile = req.file ? `/uploads/calendar/years/${req.file.filename}` : null;
+    const result = await pool.query(
+      'INSERT INTO calendar_years (year, pdf_file) VALUES ($1, $2) RETURNING id, year, pdf_file, created_at, updated_at',
+      [yearValue, pdfFile]
+    );
+    res.status(201).json(buildCalendarYearRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити рік календаря.' });
+  }
+});
+
+app.put('/api/calendar/years/:id', uploadPdf.single('pdf_file'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { year, remove_pdf } = req.body;
+    const yearValue = Number(year);
+
+    const current = await pool.query('SELECT year, pdf_file FROM calendar_years WHERE id = $1', [id]);
+    if (!current.rows.length) {
+      return res.status(404).json({ message: 'Рік календаря не знайдено.' });
+    }
+
+    const currentRow = current.rows[0];
+    if (!Number.isInteger(yearValue) || yearValue < 1900) {
+      return res.status(400).json({ message: 'Неправильний рік календаря.' });
+    }
+
+    const duplicateCheck = await pool.query('SELECT id FROM calendar_years WHERE year = $1 AND id <> $2', [yearValue, id]);
+    if (duplicateCheck.rows.length) {
+      return res.status(400).json({ message: 'Такий рік вже існує.' });
+    }
+
+    let pdfFile = currentRow.pdf_file;
+    if (req.file) {
+      pdfFile = `/uploads/calendar/years/${req.file.filename}`;
+      if (currentRow.pdf_file) {
+        fs.unlink(resolveUploadPath(currentRow.pdf_file), () => {});
+      }
+    } else if (remove_pdf === 'true') {
+      if (currentRow.pdf_file) {
+        fs.unlink(resolveUploadPath(currentRow.pdf_file), () => {});
+      }
+      pdfFile = null;
+    }
+
+    const result = await pool.query(
+      'UPDATE calendar_years SET year = $1, pdf_file = $2, updated_at = now() WHERE id = $3 RETURNING id, year, pdf_file, created_at, updated_at',
+      [yearValue, pdfFile, id]
+    );
+    res.json(buildCalendarYearRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося оновити рік календаря.' });
+  }
+});
+
+app.get('/api/calendar/:year', async (req, res) => {
+  try {
+    const yearValue = Number(req.params.year);
+    if (!Number.isInteger(yearValue)) {
+      return res.status(400).json({ message: 'Невірний рік.' });
+    }
+
+    const yearResult = await pool.query('SELECT id, year, pdf_file FROM calendar_years WHERE year = $1', [yearValue]);
+    if (!yearResult.rows.length) {
+      return res.status(404).json({ message: 'Календар не знайдено.' });
+    }
+
+    const yearRow = yearResult.rows[0];
+    const eventsResult = await pool.query(
+      `SELECT id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at
+       FROM calendar_events
+       WHERE calendar_year_id = $1
+       ORDER BY COALESCE(start_date, end_date, created_at) ASC`,
+      [yearRow.id]
+    );
+
+    const monthsMap = new Map();
+    eventsResult.rows.forEach((row) => {
+      const event = buildCalendarEventRow(row);
+      const monthKey = getMonthName(row.start_date) || 'ІНШІ';
+      if (!monthsMap.has(monthKey)) {
+        monthsMap.set(monthKey, { month: monthKey, events: [] });
+      }
+      monthsMap.get(monthKey).events.push(event);
+    });
+
+    const months = Array.from(monthsMap.values());
+
+    res.json({
+      year: yearRow.year,
+      pdf_url: yearRow.pdf_file,
+      months,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні календаря.' });
+  }
+});
+
+app.get('/api/calendar/events/search', async (req, res) => {
+  try {
+    const { q = '', year } = req.query;
+    const filters = [];
+    const params = [];
+    let query = `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, c.year
+      FROM calendar_events e
+      JOIN calendar_years c ON e.calendar_year_id = c.id`;
+
+    if (q.trim()) {
+      params.push(`%${q.trim()}%`);
+      params.push(`%${q.trim()}%`);
+      filters.push('(e.title ILIKE $' + params.length + ' OR e.location ILIKE $' + (params.length - 1) + ')');
+    }
+
+    if (year) {
+      const yearValue = Number(year);
+      if (Number.isInteger(yearValue)) {
+        params.push(yearValue);
+        filters.push('c.year = $' + params.length);
+      }
+    }
+
+    if (filters.length) {
+      query += ' WHERE ' + filters.join(' AND ');
+    }
+    query += ' ORDER BY c.year DESC, COALESCE(e.start_date, e.end_date, e.created_at) DESC';
+
+    const result = await pool.query(query, params);
+    const events = result.rows.map((row) => ({ ...buildCalendarEventRow(row), year: row.year }));
+    res.json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка пошуку подій.' });
+  }
+});
+
+app.get('/api/calendar/events/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, c.year
+       FROM calendar_events e
+       JOIN calendar_years c ON e.calendar_year_id = c.id
+       WHERE e.id = $1`,
+      [id]
+    );
+    if (!result.rows.length) {
+      return res.status(404).json({ message: 'Подію не знайдено.' });
+    }
+    const event = buildCalendarEventRow(result.rows[0]);
+    event.year = result.rows[0].year;
+    res.json(event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні події.' });
+  }
+});
+
+app.post('/api/calendar/events', uploadPdf.single('regulation_pdf'), async (req, res) => {
+  try {
+    const {
+      title,
+      event_type,
+      start_date,
+      end_date,
+      location,
+      results_url,
+      description,
+      calendar_year_id,
+    } = req.body;
+
+    if (!title || !event_type || !calendar_year_id) {
+      return res.status(400).json({ message: 'Назва, тип та рік календаря обов’язкові.' });
+    }
+
+    const validTypes = ['міжнародне', 'національне', 'чемпіонат'];
+    if (!validTypes.includes(event_type)) {
+      return res.status(400).json({ message: 'Неправильний тип події.' });
+    }
+
+    const yearResult = await pool.query('SELECT id FROM calendar_years WHERE id = $1', [calendar_year_id]);
+    if (!yearResult.rows.length) {
+      return res.status(400).json({ message: 'Рік календаря не знайдено.' });
+    }
+
+    const regulationPdf = req.file ? `/uploads/calendar/events/${req.file.filename}` : null;
+    const startDateObj = start_date ? new Date(start_date) : null;
+    const endDateObj = end_date ? new Date(end_date) : null;
+
+    const result = await pool.query(
+      `INSERT INTO calendar_events (calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at`,
+      [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description)]
+    );
+
+    res.status(201).json(buildCalendarEventRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити подію.' });
+  }
+});
+
+app.put('/api/calendar/events/:id', uploadPdf.single('regulation_pdf'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      event_type,
+      start_date,
+      end_date,
+      location,
+      results_url,
+      description,
+      calendar_year_id,
+      remove_regulation,
+    } = req.body;
+
+    const current = await pool.query('SELECT * FROM calendar_events WHERE id = $1', [id]);
+    if (!current.rows.length) {
+      return res.status(404).json({ message: 'Подію не знайдено.' });
+    }
+
+    if (!title || !event_type || !calendar_year_id) {
+      return res.status(400).json({ message: 'Назва, тип та рік календаря обов’язкові.' });
+    }
+
+    const validTypes = ['міжнародне', 'національне', 'чемпіонат'];
+    if (!validTypes.includes(event_type)) {
+      return res.status(400).json({ message: 'Неправильний тип події.' });
+    }
+
+    const yearResult = await pool.query('SELECT id FROM calendar_years WHERE id = $1', [calendar_year_id]);
+    if (!yearResult.rows.length) {
+      return res.status(400).json({ message: 'Рік календаря не знайдено.' });
+    }
+
+    let regulationPdf = current.rows[0].regulation_pdf;
+    if (req.file) {
+      regulationPdf = `/uploads/calendar/events/${req.file.filename}`;
+      if (current.rows[0].regulation_pdf) {
+        fs.unlink(resolveUploadPath(current.rows[0].regulation_pdf), () => {});
+      }
+    } else if (remove_regulation === 'true') {
+      if (current.rows[0].regulation_pdf) {
+        fs.unlink(resolveUploadPath(current.rows[0].regulation_pdf), () => {});
+      }
+      regulationPdf = null;
+    }
+
+    const startDateObj = start_date ? new Date(start_date) : null;
+    const endDateObj = end_date ? new Date(end_date) : null;
+
+    const result = await pool.query(
+      `UPDATE calendar_events
+       SET calendar_year_id = $1, title = $2, event_type = $3, start_date = $4, end_date = $5,
+           location = $6, regulation_pdf = $7, results_url = $8, description = $9, updated_at = now()
+       WHERE id = $10
+       RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at`,
+      [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description), id]
+    );
+
+    res.json(buildCalendarEventRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося оновити подію.' });
+  }
+});
+
+app.delete('/api/calendar/events/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const current = await pool.query('SELECT regulation_pdf FROM calendar_events WHERE id = $1', [id]);
+    if (!current.rows.length) {
+      return res.status(404).json({ message: 'Подію не знайдено.' });
+    }
+    const regulationPdf = current.rows[0].regulation_pdf;
+    await pool.query('DELETE FROM calendar_events WHERE id = $1', [id]);
+    if (regulationPdf) {
+      fs.unlink(resolveUploadPath(regulationPdf), () => {});
+    }
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося видалити подію.' });
   }
 });
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Греко-римська боротьба в регіонах України</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/regions.css" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets/icons/fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="presidium.html">Президіум</a></li>
+        <li><a href="calendar.html">Календар</a></li>
+        <li><a href="news.html">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main -->
+  <main class="regions-page">
+    <!-- Hero -->
+    <section class="regions-hero">
+      <div class="hero-background">
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <span class="hero-tag">Розвиток регіональних центрів</span>
+        <h1>Греко-римська боротьба в регіонах</h1>
+        <p>Організована мережа федерацій у всіх областях України</p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="regions-section">
+      <div class="container">
+        <h2 class="section-title">Виберіть регіон на карті</h2>
+        
+        <div class="regions-grid">
+          <!-- Map -->
+          <div class="map-wrapper">
+            <svg class="ukraine-map" viewBox="0 0 1545.703 1038.492" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Карта України">
+              <title>Інтерактивна карта регіонів України</title>
+              <image href="assets/Ukraine_location_map.svg" x="0" y="0" width="1545.703" height="1038.492" preserveAspectRatio="xMidYMid meet" />
+              <defs>
+                <style>
+                  .oblast { cursor: pointer; fill: #FFD500; stroke: rgba(255, 255, 255, 0.85); stroke-width: 2; pointer-events: all; transition: fill 0.25s ease, filter 0.25s ease, stroke 0.25s ease; }
+                  .oblast:hover { fill: #FFF28F; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4)); }
+                  .oblast.active { fill: #FFF1A3; stroke: rgba(255, 255, 255, 1); filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.65)); }
+                  .oblast-label { display: none; }
+                </style>
+              </defs>
+              <g>
+                <!-- Волинська -->
+                <g data-region="volyn"><circle class="oblast" cx="325.0" cy="220.6" r="12"/></g>
+                <!-- Рівненська -->
+                <g data-region="rivne"><circle class="oblast" cx="380.5" cy="260.0" r="12"/></g>
+                <!-- Житомирська -->
+                <g data-region="zhytomyr"><circle class="oblast" cx="586.0" cy="303.5" r="12"/></g>
+                <!-- Чернігівська -->
+                <g data-region="chernihiv"><circle class="oblast" cx="801.1" cy="180.9" r="12"/></g>
+                <!-- Сумська -->
+                <g data-region="sumy"><circle class="oblast" cx="1034.7" cy="230.9" r="12"/></g>
+                <!-- Луганська -->
+                <g data-region="luhansk"><circle class="oblast" cx="1430.4" cy="495.2" r="12"/></g>
+                <!-- Львівська -->
+                <g data-region="lviv"><circle class="oblast" cx="213.2" cy="333.5" r="12"/></g>
+                <!-- Тернопільська -->
+                <g data-region="ternopil"><circle class="oblast" cx="341.0" cy="363.5" r="12"/></g>
+                <!-- Хмельницька -->
+                <g data-region="khmelnytsky"><circle class="oblast" cx="448.3" cy="400.3" r="12"/></g>
+                <!-- Вінницька -->
+                <g data-region="vinnytsia"><circle class="oblast" cx="564.2" cy="441.4" r="12"/></g>
+                <!-- Чернівецька -->
+                <g data-region="chernivtsi"><circle class="oblast" cx="350.0" cy="538.7" r="12"/></g>
+                <!-- Закарпатська -->
+                <g data-region="zakarpattia"><circle class="oblast" cx="150.6" cy="520.3" r="12"/></g>
+                <!-- Івано-Франківська -->
+                <g data-region="ivano_frankivsk"><circle class="oblast" cx="271.4" cy="469.9" r="12"/></g>
+                <!-- Київська -->
+                <g data-region="kyiv_oblast"><circle class="oblast" cx="726.5" cy="363.5" r="12"/></g>
+                <!-- м. Київ -->
+                <g data-region="kyiv_city"><circle class="oblast" cx="729.9" cy="280.0" r="12"/></g>
+                <!-- Черкаська -->
+                <g data-region="cherkasy"><circle class="oblast" cx="841.1" cy="391.2" r="12"/></g>
+                <!-- Полтавська -->
+                <g data-region="poltava"><circle class="oblast" cx="1014.0" cy="390.9" r="12"/></g>
+                <!-- Харківська -->
+                <g data-region="kharkiv"><circle class="oblast" cx="1200.7" cy="374.3" r="12"/></g>
+                <!-- Донецька -->
+                <g data-region="donetsk"><circle class="oblast" cx="1297.4" cy="577.7" r="12"/></g>
+                <!-- Кіровоградська -->
+                <g data-region="kirovohrad"><circle class="oblast" cx="881.1" cy="493.8" r="12"/></g>
+                <!-- Дніпропетровська -->
+                <g data-region="dnipropetrovsk"><circle class="oblast" cx="1090.2" cy="505.7" r="12"/></g>
+                <!-- Запорізька -->
+                <g data-region="zaporizhzhia"><circle class="oblast" cx="1127.9" cy="620.5" r="12"/></g>
+                <!-- Одеська -->
+                <g data-region="odesa"><circle class="oblast" cx="741.9" cy="778.9" r="12"/></g>
+                <!-- Миколаївська -->
+                <g data-region="mykolaiv"><circle class="oblast" cx="822.4" cy="716.9" r="12"/></g>
+                <!-- Херсонська -->
+                <g data-region="kherson"><circle class="oblast" cx="908.3" cy="724.3" r="12"/></g>
+                <!-- Крим -->
+                <g data-region="crimea"><circle class="oblast" cx="990.6" cy="985.5" r="12"/></g>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Panel -->
+          <div class="info-panel">
+            <div id="panelEmpty" class="panel-empty">
+              <p>👉 Натисніть область на карті</p>
+            </div>
+            <div id="panelContent" class="panel-content" style="display: none;">
+              <div class="region-header">
+                <img id="regionFlag" src="assets/images/image.png" alt="Прапор" class="region-flag">
+                <div class="region-title">
+                  <h3 id="regionName"></h3>
+                  <p id="regionCode" class="region-meta"></p>
+                </div>
+              </div>
+              <div class="members-container">
+                <h4>Склад президії</h4>
+                <div id="membersList" class="members"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Member Profile Modal -->
+  <div class="member-modal" id="memberModal" aria-hidden="true">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="memberName">
+      <button class="modal-close" id="modalClose" aria-label="Закрити профіль">×</button>
+      <div class="modal-body">
+        <div class="modal-image">
+          <img src="assets/images/image.png" alt="Фото" id="memberPhoto">
+        </div>
+        <div class="modal-info">
+          <h3 id="memberName" class="modal-name"></h3>
+          <p class="modal-position" id="memberPosition"></p>
+          <div class="modal-details">
+            <div id="memberPhone" class="detail-item"></div>
+            <div id="memberEmail" class="detail-item"></div>
+            <div id="memberBirth" class="detail-item"></div>
+            <div id="memberAppointment" class="detail-item"></div>
+          </div>
+          <p class="modal-bio" id="memberBio"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 67 422 9004</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+    </div>
+    <a href="login.html" class="dev-login-link">Вхід для розробника</a>
+  </footer>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/regions-data.js" defer></script>
+  <script src="./JS/regions_gr.js" defer></script>
+</body>
+</html>

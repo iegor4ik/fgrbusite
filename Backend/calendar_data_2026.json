@@ -1,0 +1,330 @@
+{
+  "year": 2026,
+  "pdf_url": "/assets/Календар ПДФ 2026 (1).pdf",
+  "months": [
+    {
+      "month": "Січень",
+      "events": [
+        {
+          "title": "MT Ніца",
+          "location": "Ніца, Франція",
+          "dates": "16–18 січня",
+          "type": "International",
+          "id": "event-1",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "ЧУ U23",
+          "location": "Ужгород, Україна",
+          "dates": "30 січня – 1 лютого",
+          "type": "National",
+          "id": "event-2",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Лютий",
+      "events": [
+        {
+          "title": "MT Загреб",
+          "location": "Загреб, Хорватія",
+          "dates": "4–8 лютого",
+          "type": "International",
+          "id": "event-3",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "MT Тірана",
+          "location": "Тірана, Албанія",
+          "dates": "25 лютого – 1 березня",
+          "type": "International",
+          "id": "event-4",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "ВТ пам'яті І. Г. Богдана",
+          "location": "Україна",
+          "dates": "27–29 лютого",
+          "type": "National",
+          "id": "event-5",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Березень",
+      "events": [
+        {
+          "title": "ЧЄ U23",
+          "location": "Зрежанін, Сербія",
+          "dates": "12–16 березня",
+          "type": "Championship",
+          "id": "event-6",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "MT Пловдів",
+          "location": "Пловдів, Болгарія",
+          "dates": "26–29 березня",
+          "type": "International",
+          "id": "event-7",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Квітень",
+      "events": [
+        {
+          "title": "ЧЄ",
+          "location": "Тірана, Албанія",
+          "dates": "18–23 квітня",
+          "type": "Championship",
+          "id": "event-8",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Травень",
+      "events": [
+        {
+          "title": "КУ",
+          "location": "Південне, Одеська область, Україна",
+          "dates": "15–17 травня",
+          "type": "National",
+          "id": "event-9",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Червень",
+      "events": [
+        {
+          "title": "MT Уланбатор",
+          "location": "Уланбатор, Монголія",
+          "dates": "4–7 червня",
+          "type": "International",
+          "id": "event-10",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "НТЗ Колорадо-Спрингс",
+          "location": "Колорадо-Спрингс, США",
+          "dates": "13–27 червня",
+          "type": "Training Camp",
+          "id": "event-11",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Липень",
+      "events": [
+        {
+          "title": "MT Мадрид",
+          "location": "Мадрид, Іспанія",
+          "dates": "10–12 липня",
+          "type": "International",
+          "id": "event-12",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "MT Будапешт",
+          "location": "Будапешт, Угорщина",
+          "dates": "16–19 липня",
+          "type": "International",
+          "id": "event-13",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "ВТ пам'яті Є. Ворка",
+          "location": "Тернопіль, Україна",
+          "dates": "10–12 липня",
+          "type": "National",
+          "id": "event-14",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Серпень",
+      "events": [
+        {
+          "title": "MT Друскінінкай",
+          "location": "Друскінінкай, Литва",
+          "dates": "31 липня – 3 серпня",
+          "type": "International",
+          "id": "event-15",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "MT Дортмунд",
+          "location": "Дортмунд, Німеччина",
+          "dates": "14–16 серпня",
+          "type": "International",
+          "id": "event-16",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "MT Варшава",
+          "location": "Варшава, Польща",
+          "dates": "26–30 серпня",
+          "type": "International",
+          "id": "event-17",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Вересень",
+      "events": [
+        {
+          "title": "MT Пореч",
+          "location": "Пореч, Хорватія",
+          "dates": "18–20 вересня",
+          "type": "International",
+          "id": "event-18",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Жовтень",
+      "events": [
+        {
+          "title": "ЧС U23",
+          "location": "Лас-Вегас, США",
+          "dates": "12–18 жовтня",
+          "type": "Championship",
+          "id": "event-19",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "ВТ пам'яті ЗТУ Гайріяна",
+          "location": "Київ, Україна",
+          "dates": "19–21 жовтня",
+          "type": "National",
+          "id": "event-20",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "ЧС",
+          "location": "Манама, Бахрейн",
+          "dates": "22–28 жовтня",
+          "type": "Championship",
+          "id": "event-21",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Листопад",
+      "events": [
+        {
+          "title": "Чемпіонат України",
+          "location": "Хапаранда, Швеція",
+          "dates": "листопад 2026",
+          "type": "National",
+          "id": "event-22",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        },
+        {
+          "title": "НТЗ U23",
+          "location": "Швеція / Фінляндія",
+          "dates": "листопад 2026",
+          "type": "Training Camp",
+          "id": "event-23",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    },
+    {
+      "month": "Грудень",
+      "events": [
+        {
+          "title": "НТЗ Трускавець",
+          "location": "Трускавець, Україна",
+          "dates": "13–26 грудня",
+          "type": "Training Camp",
+          "id": "event-24",
+          "start_date": "",
+          "end_date": "",
+          "regulation_pdf": "",
+          "results_url": ""
+        }
+      ]
+    }
+  ]
+}

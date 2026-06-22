@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Президіум Федерації греко-римської боротьби України</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/presidium.css" />
+  <script>
+    // Prevent theme flash - apply theme before page renders
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="assets\icons\fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="federation.html">Федерація</a>
+        <a href="calendar.html">Календар</a>
+        <a href="news.html">Новини</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="nationalteam.html">Збірна</a>
+        <a href="documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="federation.html">Федерація</a></li>
+        <li><a href="calendar.html">Календар</a></li>
+        <li><a href="news.html">Новини</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="nationalteam.html">Збірна</a></li>
+        <li><a href="documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="presidium-page">
+    <!-- Hero Section -->
+    <section class="presidium-hero">
+      <img src="assets\images\Prezidium.jpg" alt="Президіум Федерації" class="hero-img">
+      <div class="hero-overlay"></div>
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Керівна структура</span>
+        <h1>Президіум Федерації</h1>
+        <p class="hero-subtitle">Управління та стратегія розвитку греко-римської боротьби в Україні</p>
+      </div>
+    </section>
+
+    <!-- Description Section -->
+    <section class="presidium-intro">
+      <div class="container">
+        <div class="intro-content">
+          <h2>Керівна структура Федерації</h2>
+          <p>Президіум Федерації греко-римської боротьби України представляє керівну ланку, яка формує стратегію розвитку спорту, координує діяльність регіональних організацій та здійснює представництво федерації на міжнародному рівні.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hierarchy Section -->
+    <section class="presidium-hierarchy" aria-labelledby="hierarchyTitle">
+      <div class="container hierarchy-container">
+        <h2 id="hierarchyTitle" class="hierarchy-title">Організаційна структура</h2>
+        
+        <!-- Hierarchy Levels -->
+        <div class="hierarchy-wrapper">
+          <div class="hierarchy-level level-1" data-level="1">
+            <div class="level-label">Президент Федерації</div>
+            <div class="hierarchy-grid" id="level-1"></div>
+          </div>
+
+          <div class="hierarchy-connector level-1-to-2"></div>
+
+          <div class="hierarchy-level level-2" data-level="2">
+            <div class="level-label">Перший Віце-Президент Федерації</div>
+            <div class="hierarchy-grid" id="level-2"></div>
+          </div>
+
+          <div class="hierarchy-connector level-2-to-3"></div>
+
+          <div class="hierarchy-level level-3" data-level="3">
+            <div class="level-label">Генеральний Секретар Федерації</div>
+            <div class="hierarchy-grid" id="level-3"></div>
+          </div>
+
+          <div class="hierarchy-connector level-3-to-4"></div>
+
+          <div class="hierarchy-level level-4" data-level="4">
+            <div class="level-label">Почесні Президенти Федерації</div>
+            <div class="hierarchy-grid" id="level-4"></div>
+          </div>
+
+          <div class="hierarchy-connector level-4-to-5"></div>
+
+          <div class="hierarchy-level level-5" data-level="5">
+            <div class="level-label">Віце-Президенти Федерації</div>
+            <div class="hierarchy-grid" id="level-5"></div>
+          </div>
+
+          <div class="hierarchy-connector level-5-to-6"></div>
+
+          <div class="hierarchy-level level-6" data-level="6">
+            <div class="level-label">Члени Президії</div>
+            <div class="hierarchy-grid" id="level-6"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profileModal" aria-hidden="true">
+      <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileName">
+        <button class="profile-close" id="profileClose" aria-label="Закрити профіль">×</button>
+        <div class="profile-media">
+          <img src="image.png" alt="Профіль" id="profileImage" />
+        </div>
+        <div class="profile-info">
+          <span class="profile-tag" id="profileCategory">Категорія</span>
+          <h2 id="profileName">Ім'я особи</h2>
+          <p class="profile-position" id="profilePosition">Позиція</p>
+          <div class="profile-details" id="profileDetails"></div>
+          <div class="profile-extra" id="profileExtra"></div>
+          <div class="profile-achievements" id="profileAchievements"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 67 422 9004</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+    </div>
+    <a href="login.html" class="dev-login-link">Вхід для розробника</a>
+  </footer>
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/presidium.js" defer></script>
+</body>
+</html>

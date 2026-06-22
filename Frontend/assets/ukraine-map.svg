@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg" class="ukraine-map-svg" role="img" aria-label="Карта України з областями">
+  <defs>
+    <style>
+      .oblast-path {
+        cursor: pointer;
+        transition: all 0.35s ease;
+        stroke: rgba(255, 255, 255, 0.1);
+        stroke-width: 1.5;
+      }
+
+      .oblast-path:hover {
+        fill: #0078D7 !important;
+        filter: brightness(1.15);
+      }
+
+      .oblast-path.active {
+        fill: #FFD500 !important;
+        stroke: rgba(255, 255, 255, 0.3);
+        stroke-width: 2;
+        filter: drop-shadow(0 0 8px rgba(255, 213, 0, 0.4));
+      }
+
+      .oblast-path:focus-visible {
+        outline: 2px solid #00BFFF;
+        outline-offset: 2px;
+      }
+
+      .oblast-label {
+        font-size: 9px;
+        font-weight: 600;
+        text-anchor: middle;
+        pointer-events: none;
+        fill: rgba(255, 255, 255, 0.85);
+        letter-spacing: 0.3px;
+      }
+
+      .map-background {
+        fill: #1E3A5F;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .oblast-path {
+          transition: none;
+        }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="map-background" width="1000" height="800"/>
+
+  <!-- Water (Sea of Azov and Black Sea) -->
+  <path d="M 900 500 L 1000 600 L 1000 800 L 600 800 Z" fill="#0D47A1" opacity="0.2"/>
+
+  <!-- ============================================================================
+       UKRAINE OBLASTS AND REGIONS
+       ============================================================================ -->
+
+  <!-- AR Крим (Autonomous Republic of Crimea) -->
+  <g data-region-id="crimea" class="oblast-group">
+    <path class="oblast-path" data-oblast="crimea" d="M 750 650 L 800 640 L 810 660 L 800 680 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="АР Крим"/>
+    <text class="oblast-label" x="770" y="665">Крим</text>
+  </g>
+
+  <!-- Вінницька область -->
+  <g data-region-id="vinnytsia" class="oblast-group">
+    <path class="oblast-path" data-oblast="vinnytsia" d="M 350 320 L 390 310 L 395 350 L 370 365 L 340 345 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Вінницька область"/>
+    <text class="oblast-label" x="365" y="340">Вінниця</text>
+  </g>
+
+  <!-- Волинська область -->
+  <g data-region-id="volyn" class="oblast-group">
+    <path class="oblast-path" data-oblast="volyn" d="M 270 200 L 320 190 L 325 240 L 290 250 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Волинська область"/>
+    <text class="oblast-label" x="295" y="220">Волинь</text>
+  </g>
+
+  <!-- Дніпропетровська область -->
+  <g data-region-id="dnipropetrovsk" class="oblast-group">
+    <path class="oblast-path" data-oblast="dnipropetrovsk" d="M 550 380 L 620 370 L 630 480 L 570 490 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Дніпропетровська область"/>
+    <text class="oblast-label" x="585" y="435">Днід.</text>
+  </g>
+
+  <!-- Донецька область -->
+  <g data-region-id="donetsk" class="oblast-group">
+    <path class="oblast-path" data-oblast="donetsk" d="M 670 400 L 750 390 L 760 480 L 690 490 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Донецька область"/>
+    <text class="oblast-label" x="710" y="445">Донецьк</text>
+  </g>
+
+  <!-- Житомирська область -->
+  <g data-region-id="zhytomyr" class="oblast-group">
+    <path class="oblast-path" data-oblast="zhytomyr" d="M 380 250 L 430 240 L 440 310 L 400 320 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Житомирська область"/>
+    <text class="oblast-label" x="405" y="280">Житомир</text>
+  </g>
+
+  <!-- Закарпатська область -->
+  <g data-region-id="zakarpattia" class="oblast-group">
+    <path class="oblast-path" data-oblast="zakarpattia" d="M 240 350 L 280 340 L 295 390 L 260 400 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Закарпатська область"/>
+    <text class="oblast-label" x="265" y="370">Закарп.</text>
+  </g>
+
+  <!-- Запорізька область -->
+  <g data-region-id="zaporizhzhia" class="oblast-group">
+    <path class="oblast-path" data-oblast="zaporizhzhia" d="M 630 480 L 700 470 L 710 570 L 640 580 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Запорізька область"/>
+    <text class="oblast-label" x="665" y="525">Запоріжжя</text>
+  </g>
+
+  <!-- Івано-Франківська область -->
+  <g data-region-id="ivano_frankivsk" class="oblast-group">
+    <path class="oblast-path" data-oblast="ivano_frankivsk" d="M 280 340 L 320 335 L 335 380 L 300 390 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Івано-Франківська область"/>
+    <text class="oblast-label" x="305" y="362">Іф. Франк.</text>
+  </g>
+
+  <!-- Київська область -->
+  <g data-region-id="kyiv_oblast" class="oblast-group">
+    <path class="oblast-path" data-oblast="kyiv_oblast" d="M 430 240 L 500 235 L 510 320 L 460 325 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Київська область"/>
+    <text class="oblast-label" x="470" y="280">Київ. обл.</text>
+  </g>
+
+  <!-- м. Київ (Kyiv City) -->
+  <g data-region-id="kyiv_city" class="oblast-group">
+    <circle class="oblast-path" data-oblast="kyiv_city" cx="480" cy="265" r="12" fill="#1E3A5F" tabindex="0" role="button" aria-label="м. Київ"/>
+    <text class="oblast-label" x="480" y="275" font-size="8">м. Київ</text>
+  </g>
+
+  <!-- Кіровоградська область -->
+  <g data-region-id="kirovohrad" class="oblast-group">
+    <path class="oblast-path" data-oblast="kirovohrad" d="M 450 360 L 520 350 L 540 420 L 480 430 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Кіровоградська область"/>
+    <text class="oblast-label" x="490" y="390">Кіровогр.</text>
+  </g>
+
+  <!-- Луганська область -->
+  <g data-region-id="luhansk" class="oblast-group">
+    <path class="oblast-path" data-oblast="luhansk" d="M 720 380 L 800 375 L 810 460 L 750 465 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Луганська область"/>
+    <text class="oblast-label" x="760" y="420">Луганськ</text>
+  </g>
+
+  <!-- Львівська область -->
+  <g data-region-id="lviv" class="oblast-group">
+    <path class="oblast-path" data-oblast="lviv" d="M 200 250 L 260 240 L 275 310 L 220 320 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Львівська область"/>
+    <text class="oblast-label" x="235" y="280">Львів</text>
+  </g>
+
+  <!-- Миколаївська область -->
+  <g data-region-id="mykolaiv" class="oblast-group">
+    <path class="oblast-path" data-oblast="mykolaiv" d="M 500 520 L 580 510 L 600 600 L 520 610 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Миколаївська область"/>
+    <text class="oblast-label" x="545" y="560">Миколаїв</text>
+  </g>
+
+  <!-- Одеська область -->
+  <g data-region-id="odesa" class="oblast-group">
+    <path class="oblast-path" data-oblast="odesa" d="M 430 550 L 510 540 L 530 650 L 450 660 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Одеська область"/>
+    <text class="oblast-label" x="480" y="600">Одеса</text>
+  </g>
+
+  <!-- Полтавська область -->
+  <g data-region-id="poltava" class="oblast-group">
+    <path class="oblast-path" data-oblast="poltava" d="M 520 320 L 600 310 L 620 410 L 550 420 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Полтавська область"/>
+    <text class="oblast-label" x="570" y="365">Полтава</text>
+  </g>
+
+  <!-- Рівненська область -->
+  <g data-region-id="rivne" class="oblast-group">
+    <path class="oblast-path" data-oblast="rivne" d="M 310 240 L 360 230 L 370 290 L 320 300 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Рівненська область"/>
+    <text class="oblast-label" x="340" y="265">Рівне</text>
+  </g>
+
+  <!-- Сумська область -->
+  <g data-region-id="sumy" class="oblast-group">
+    <path class="oblast-path" data-oblast="sumy" d="M 600 270 L 680 260 L 700 340 L 630 350 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Сумська область"/>
+    <text class="oblast-label" x="650" y="305">Суми</text>
+  </g>
+
+  <!-- Тернопільська область -->
+  <g data-region-id="ternopil" class="oblast-group">
+    <path class="oblast-path" data-oblast="ternopil" d="M 320 310 L 370 300 L 385 350 L 340 360 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Тернопільська область"/>
+    <text class="oblast-label" x="350" y="335">Тернопіль</text>
+  </g>
+
+  <!-- Харківська область -->
+  <g data-region-id="kharkiv" class="oblast-group">
+    <path class="oblast-path" data-oblast="kharkiv" d="M 680 310 L 770 300 L 790 390 L 710 400 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Харківська область"/>
+    <text class="oblast-label" x="730" y="350">Харків</text>
+  </g>
+
+  <!-- Херсонська область -->
+  <g data-region-id="kherson" class="oblast-group">
+    <path class="oblast-path" data-oblast="kherson" d="M 580 580 L 660 570 L 680 680 L 600 690 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Херсонська область"/>
+    <text class="oblast-label" x="620" y="635">Херсон</text>
+  </g>
+
+  <!-- Хмельницька область -->
+  <g data-region-id="khmelnytsky" class="oblast-group">
+    <path class="oblast-path" data-oblast="khmelnytsky" d="M 360 320 L 430 310 L 450 380 L 380 390 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Хмельницька область"/>
+    <text class="oblast-label" x="400" y="350">Хмельниці</text>
+  </g>
+
+  <!-- Черкаська область -->
+  <g data-region-id="cherkasy" class="oblast-group">
+    <path class="oblast-path" data-oblast="cherkasy" d="M 480 400 L 560 395 L 575 480 L 500 490 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Черкаська область"/>
+    <text class="oblast-label" x="520" y="440">Черкаси</text>
+  </g>
+
+  <!-- Чернівецька область -->
+  <g data-region-id="chernivtsi" class="oblast-group">
+    <path class="oblast-path" data-oblast="chernivtsi" d="M 270 390 L 310 385 L 320 440 L 280 445 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Чернівецька область"/>
+    <text class="oblast-label" x="295" y="415">Чернівці</text>
+  </g>
+
+  <!-- Чернігівська область -->
+  <g data-region-id="chernihiv" class="oblast-group">
+    <path class="oblast-path" data-oblast="chernihiv" d="M 520 200 L 600 190 L 620 260 L 550 270 Z" fill="#1E3A5F" tabindex="0" role="button" aria-label="Чернігівська область"/>
+    <text class="oblast-label" x="570" y="230">Чернігів</text>
+  </g>
+</svg>
