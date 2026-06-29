@@ -46,8 +46,8 @@ const coaches = [
 	{
 		id: 'coach-2',
 		role: 'Державний тренер',
-		name: 'Каплуновський Андрій Олександрович',
-		image: "assets/images/photo_5206177327367263296_y.jpg",
+		name: 'Андрій Каплуновський',
+		image: 'assets/images/Kaplunovski.webp',
 		dob: '',
 		appointed: '',
 		city: 'Харків',
@@ -189,7 +189,6 @@ const athletes = [
 ];
 
 const heroSlides = document.querySelectorAll('.hero-slide');
-const leaderGrid = document.getElementById('leaderGrid');
 const coachGrid = document.getElementById('coachGrid');
 const athleteGrid = document.getElementById('athleteGrid');
 const profileModal = document.getElementById('profileModal');
@@ -217,7 +216,6 @@ function createProfileCard(item, type) {
 }
 
 function renderCards() {
-	leaderGrid.innerHTML = leaders.map((leader) => createProfileCard(leader, 'leader')).join('');
 	coachGrid.innerHTML = coaches.map((coach) => createProfileCard(coach, 'coach')).join('');
 	athleteGrid.innerHTML = athletes.map((athlete) => {
 		return `\n      <button class="profile-card-item fade-in-up" type="button" data-id="${athlete.id}" data-type="athlete">\n        <img src="${athlete.image}" alt="${athlete.name}" loading="lazy" />\n        <div class="profile-card-body">\n          <h4>${athlete.name}</h4>\n          <p>${athlete.title}</p>\n          <p>${athlete.weight}</p>\n        </div>\n      </button>\n    `;
