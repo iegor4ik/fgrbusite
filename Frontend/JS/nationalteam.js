@@ -188,6 +188,66 @@ const athletes = [
 	},
 ];
 
+// ---------------------------------------------------------------------------
+// Teams data: coaches and athletes per age category
+// ---------------------------------------------------------------------------
+function buildDummyAthletes(prefix) {
+	const arr = [];
+	for (let i = 1; i <= 10; i++) {
+		arr.push({
+			id: `${prefix}-athlete-${i}`,
+			role: 'Спортсмен',
+			name: `Спортсмен ${i}`,
+			image: 'assets/images/No-photo-m.png',
+			dob: '',
+			city: '',
+			title: '',
+			weight: '',
+			achievements: [],
+		});
+	}
+	return arr;
+}
+
+const teams = {
+	adult: {
+		coaches: [
+			{ id: 'coach-adult-1', role: 'Головний тренер', name: 'Володимир Шацьких', image: 'assets/images/VolodymyrShatskih.jpg', city: 'Дніпро' },
+			{ id: 'coach-adult-2', role: 'Тренер', name: 'Сарсян', image: 'assets/images/No-photo-m.png', city: '' },
+			{ id: 'coach-adult-3', role: 'Тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
+		],
+		athletes: buildDummyAthletes('adult')
+	},
+	u23: {
+		coaches: [
+			{ id: 'coach-u23-1', role: 'Головний тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
+			{ id: 'coach-u23-2', role: 'Тренер', name: 'Тиміров', image: 'assets/images/No-photo-m.png' },
+		],
+		athletes: buildDummyAthletes('u23')
+	},
+	u20: {
+		coaches: [
+			{ id: 'coach-u20-1', role: 'Головний тренер', name: 'Мягкий Євгеній', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u20-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+		],
+		athletes: buildDummyAthletes('u20')
+	},
+	u17: {
+		coaches: [
+			{ id: 'coach-u17-1', role: 'Головний тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u17-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+		],
+		athletes: buildDummyAthletes('u17')
+	},
+	u15: {
+		coaches: [
+			{ id: 'coach-u15-1', role: 'Головний тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u15-2', role: 'Тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
+		],
+		athletes: buildDummyAthletes('u15')
+	}
+};
+
 const heroSlides = document.querySelectorAll('.hero-slide');
 const coachGrid = document.getElementById('coachGrid');
 const athleteGrid = document.getElementById('athleteGrid');
@@ -205,6 +265,7 @@ let heroIndex = 0;
 let slideTimer = null;
 
 function rotateHeroSlides() {
+	if (!heroSlides || heroSlides.length === 0) return;
 	heroSlides.forEach((slide, index) => {
 		slide.classList.toggle('active', index === heroIndex);
 	});
@@ -212,14 +273,18 @@ function rotateHeroSlides() {
 }
 
 function createProfileCard(item, type) {
-	return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="${type}">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
+	if (type === 'athlete') {
+		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="athlete">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.title || item.role || ''}</p>\n        <p>${item.weight || ''}</p>\n      </div>\n    </button>\n  `;
+	}
+
+	return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="coach">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
 }
 
-function renderCards() {
-	coachGrid.innerHTML = coaches.map((coach) => createProfileCard(coach, 'coach')).join('');
-	athleteGrid.innerHTML = athletes.map((athlete) => {
-		return `\n      <button class="profile-card-item fade-in-up" type="button" data-id="${athlete.id}" data-type="athlete">\n        <img src="${athlete.image}" alt="${athlete.name}" loading="lazy" />\n        <div class="profile-card-body">\n          <h4>${athlete.name}</h4>\n          <p>${athlete.title}</p>\n          <p>${athlete.weight}</p>\n        </div>\n      </button>\n    `;
-	}).join('');
+function renderTeam(teamKey) {
+	const team = teams[teamKey];
+	if (!team) return;
+	coachGrid.innerHTML = team.coaches.map((c) => createProfileCard(c, 'coach')).join('');
+	athleteGrid.innerHTML = team.athletes.map((a) => createProfileCard(a, 'athlete')).join('');
 }
 
 function formatDate(dateString) {
@@ -261,9 +326,32 @@ function closeProfile() {
 }
 
 function getItemById(id, type) {
-	if (type === 'leader') return leaders.find((item) => item.id === id);
-	if (type === 'coach') return coaches.find((item) => item.id === id);
-	if (type === 'athlete') return athletes.find((item) => item.id === id);
+	if (type === 'leader') return leaders.find((item) => item.id === id) || null;
+
+	if (type === 'coach') {
+		// search global coaches array first
+		let found = coaches.find((item) => item.id === id);
+		if (found) return found;
+		// then search teams' coaches
+		for (const key of Object.keys(teams)) {
+			found = (teams[key].coaches || []).find((c) => c.id === id);
+			if (found) return found;
+		}
+		return null;
+	}
+
+	if (type === 'athlete') {
+		// search global athletes array first
+		let found = athletes.find((item) => item.id === id);
+		if (found) return found;
+		// search teams' athletes
+		for (const key of Object.keys(teams)) {
+			found = (teams[key].athletes || []).find((a) => a.id === id);
+			if (found) return found;
+		}
+		return null;
+	}
+
 	return null;
 }
 
@@ -275,7 +363,10 @@ function setupEventListeners() {
 		const type = card.dataset.type;
 
 		if (type && id) {
-			openProfile(getItemById(id, type), type);
+			const item = getItemById(id, type);
+			if (item) {
+				openProfile(item, type);
+			}
 		}
 	});
 
@@ -310,12 +401,27 @@ function buildFadeInObserver() {
 }
 
 function initHeroSlider() {
+	if (!heroSlides || heroSlides.length === 0) return;
 	rotateHeroSlides();
 	slideTimer = setInterval(rotateHeroSlides, 4000);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	renderCards();
+	// initial team render
+	renderTeam('adult');
+
+	// setup tabs
+	document.querySelectorAll('.team-tab').forEach(btn => {
+		btn.addEventListener('click', (e) => {
+			const team = btn.dataset.team;
+			document.querySelectorAll('.team-tab').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			renderTeam(team);
+			// rebuild fade-in observer for new elements
+			buildFadeInObserver();
+		});
+	});
+
 	setupEventListeners();
 	initHeroSlider();
 	buildFadeInObserver();

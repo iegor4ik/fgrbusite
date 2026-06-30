@@ -198,47 +198,33 @@
   justify-items: center;
 }
 
-/* Level 1 - President (1 card) */
+/* Top row: 6 items (President, First Vice, 3 Honorary, General Secretary) */
 .hierarchy-level[data-level="1"] .hierarchy-grid {
-  grid-template-columns: 1fr;
-  max-width: 280px;
-  margin: 0 auto;
-}
-
-/* Level 2 - First Vice President (1 card) */
-.hierarchy-level[data-level="2"] .hierarchy-grid {
-  grid-template-columns: 1fr;
-  max-width: 280px;
-  margin: 0 auto;
-}
-
-/* Level 3 - General Secretary (1 card) */
-.hierarchy-level[data-level="3"] .hierarchy-grid {
-  grid-template-columns: 1fr;
-  max-width: 280px;
-  margin: 0 auto;
-}
-
-/* Level 4 - Honorary Presidents (3 cards) */
-.hierarchy-level[data-level="4"] .hierarchy-grid {
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 920px;
-  margin: 0 auto;
-}
-
-/* Level 5 - Vice Presidents (8 cards) */
-.hierarchy-level[data-level="5"] .hierarchy-grid {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, minmax(140px, 1fr));
+  gap: 1.25rem;
   width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Level 6 - Presidium Members */
-.hierarchy-level[data-level="6"] .hierarchy-grid {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+/* Second row: Vice-Presidents - 6 per row, wrap extra to next row centered */
+.hierarchy-level[data-level="2"] .hierarchy-grid {
+  grid-template-columns: repeat(6, minmax(140px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+/* Third row: Presidium members - show two centered */
+.hierarchy-level[data-level="3"] .hierarchy-grid {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
   gap: 2rem;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
+  justify-items: center;
 }
 
 /* ============================================================================

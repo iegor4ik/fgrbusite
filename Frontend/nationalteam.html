@@ -8,6 +8,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./CSS/style.css" />
+  <style>
+    /* Simple tab styles matching site look */
+    .team-tabs {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 2rem 0 1rem;
+      flex-wrap: wrap;
+    }
+    .team-tab {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s ease, color .15s ease, box-shadow .15s ease;
+    }
+    .team-tab:hover { background: rgba(255,255,255,0.02); }
+    .team-tab.active { background: #FFD24A; color: #0b1a2b; box-shadow: 0 6px 20px rgba(255,210,74,0.15); }
+  </style>
   <script>
     // Prevent theme flash - apply theme before page renders
     (function() {
@@ -73,7 +95,20 @@
     </section>
 
     <section class="team-cta">
-      <a href="indev.html" class="glow-button">Шукаєте когось конкретного?</a>
+      <a href="https://www.uwrest.com.ua/search" class="glow-button">Шукаєте когось конкретного?</a>
+    </section>
+
+    <!-- Team Tabs -->
+    <section class="team-tabs-section">
+      <div class="container">
+        <div class="team-tabs" role="tablist" aria-label="Вікові категорії">
+          <button class="team-tab active" data-team="adult">Дорослі</button>
+          <button class="team-tab" data-team="u23">U23</button>
+          <button class="team-tab" data-team="u20">U20</button>
+          <button class="team-tab" data-team="u17">U17</button>
+          <button class="team-tab" data-team="u15">U15</button>
+        </div>
+      </div>
     </section>
 
     <section class="team-section" aria-labelledby="nationalTitle">

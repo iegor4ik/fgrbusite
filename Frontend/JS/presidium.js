@@ -47,7 +47,7 @@ const presidiumMembers = [
   // ========================================================================
   {
     id: 'vice-president-1',
-    level: 2,
+    level: 1,
     role: 'Перший віце-президент Федерації греко-римської боротьби',
     name: 'Коваль Віталій Станіславович',
     image: 'assets/images/Vitaliy_Koval\'.jpg',
@@ -62,7 +62,7 @@ const presidiumMembers = [
   // ========================================================================
   {
     id: 'honorary-1',
-    level: 4,
+    level: 1,
     role: 'Почесний президент Федерації',
     name: 'Кисіль Вадим Володимирович',
     image: 'assets/images/Kisil_Vadim.jpg',
@@ -73,7 +73,7 @@ const presidiumMembers = [
   },
   {
     id: 'honorary-2',
-    level: 4,
+    level: 1,
     role: 'Почесний президент Федерації',
     name: 'Камач Олександр Петрович',
     image: 'assets/images/Kamch.jpg',
@@ -84,7 +84,7 @@ const presidiumMembers = [
   },
   {
     id: 'honorary-3',
-    level: 4,
+    level: 1,
     role: 'Почесний президент Федерації',
     name: 'Кравченко Олег Миколайович',
     image: 'assets/images/Kravchenko.jpg',
@@ -99,7 +99,7 @@ const presidiumMembers = [
   // ========================================================================
   {
     id: 'vp-1',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Петро Григорович Душейко',
     image: 'assets/images/dushejko.webp',
@@ -110,7 +110,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-2',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Лисак Сергій Петрович',
     image: 'assets/images/lysak.webp',
@@ -121,7 +121,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-3',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Ковальчук Олександр Іванович',
     image: 'assets/images/Kovalchuk.webp',
@@ -132,7 +132,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-4',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Кирій Олександр Вікторович',
     image: 'assets/images/kyrii.webp',
@@ -143,7 +143,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-5',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Варданян Вартан Володимирович',
     image: 'assets/images/No-photo-m.png',
@@ -154,7 +154,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-6',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Акопян Гегам Ванікович',
     image: 'assets/images/No-photo-m.png',
@@ -165,10 +165,10 @@ const presidiumMembers = [
   },
   {
     id: 'vp-7',
-    level: 5,
+    level: 2,
     role: 'Віце-президент',
     name: 'Роєнко Євгеній Анатолійович',
-    image: 'assets/images/No-photo-m.png',
+    image: 'assets/images/Royenko.webp',
     dob: '',
     city: '',
     appointed: '2023',
@@ -176,7 +176,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-8',
-    level: 5,
+    level: 2,
     role: 'Віце-президент ',
     name: 'Квятковський Андрій Васильович',
     image: 'assets/images/Kvyatkovski.webp',
@@ -185,13 +185,14 @@ const presidiumMembers = [
     appointed: '2023',
     description: '',
   },
+  
 
   // ========================================================================
   // LEVEL 6 - PRESIDIUM MEMBERS
   // ========================================================================
   {
     id: 'secretary-1',
-    level: 6,
+    level: 1,
     role: 'Генеральний секретар Федерації греко-римської боротьби',
     name: 'Каплуновський Андрій Олександрович',
     image: 'assets/images/Kaplunovski.webp',
@@ -202,10 +203,21 @@ const presidiumMembers = [
   },
   {
     id: 'member-1',
-    level: 6,
+    level: 3,
     role: 'Член Президіуму Федерації',
     name: 'Калашников Андрій Миколайович',
     image: 'assets/images/Kalashnikov.webp',
+    dob: '1964-11-20',
+    city: 'Київ',
+    appointed: '2023',
+    description: '',
+  },
+    {
+    id: 'member-2',
+    level: 3,
+    role: 'Член Президіуму Федерації',
+    name: 'Смишляєв Олександр Вікторович',
+    image: 'assets/images/No-photo-m.png',
     dob: '1964-11-20',
     city: 'Київ',
     appointed: '2023',
