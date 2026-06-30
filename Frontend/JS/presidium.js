@@ -28,11 +28,11 @@
  */
 const presidiumMembers = [
   // ========================================================================
-  // LEVEL 1 - PRESIDENT
+  // LEVEL 0 - PRESIDENT (SPECIAL DISPLAY)
   // ========================================================================
   {
     id: 'president-1',
-    level: 1,
+    level: 0,
     role: 'Президент Федерації греко-римської боротьби України',
     name: 'Сазонов Олег Юрійович',
     image: 'assets/images/oleg-sazonov.jpg',
@@ -43,11 +43,11 @@ const presidiumMembers = [
   },
 
   // ========================================================================
-  // LEVEL 2 - FIRST VICE PRESIDENT
+  // LEVEL 3 - PRESIDIUM MEMBERS (ALL ON ONE LEVEL)
   // ========================================================================
   {
     id: 'vice-president-1',
-    level: 1,
+    level: 3,
     role: 'Перший віце-президент Федерації греко-римської боротьби',
     name: 'Коваль Віталій Станіславович',
     image: 'assets/images/Vitaliy_Koval\'.jpg',
@@ -56,13 +56,9 @@ const presidiumMembers = [
     appointed: '2023',
     description: 'Керує напрямком спортивної підготовки та координує розвиток тренерського складу. Відповідає за якість спортивної підготовки на всіх рівнях та взаємодію з регіональними спортивними організаціями.',
   },
-
-  // ========================================================================
-  // LEVEL 4 - HONORARY PRESIDENTS
-  // ========================================================================
   {
     id: 'honorary-1',
-    level: 1,
+    level: 3,
     role: 'Почесний президент Федерації',
     name: 'Кисіль Вадим Володимирович',
     image: 'assets/images/Kisil_Vadim.jpg',
@@ -73,7 +69,7 @@ const presidiumMembers = [
   },
   {
     id: 'honorary-2',
-    level: 1,
+    level: 3,
     role: 'Почесний президент Федерації',
     name: 'Камач Олександр Петрович',
     image: 'assets/images/Kamch.jpg',
@@ -84,7 +80,7 @@ const presidiumMembers = [
   },
   {
     id: 'honorary-3',
-    level: 1,
+    level: 3,
     role: 'Почесний президент Федерації',
     name: 'Кравченко Олег Миколайович',
     image: 'assets/images/Kravchenko.jpg',
@@ -95,11 +91,11 @@ const presidiumMembers = [
   },
 
   // ========================================================================
-  // LEVEL 5 - VICE PRESIDENTS
+  // LEVEL 3 - VICE PRESIDENTS (MOVED TO SINGLE LEVEL)
   // ========================================================================
   {
     id: 'vp-1',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Петро Григорович Душейко',
     image: 'assets/images/dushejko.webp',
@@ -110,7 +106,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-2',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Лисак Сергій Петрович',
     image: 'assets/images/lysak.webp',
@@ -121,7 +117,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-3',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Ковальчук Олександр Іванович',
     image: 'assets/images/Kovalchuk.webp',
@@ -132,7 +128,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-4',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Кирій Олександр Вікторович',
     image: 'assets/images/kyrii.webp',
@@ -143,7 +139,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-5',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Варданян Вартан Володимирович',
     image: 'assets/images/No-photo-m.png',
@@ -154,7 +150,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-6',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Акопян Гегам Ванікович',
     image: 'assets/images/No-photo-m.png',
@@ -165,7 +161,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-7',
-    level: 2,
+    level: 3,
     role: 'Віце-президент',
     name: 'Роєнко Євгеній Анатолійович',
     image: 'assets/images/Royenko.webp',
@@ -176,7 +172,7 @@ const presidiumMembers = [
   },
   {
     id: 'vp-8',
-    level: 2,
+    level: 3,
     role: 'Віце-президент ',
     name: 'Квятковський Андрій Васильович',
     image: 'assets/images/Kvyatkovski.webp',
@@ -188,11 +184,11 @@ const presidiumMembers = [
   
 
   // ========================================================================
-  // LEVEL 6 - PRESIDIUM MEMBERS
+  // LEVEL 3 - ADDITIONAL PRESIDIUM MEMBERS
   // ========================================================================
   {
     id: 'secretary-1',
-    level: 1,
+    level: 3,
     role: 'Генеральний секретар Федерації греко-римської боротьби',
     name: 'Каплуновський Андрій Олександрович',
     image: 'assets/images/Kaplunovski.webp',
@@ -218,7 +214,7 @@ const presidiumMembers = [
     role: 'Член Президіуму Федерації',
     name: 'Смишляєв Олександр Вікторович',
     image: 'assets/images/No-photo-m.png',
-    dob: '1964-11-20',
+    dob: '',
     city: 'Київ',
     appointed: '2023',
     description: '',
@@ -286,15 +282,43 @@ function renderHierarchy() {
     membersByLevel[member.level].push(member);
   });
 
-  // Render cards for each level
-  for (let level = 1; level <= 6; level++) {
-    const container = document.getElementById(`level-${level}`);
-    
-    if (container && membersByLevel[level]) {
-      container.innerHTML = membersByLevel[level]
-        .map(member => createPresidiumCard(member))
+  // Render president (level 0) - special large card
+  if (membersByLevel[0]) {
+    const presidentContainer = document.getElementById(`level-0`);
+    if (presidentContainer) {
+      presidentContainer.innerHTML = membersByLevel[0]
+        .map(member => `
+          <button 
+            class="presidium-card presidium-card-president fade-in-up" 
+            type="button" 
+            data-id="${member.id}" 
+            data-level="${member.level}"
+            aria-label="Відкрити профіль ${member.name}"
+          >
+            <img 
+              src="${member.image}" 
+              alt="${member.name}" 
+              loading="lazy" 
+              decoding="async"
+            />
+            <div class="presidium-card-body">
+              <h4>${member.name}</h4>
+              <p>${member.role}</p>
+            </div>
+          </button>
+        `)
         .join('');
     }
+  }
+
+  // Render presidium members - all on level 1 container, regardless of their level in data
+  const presidiumContainer = document.getElementById('level-1');
+  if (presidiumContainer) {
+    // Collect all members except president (level 0)
+    const allPresidiumMembers = presidiumMembers.filter(member => member.level !== 0);
+    presidiumContainer.innerHTML = allPresidiumMembers
+      .map(member => createPresidiumCard(member))
+      .join('');
   }
 }
 

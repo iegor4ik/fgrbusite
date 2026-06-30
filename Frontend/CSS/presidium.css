@@ -198,33 +198,23 @@
   justify-items: center;
 }
 
-/* Top row: 6 items (President, First Vice, 3 Honorary, General Secretary) */
-.hierarchy-level[data-level="1"] .hierarchy-grid {
-  grid-template-columns: repeat(6, minmax(140px, 1fr));
-  gap: 1.25rem;
+/* Level 0: President - Single large card centered */
+.hierarchy-level[data-level="0"] .hierarchy-grid {
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 1400px;
+  max-width: 400px;
   margin: 0 auto;
 }
 
-/* Second row: Vice-Presidents - 6 per row, wrap extra to next row centered */
-.hierarchy-level[data-level="2"] .hierarchy-grid {
-  grid-template-columns: repeat(6, minmax(140px, 1fr));
-  gap: 1.25rem;
+/* Level 1: All Presidium members - 6 per row, centered */
+.hierarchy-level[data-level="1"] .hierarchy-grid {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5rem;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   justify-content: center;
-}
-
-/* Third row: Presidium members - show two centered */
-.hierarchy-level[data-level="3"] .hierarchy-grid {
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap: 2rem;
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  justify-items: center;
 }
 
 /* ============================================================================
@@ -233,7 +223,7 @@
 
 .presidium-card {
   width: 100%;
-  max-width: 280px;
+  max-width: 200px;
   background: var(--presidium-card-bg);
   border: 1px solid var(--presidium-border);
   border-radius: var(--presidium-radius);
@@ -287,6 +277,31 @@
   color: var(--presidium-text);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+/* ============================================================================
+   SPECIAL STYLING FOR PRESIDENT CARD
+   ============================================================================ */
+
+.presidium-card-president {
+  max-width: 400px;
+  width: 100%;
+}
+
+.presidium-card-president img {
+  aspect-ratio: 1/1;
+}
+
+.presidium-card-president .presidium-card-body {
+  padding: 2rem;
+}
+
+.presidium-card-president h4 {
+  font-size: 1.3rem;
+}
+
+.presidium-card-president p {
+  font-size: 1rem;
 }
 
 /* ============================================================================
@@ -551,8 +566,19 @@
   }
 }
 
+/* Tablets: 768px - 879px */
+@media (max-width: 879px) and (min-width: 761px) {
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 /* Smaller tablets: 880px and below */
 @media (max-width: 880px) {
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
   .hierarchy-level[data-level="4"] .hierarchy-grid {
     grid-template-columns: repeat(2, 1fr);
     max-width: 620px;
@@ -590,7 +616,15 @@
     font-size: clamp(0.9rem, 1.5vw, 1rem);
   }
 
-  .hierarchy-level[data-level="1"] .hierarchy-grid,
+  .hierarchy-level[data-level="0"] .hierarchy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
   .hierarchy-level[data-level="2"] .hierarchy-grid,
   .hierarchy-level[data-level="3"] .hierarchy-grid,
   .hierarchy-level[data-level="6"] .hierarchy-grid {
