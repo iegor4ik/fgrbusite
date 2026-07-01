@@ -244,7 +244,18 @@ const teams = {
 			{ id: 'coach-u15-1', role: 'Головний тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
 			{ id: 'coach-u15-2', role: 'Тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
 		],
-		athletes: buildDummyAthletes('u15')
+		athletes: [
+			{ id: 'u15-athlete-1', role: 'Спортсмен', name: 'Алессандро Бурич', image: 'assets/u15/V.Burych.JPG', dob: '', city: 'Київська обл.', title: '', weight: '85 кг', achievements: [] },
+			{ id: 'u15-athlete-2', role: 'Спортсмен', name: 'Вадим Мінковський', image: 'assets/u15/V.Minovski.JPG', dob: '', city: 'Одеська обл.', title: '', weight: '75 кг', achievements: [] },
+			{ id: 'u15-athlete-3', role: 'Спортсмен', name: 'Віктор Шелков', image: 'assets/u15/V.Shelkov.JPG', dob: '', city: 'Одеська обл.', title: '', weight: '68 кг', achievements: [] },
+			{ id: 'u15-athlete-4', role: 'Спортсмен', name: 'Євген Кравчук', image: 'assets/u15/Y.Kravchuk.JPG', dob: '', city: 'Рівненська обл.', title: '', weight: '62 кг', achievements: [] },
+			{ id: 'u15-athlete-5', role: 'Спортсмен', name: 'Володимир Зикін', image: 'assets/u15/V.Zikin.JPG', dob: '', city: 'Миколаївська обл.', title: '', weight: '57 кг', achievements: [] },
+			{ id: 'u15-athlete-6', role: 'Спортсмен', name: 'Владислав Димчишин', image: 'assets/u15/V.Dymchishin.webp', dob: '', city: 'Київ', title: '', weight: '52 кг', achievements: [] },
+			{ id: 'u15-athlete-7', role: 'Спортсмен', name: 'Андрій Чуйко', image: 'assets/u15/A.Chuyko.webp', dob: '', city: 'Закарпатська обл.', title: '', weight: '48 кг', achievements: [] },
+			{ id: 'u15-athlete-8', role: 'Спортсмен', name: 'Радіон Свириденко', image: 'assets/u15/R.Sveridenko.webp', dob: '', city: 'Запорізька обл.', title: '', weight: '44 кг', achievements: [] },
+			{ id: 'u15-athlete-9', role: 'Спортсмен', name: 'Іван Гуцол', image: 'assets/u15/I_Gutsol.webp', dob: '', city: 'Запорізька обл.', title: '', weight: '41 кг', achievements: [] },
+			{ id: 'u15-athlete-10', role: 'Спортсмен', name: 'Єгор Шевченко', image: 'assets/u15/Y.Shevchenko.webp', dob: '', city: 'Сумська обл.', title: '', weight: '38 кг', achievements: [] },
+		]
 	}
 };
 
