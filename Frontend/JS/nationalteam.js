@@ -1,36 +1,4 @@
-// National Team page script: slider, cards, and modal interactions
-const leaders = [
-	{
-		id: 'leader-1',
-		role: 'Президент Асоціації спортивної боротьби ',
-		name: 'Сазонов Олег Юрійович',
-		image: "assets/images/oleg-sazonov.jpg",
-		dob: '1973-08-20',
-		appointed: '2018',
-		city: 'Кременчук',
-		description: 'Очолює федерацію та формує стратегію розвитку, підтримує молодіжні програми й підсилює міжнародні зв’язки.',
-	},
-	{
-		id: 'leader-2',
-		role: 'Перший віце-президент Федерації греко-римської боротьби',
-		name: 'Коваль Віталій Станіславович',
-		image: "assets/images/Vitaliy_Koval'.jpg",
-		dob: '1982-07-05',
-		appointed: '2018',
-		city: 'Рівне',
-		description: 'Керує напрямком спортивної підготовки та координує програму розвитку тренерського складу.',
-	},
-    {
-		id: 'leader-3',
-		role: 'Генеральний секретар Федерації греко-римської боротьби',
-		name: 'Каплуновський Андрій Олександрович',
-		image: "assets/images/photo_5206177327367263296_y.jpg",
-		dob: '',
-		appointed: '2018',
-		city: 'Харків',
-		description: 'Працює у координації підготовки національної збірної, взаємодії федерації з Міністерством молоді та спорту та організації міжнародних стартів.',
-	},
-];
+
 
 const coaches = [
 	{
@@ -189,7 +157,7 @@ const athletes = [
 ];
 
 const staffMembers = [
-	{ id: 'staff-1', role: 'Державний тренер', name: 'Каплуновський Андрій Олександрович', image: 'assets/images/No-photo-m.png', city: '', description: 'Державний тренер національної збірної.' },
+	{ id: 'staff-1', role: 'Державний тренер', name: 'Каплуновський Андрій Олександрович', image: 'assets/images/Kaplunovski.webp', city: '', description: 'Державний тренер національної збірної.' },
 	{ id: 'staff-2', role: 'Провідний тренер', name: 'Костенко Іван Павлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-4', role: 'Начальник команди', name: 'Полякова Тетяна Вікторівна', image: 'assets/images/No-photo-m.png', city: '', description: 'Начальник команди.' },
@@ -232,28 +200,28 @@ const teams = {
 	u23: {
 		coaches: [
 			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
-			{ id: 'coach-u23-2', role: 'Тренер', name: 'Тиміров', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u23-2', role: 'Старший тренер', name: 'Тиміров', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u23')
 	},
 	u20: {
 		coaches: [
 			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євгеній', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u20-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u20-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u20')
 	},
 	u17: {
 		coaches: [
 			{ id: 'coach-u17-1', role: 'Старший тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u17-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u17-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u17')
 	},
 	u15: {
 		coaches: [
 			{ id: 'coach-u15-1', role: 'Старший тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u15-2', role: 'Тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u15-2', role: 'Старший тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: [
 			{ id: 'u15-athlete-1', role: 'Спортсмен', name: 'Алессандро Бурич', image: 'assets/u15/V.Burych.JPG', dob: '', city: 'Київська обл.', title: '', weight: '85 кг', achievements: [] },
