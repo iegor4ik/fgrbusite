@@ -116,6 +116,17 @@ const presidiumMembers = [
     description: '',
   },
   {
+    id: 'vp-1-new',
+    level: 3,
+    role: 'Віце-президент',
+    name: 'Назаренко Клим',
+    image: 'assets/images/Nazarenko.webp',
+    dob: '',
+    city: '',
+    appointed: '2023',
+    description: '',
+  },
+  {
     id: 'vp-2',
     level: 3,
     role: 'Віце-президент',

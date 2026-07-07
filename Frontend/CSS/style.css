@@ -1291,6 +1291,29 @@ button {
   font-size: clamp(2rem, 3vw, 3rem);
 }
 
+.team-page {
+  color: #f7fbff;
+}
+
+.team-page .section-header h1,
+.team-page .section-header .section-tag,
+.team-page .team-section h2,
+.team-page .subsection-header h3,
+.team-page .team-subgroup-header h4,
+.team-page .profile-card-body h4,
+.team-page .team-tab {
+  color: #f7fbff;
+}
+
+.team-page .profile-card-body p,
+.team-page .team-tab {
+  color: #dfe9ff;
+}
+
+.team-page .team-tab.active {
+  color: #07131e;
+}
+
 .subsection {
   max-width: 1140px;
   margin: 0 auto 3rem;

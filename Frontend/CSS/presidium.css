@@ -199,7 +199,7 @@
   display: grid;
   gap: 1.5rem;
   justify-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   width: 100%;
 }
 
@@ -211,12 +211,30 @@
   margin: 0 auto;
 }
 
-/* Level 1: All Presidium members - 3 to 6 columns centered */
+/* Level 1: All Presidium members - central row with up to 6 items */
 .hierarchy-level[data-level="1"] .hierarchy-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  max-width: 1100px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  max-width: 1400px;
   margin: 0 auto;
   justify-content: center;
+}
+
+@media (max-width: 1200px) {
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .hierarchy-level[data-level="1"] .hierarchy-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Level 2: National category judges - responsive grid */
