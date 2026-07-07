@@ -45,7 +45,7 @@ const coaches = [
 	},
 	{
 		id: 'coach-2',
-		role: 'Державний тренер',
+		role: 'Тренер',
 		name: 'Андрій Каплуновський',
 		image: 'assets/images/Kaplunovski.webp',
 		dob: '',
@@ -168,8 +168,8 @@ const athletes = [
 		id: 'athlete-9',
 		role: 'Спортсмен',
 		name: 'Владислав Кузько',
-        image: "assets/images/Kuzko.jpg",
-        dob: '2000',
+		image: "assets/images/Kuzko.jpg",
+		dob: '2000',
 		city: 'Запоріжжя',
 		title: 'Майстер спорту України',
 		weight: '55 кг',
@@ -186,6 +186,17 @@ const athletes = [
 		weight: '55 кг',
 		achievements: ['Переможець міжнародного Grand Prix', 'Чемпіон України'],
 	},
+];
+
+const staffMembers = [
+	{ id: 'staff-1', role: 'Державний тренер', name: 'Каплуновський Андрій Олександрович', image: 'assets/images/No-photo-m.png', city: '', description: 'Державний тренер національної збірної.' },
+	{ id: 'staff-2', role: 'Провідний тренер', name: 'Костенко Іван Павлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
+	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
+	{ id: 'staff-4', role: 'Начальник команди', name: 'Полякова Тетяна Вікторівна', image: 'assets/images/No-photo-m.png', city: '', description: 'Начальник команди.' },
+	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/No-photo-m.png', city: '', description: 'Начальник команди.' },
+	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-лікар.' },
+	{ id: 'staff-7', role: 'Тренер - масажист', name: 'Глухарев Ігор Владиславович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-масажист.' },
+	{ id: 'staff-8', role: 'Тренер - психолог', name: 'Курилюк Сергій Іванович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-психолог.' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -213,35 +224,35 @@ const teams = {
 	adult: {
 		coaches: [
 			{ id: 'coach-adult-1', role: 'Головний тренер', name: 'Володимир Шацьких', image: 'assets/images/VolodymyrShatskih.jpg', city: 'Дніпро' },
-			{ id: 'coach-adult-2', role: 'Тренер', name: 'Сарсян', image: 'assets/images/No-photo-m.png', city: '' },
-			{ id: 'coach-adult-3', role: 'Тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
+			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Сарсян', image: 'assets/images/No-photo-m.png', city: '' },
+			{ id: 'coach-adult-3', role: 'Старший тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
 		],
 		athletes: buildDummyAthletes('adult')
 	},
 	u23: {
 		coaches: [
-			{ id: 'coach-u23-1', role: 'Головний тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
+			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
 			{ id: 'coach-u23-2', role: 'Тренер', name: 'Тиміров', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u23')
 	},
 	u20: {
 		coaches: [
-			{ id: 'coach-u20-1', role: 'Головний тренер', name: 'Мягкий Євгеній', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євгеній', image: 'assets/images/No-photo-m.png' },
 			{ id: 'coach-u20-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u20')
 	},
 	u17: {
 		coaches: [
-			{ id: 'coach-u17-1', role: 'Головний тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u17-1', role: 'Старший тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
 			{ id: 'coach-u17-2', role: 'Тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: buildDummyAthletes('u17')
 	},
 	u15: {
 		coaches: [
-			{ id: 'coach-u15-1', role: 'Головний тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u15-1', role: 'Старший тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
 			{ id: 'coach-u15-2', role: 'Тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
 		],
 		athletes: [
@@ -262,6 +273,7 @@ const teams = {
 const heroSlides = document.querySelectorAll('.hero-slide');
 const coachGrid = document.getElementById('coachGrid');
 const athleteGrid = document.getElementById('athleteGrid');
+const staffGrid = document.getElementById('staffGrid');
 const profileModal = document.getElementById('profileModal');
 const profileClose = document.getElementById('profileClose');
 const profileImage = document.getElementById('profileImage');
@@ -288,14 +300,59 @@ function createProfileCard(item, type) {
 		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="athlete">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.title || item.role || ''}</p>\n        <p>${item.weight || ''}</p>\n      </div>\n    </button>\n  `;
 	}
 
+	if (type === 'staff') {
+		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="staff">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
+	}
+
 	return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="coach">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
+}
+
+function createEmptyAthleteCard(label = 'Очікується') {
+	return createProfileCard({
+		id: `empty-athlete-${label}`,
+		role: 'Спортсмен',
+		name: label,
+		image: 'assets/images/No-photo-m.png',
+		dob: '',
+		city: '',
+		title: 'Спортсмен',
+		weight: '',
+		achievements: [],
+	}, 'athlete');
+}
+
+function renderStaff() {
+	if (!staffGrid) return;
+	staffGrid.innerHTML = staffMembers.map((member) => createProfileCard(member, 'staff')).join('');
 }
 
 function renderTeam(teamKey) {
 	const team = teams[teamKey];
 	if (!team) return;
 	coachGrid.innerHTML = team.coaches.map((c) => createProfileCard(c, 'coach')).join('');
-	athleteGrid.innerHTML = team.athletes.map((a) => createProfileCard(a, 'athlete')).join('');
+
+	const shouldSplitGroups = ['adult', 'u23', 'u20', 'u17'].includes(teamKey);
+	const europeAthletes = team.athletes.map((a) => createProfileCard(a, 'athlete')).join('');
+	const europeMarkup = `
+		<div class="team-subgroup">
+			<div class="team-subgroup-header"><h4>Чемпіонат Європи</h4></div>
+			<div class="team-grid athletes-grid">${europeAthletes}</div>
+		</div>
+	`;
+
+	if (!shouldSplitGroups) {
+		athleteGrid.innerHTML = `<div class="team-subgroups">${europeMarkup}</div>`;
+		return;
+	}
+
+	const worldMarkup = `
+		<div class="team-subgroup">
+			<div class="team-subgroup-header"><h4>Чемпіонат світу</h4></div>
+			<div class="team-grid athletes-grid">${Array.from({ length: team.athletes.length }, (_, index) => createEmptyAthleteCard(`Спортсмен ${index + 1}`)).join('')}</div>
+		</div>
+	`;
+
+	athleteGrid.innerHTML = `<div class="team-subgroups">${europeMarkup}${worldMarkup}</div>`;
 }
 
 function formatDate(dateString) {
@@ -338,6 +395,10 @@ function closeProfile() {
 
 function getItemById(id, type) {
 	if (type === 'leader') return leaders.find((item) => item.id === id) || null;
+
+	if (type === 'staff') {
+		return staffMembers.find((item) => item.id === id) || null;
+	}
 
 	if (type === 'coach') {
 		// search global coaches array first
@@ -419,6 +480,7 @@ function initHeroSlider() {
 
 window.addEventListener('DOMContentLoaded', () => {
 	// initial team render
+	renderStaff();
 	renderTeam('adult');
 
 	// setup tabs

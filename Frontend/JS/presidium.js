@@ -89,6 +89,17 @@ const presidiumMembers = [
     appointed: '2023',
     description: '',
   },
+  {
+    id: 'secretary-1',
+    level: 3,
+    role: 'Генеральний секретар Федерації греко-римської боротьби',
+    name: 'Каплуновський Андрій Олександрович',
+    image: 'assets/images/Kaplunovski.webp',
+    dob: '1965-03-15',
+    city: 'Харків',
+    appointed: '2023',
+    description: '',
+  },
 
   // ========================================================================
   // LEVEL 3 - VICE PRESIDENTS (MOVED TO SINGLE LEVEL)
@@ -186,17 +197,6 @@ const presidiumMembers = [
   // ========================================================================
   // LEVEL 3 - ADDITIONAL PRESIDIUM MEMBERS
   // ========================================================================
-  {
-    id: 'secretary-1',
-    level: 3,
-    role: 'Генеральний секретар Федерації греко-римської боротьби',
-    name: 'Каплуновський Андрій Олександрович',
-    image: 'assets/images/Kaplunovski.webp',
-    dob: '1965-03-15',
-    city: 'Харків',
-    appointed: '2023',
-    description: '',
-  },
   {
     id: 'member-1',
     level: 3,

@@ -1139,12 +1139,47 @@ button {
 
 .team-hero {
   position: relative;
-  min-height: calc(100vh - var(--header-height));
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 1.5rem;
+  padding: 3rem 1.5rem 1rem;
+}
+
+.team-hero .container {
+  position: relative;
+  z-index: 1;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.team-hero .hero-section-header {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.team-hero .hero-section-header .section-tag {
+  color: var(--team-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-weight: 700;
+}
+
+.team-hero .hero-section-header h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.team-hero .staff-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.team-hero .section-tag {
+  color: var(--team-accent);
+}
+
+.team-hero .hero-section-header h1,
+.team-hero .hero-section-header .section-tag {
+  max-width: 980px;
 }
 
 .hero-slides {
@@ -1229,6 +1264,15 @@ button {
   background: linear-gradient(135deg, rgba(90, 164, 255, 0.4), rgba(31, 108, 255, 0.48));
 }
 
+.team-staff-section {
+  padding: 1.5rem 1.5rem 0;
+}
+
+.team-staff-section .section-header {
+  max-width: 1140px;
+  margin: 0 auto 2rem;
+}
+
 .team-section {
   padding: 3rem 1.5rem;
 }
@@ -1269,6 +1313,26 @@ button {
   gap: 1.5rem;
 }
 
+.staff-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.team-subgroups {
+  display: grid;
+  gap: 2rem;
+}
+
+.team-subgroup {
+  display: grid;
+  gap: 1rem;
+}
+
+.team-subgroup-header h4 {
+  margin: 0;
+  color: var(--team-accent);
+  font-size: 1.1rem;
+}
+
 .leaders-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -1282,6 +1346,8 @@ button {
 }
 
 .profile-card-item {
+  display: grid;
+  width: 100%;
   background: rgba(7, 16, 42, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--team-radius);
@@ -1307,6 +1373,20 @@ button {
 
 .profile-card-item:hover img {
   transform: scale(1.06);
+}
+
+.profile-card-item--empty {
+  min-height: 100%;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255,255,255,0.03);
+}
+
+.profile-card-item--empty .profile-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 220px;
 }
 
 .profile-card-body {
@@ -1508,7 +1588,8 @@ button {
 @media (max-width: 1120px) {
   .coaches-grid,
   .athletes-grid,
-  .leaders-grid {
+  .leaders-grid,
+  .staff-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
