@@ -192,7 +192,7 @@ const teams = {
 	adult: {
 		coaches: [
 			{ id: 'coach-adult-1', role: 'Головний тренер', name: 'Володимир Шацьких', image: 'assets/images/VolodymyrShatskih.jpg', city: 'Дніпро' },
-			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Сарсян', image: 'assets/images/No-photo-m.png', city: '' },
+			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Сарсян', image: 'assets/images/Sarasyan.jpg', city: '' },
 			{ id: 'coach-adult-3', role: 'Старший тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
 		],
 		athletes: buildDummyAthletes('adult')
@@ -200,7 +200,7 @@ const teams = {
 	u23: {
 		coaches: [
 			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
-			{ id: 'coach-u23-2', role: 'Старший тренер', name: 'Тиміров', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u23-2', role: 'Старший тренер', name: 'Теміров Ленур', image: 'assets/images/Timirov.webp' },
 		],
 		athletes: buildDummyAthletes('u23')
 	},
@@ -220,8 +220,8 @@ const teams = {
 	},
 	u15: {
 		coaches: [
-			{ id: 'coach-u15-1', role: 'Старший тренер', name: 'Молнар Сергій', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u15-2', role: 'Старший тренер', name: 'Гробован Олександр', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u15-1', role: 'Старший тренер', name: 'Молнар Сергій', image: 'assets/images/Molnar.webp"' },
+			{ id: 'coach-u15-2', role: 'Старший тренер', name: 'Гробован Олександр', image: 'assets/images/Grobovan.webp' },
 		],
 		athletes: [
 			{ id: 'u15-athlete-1', role: 'Спортсмен', name: 'Алессандро Бурич', image: 'assets/u15/V.Burych.JPG', dob: '', city: 'Київська обл.', title: '', weight: '85 кг', achievements: [] },
