@@ -195,28 +195,72 @@ const teams = {
 			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Сарсян', image: 'assets/images/Sarasyan.jpg', city: '' },
 			{ id: 'coach-adult-3', role: 'Старший тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
 		],
-		athletes: buildDummyAthletes('adult')
+		athletes: [
+			{ id: 'adult-athlete-1', role: 'Спортсмен', name: 'Михайло Вишнивецький', image: 'assets/Дорослі/Europe/Михайло Вишнивецький (130 кг).png', dob: '', city: '', title: '', weight: '130 кг', achievements: [] },
+			{ id: 'adult-athlete-2', role: 'Спортсмен', name: 'Владлен Козлюк', image: 'assets/Дорослі/Europe/Владлен Козлюк (97 кг).png', dob: '', city: '', title: '', weight: '97 кг', achievements: [] },
+			{ id: 'adult-athlete-3', role: 'Спортсмен', name: 'Ярослав Фільчаков', image: 'assets/Дорослі/Europe/Ярослав Фільчаков (87 кг).png', dob: '', city: '', title: '', weight: '87 кг', achievements: [] },
+			{ id: 'adult-athlete-4', role: 'Спортсмен', name: 'Руслан Абдієв', image: 'assets/Дорослі/Europe/Руслан Абдієв (82 кг).png', dob: '', city: '', title: '', weight: '82 кг', achievements: [] },
+			{ id: 'adult-athlete-5', role: 'Спортсмен', name: 'Ірфан Мірзоєв', image: 'assets/Дорослі/Europe/Ірфан Мірзоєв (77 кг).png', dob: '', city: '', title: '', weight: '77 кг', achievements: [] },
+			{ id: 'adult-athlete-6', role: 'Спортсмен', name: 'Дмитро Васильєв', image: 'assets/Дорослі/Europe/Дмитро Васильєв (72 кг).png', dob: '', city: '', title: '', weight: '72 кг', achievements: [] },
+			{ id: 'adult-athlete-7', role: 'Спортсмен', name: 'Олександр Грушин', image: 'assets/Дорослі/Europe/Олександр Грушин (67 кг).png', dob: '', city: '', title: '', weight: '67 кг', achievements: [] },
+			{ id: 'adult-athlete-8', role: 'Спортсмен', name: 'Максим Лю', image: 'assets/Дорослі/Europe/Максим Лю (63 кг).png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
+			{ id: 'adult-athlete-9', role: 'Спортсмен', name: 'Владислав Кузько', image: 'assets/Дорослі/Europe/Владислав Кузько (60 кг).png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
+			{ id: 'adult-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/Дорослі/Europe/Іван Стефанський (55 кг).png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
+		]
 	},
 	u23: {
 		coaches: [
 			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
 			{ id: 'coach-u23-2', role: 'Старший тренер', name: 'Теміров Ленур', image: 'assets/images/Timirov.webp' },
 		],
-		athletes: buildDummyAthletes('u23')
+		athletes: [
+			{ id: 'u23-athlete-1', role: 'Спортсмен', name: 'Іван Янковський', image: 'assets/u23/Europe/130кг - Іван Янковський.png', dob: '', city: '', title: '', weight: '130 кг', achievements: [] },
+			{ id: 'u23-athlete-2', role: 'Спортсмен', name: 'Єгор Якушенко', image: 'assets/u23/Europe/97кг - Єгор Якушенко.png', dob: '', city: '', title: '', weight: '97 кг', achievements: [] },
+			{ id: 'u23-athlete-3', role: 'Спортсмен', name: 'Владислав Солодчук', image: 'assets/u23/Europe/87кг - Владислав Солодчук.png', dob: '', city: '', title: '', weight: '87 кг', achievements: [] },
+			{ id: 'u23-athlete-4', role: 'Спортсмен', name: 'Руслан Абдієв', image: 'assets/u23/Europe/82кг - Руслан Абдієв.png', dob: '', city: '', title: '', weight: '82 кг', achievements: [] },
+			{ id: 'u23-athlete-5', role: 'Спортсмен', name: 'Ірфан Мірзоєв', image: 'assets/u23/Europe/77кг - Ірфан Мірзоєв.png', dob: '', city: '', title: '', weight: '77 кг', achievements: [] },
+			{ id: 'u23-athlete-6', role: 'Спортсмен', name: 'Дмитро Васильєв', image: 'assets/u23/Europe/72кг - Дмитро Васильєв.png', dob: '', city: '', title: '', weight: '72 кг', achievements: [] },
+			{ id: 'u23-athlete-7', role: 'Спортсмен', name: 'Імед Худжадзе', image: 'assets/u23/Europe/67кг - Імед Худжадзе.png', dob: '', city: '', title: '', weight: '67 кг', achievements: [] },
+			{ id: 'u23-athlete-8', role: 'Спортсмен', name: 'Максут Султанов', image: 'assets/u23/Europe/63кг - Максут Султанов.png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
+			{ id: 'u23-athlete-9', role: 'Спортсмен', name: 'Євген Поковба', image: 'assets/u23/Europe/60кг - Євген Поковба.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
+			{ id: 'u23-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/u23/Europe/55кг - Іван Стефанський.jpg', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
+		]
 	},
 	u20: {
 		coaches: [
-			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євгеній', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u20-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євгеній', image: 'assets/u20/Coach/Євген Мягкий старший тренер збірної.png' },
+			{ id: 'coach-u20-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/u20/Coach/Бутхузі Карая старший тренер збірної.png' },
 		],
-		athletes: buildDummyAthletes('u20')
+		athletes: [
+			{ id: 'u20-athlete-1', role: 'Спортсмен', name: 'Іван Янковський', image: 'assets/u20/Europe/Іван Янковський 130 кг.png', dob: '', city: '', title: '', weight: '130 кг', achievements: [] },
+			{ id: 'u20-athlete-2', role: 'Спортсмен', name: 'Єгор Якушенко', image: 'assets/u20/Europe/Єгор Якушенко 97 кг.png', dob: '', city: '', title: '', weight: '97 кг', achievements: [] },
+			{ id: 'u20-athlete-3', role: 'Спортсмен', name: 'Владислав Солодчук', image: 'assets/u20/Europe/Владислав Солодчук 87 кг.png', dob: '', city: '', title: '', weight: '87 кг', achievements: [] },
+			{ id: 'u20-athlete-4', role: 'Спортсмен', name: 'Єгор Легкий', image: 'assets/u20/Europe/Єгор Легкий 82 кг.png', dob: '', city: '', title: '', weight: '82 кг', achievements: [] },
+			{ id: 'u20-athlete-5', role: 'Спортсмен', name: 'Павло Пошутилов', image: 'assets/u20/Europe/Павло Пошутилов 77 кг.png', dob: '', city: '', title: '', weight: '77 кг', achievements: [] },
+			{ id: 'u20-athlete-6', role: 'Спортсмен', name: 'Дмитро Демʼяновський', image: 'assets/u20/Europe/Дмитро Демʼяновський 72 кг.png', dob: '', city: '', title: '', weight: '72 кг', achievements: [] },
+			{ id: 'u20-athlete-7', role: 'Спортсмен', name: 'Владислав Покотило', image: 'assets/u20/Europe/Владислав Покотило 67 кг.png', dob: '', city: '', title: '', weight: '67 кг', achievements: [] },
+			{ id: 'u20-athlete-8', role: 'Спортсмен', name: 'Максут Султанов', image: 'assets/u20/Europe/Максут Султанов 63 кг.png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
+			{ id: 'u20-athlete-9', role: 'Спортсмен', name: 'Герман Басараб', image: 'assets/u20/Europe/Герман Басараб 60 кг.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
+			{ id: 'u20-athlete-10', role: 'Спортсмен', name: 'Богдан Різниченко', image: 'assets/u20/Europe/Богдан Різниченко 55 кг.png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
+		]
 	},
 	u17: {
 		coaches: [
 			{ id: 'coach-u17-1', role: 'Старший тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
-			{ id: 'coach-u17-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u17-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/u20/Coach/Бутхузі Карая старший тренер збірної.png' },
 		],
-		athletes: buildDummyAthletes('u17')
+		athletes: [
+			{ id: 'u17-athlete-1', role: 'Спортсмен', name: 'Соколюк Максим', image: 'assets/u17/Europe/110 кг - Соколюк Максим.png', dob: '', city: '', title: '', weight: '110 кг', achievements: [] },
+			{ id: 'u17-athlete-2', role: 'Спортсмен', name: 'Гліб Євсєєв', image: 'assets/u17/Europe/92 кг - Гліб Євсєєв.png', dob: '', city: '', title: '', weight: '92 кг', achievements: [] },
+			{ id: 'u17-athlete-3', role: 'Спортсмен', name: 'Даниїл Мельничук', image: 'assets/u17/Europe/80 кг - Даниїл Мельничук.png', dob: '', city: '', title: '', weight: '80 кг', achievements: [] },
+			{ id: 'u17-athlete-4', role: 'Спортсмен', name: 'Величко Владислав', image: 'assets/u17/Europe/71 кг - Величко Владислав.png', dob: '', city: '', title: '', weight: '71 кг', achievements: [] },
+			{ id: 'u17-athlete-5', role: 'Спортсмен', name: 'Олександр Венець', image: 'assets/u17/Europe/65 кг - Олександр Венець.png', dob: '', city: '', title: '', weight: '65 кг', achievements: [] },
+			{ id: 'u17-athlete-6', role: 'Спортсмен', name: 'Желобков Артем', image: 'assets/u17/Europe/60 кг - Желобков Артем.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
+			{ id: 'u17-athlete-7', role: 'Спортсмен', name: 'Гамідов Рахман', image: 'assets/u17/Europe/55 кг - Гамідов Рахман.png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
+			{ id: 'u17-athlete-8', role: 'Спортсмен', name: 'Шлапак Сергій', image: 'assets/u17/Europe/51 кг - Шлапак Сергій.png', dob: '', city: '', title: '', weight: '51 кг', achievements: [] },
+			{ id: 'u17-athlete-9', role: 'Спортсмен', name: 'Магеррамов Тимур', image: 'assets/u17/Europe/48 кг - Магеррамов Тимур.png', dob: '', city: '', title: '', weight: '48 кг', achievements: [] },
+			{ id: 'u17-athlete-10', role: 'Спортсмен', name: 'Голубєв Руслан', image: 'assets/u17/Europe/45 кг - Голубєв Руслан.png', dob: '', city: '', title: '', weight: '45 кг', achievements: [] },
+		]
 	},
 	u15: {
 		coaches: [
