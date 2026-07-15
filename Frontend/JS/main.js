@@ -15,28 +15,83 @@
 // ==============================================================
 const menuToggle = document.getElementById('menuToggle');
 const mobileMenu = document.getElementById('mobileMenu');
-const menuLinks = mobileMenu?.querySelectorAll('a') || [];
+const menuList = mobileMenu?.querySelector('ul');
+const mobileNavItems = [
+  { label: 'Головна', href: '#hero' },
+  { label: 'Федерація', href: 'federation.html' },
+  { label: 'Календар', href: 'calendar.html' },
+  { label: 'Новини', href: 'news.html' },
+  { label: 'Галерея', href: 'gallery.html' },
+  { label: 'Збірна', href: 'nationalteam.html' },
+  { label: 'Документи', href: 'documents.html' },
+];
 
-function toggleMenu() {
-  const isOpen = mobileMenu.classList.toggle('open');
-  menuToggle.setAttribute('aria-expanded', String(isOpen));
-  mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+function renderMobileMenu() {
+  if (!mobileMenu || !menuList) return;
+
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const isHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html');
+
+  menuList.innerHTML = mobileNavItems
+    .map((item) => {
+      const isCurrentPage = item.href !== '#hero' && currentPath.toLowerCase() === item.href.toLowerCase();
+      const isHeroActive = item.href === '#hero' && isHomepage;
+      const activeClass = isCurrentPage || isHeroActive ? 'is-active' : '';
+      return `<li><a href="${item.href}" class="${activeClass}">${item.label}</a></li>`;
+    })
+    .join('');
+
+  if (!mobileMenu.querySelector('.mobile-menu-panel')) {
+    const panel = document.createElement('div');
+    panel.className = 'mobile-menu-panel';
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'mobile-menu-close';
+    closeButton.type = 'button';
+    closeButton.setAttribute('aria-label', 'Закрити меню');
+    closeButton.innerHTML = '&times;';
+    panel.appendChild(closeButton);
+
+    const existingList = mobileMenu.querySelector('ul');
+    if (existingList) {
+      panel.appendChild(existingList);
+      mobileMenu.appendChild(panel);
+    }
+
+    closeButton.addEventListener('click', () => toggleMenu(false));
+  }
 }
 
-menuToggle?.addEventListener('click', toggleMenu);
-menuLinks.forEach((link) => {
+function toggleMenu(forceOpen) {
+  if (!mobileMenu || !menuToggle) return;
+
+  const isOpen = typeof forceOpen === 'boolean' ? forceOpen : !mobileMenu.classList.contains('open');
+  mobileMenu.classList.toggle('open', isOpen);
+  menuToggle.setAttribute('aria-expanded', String(isOpen));
+  mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+  document.body.classList.toggle('menu-open', isOpen);
+}
+
+renderMobileMenu();
+menuToggle?.addEventListener('click', () => toggleMenu());
+
+mobileMenu?.querySelectorAll('a').forEach((link) => {
   link.addEventListener('click', () => {
     if (mobileMenu.classList.contains('open')) {
-      toggleMenu();
+      toggleMenu(false);
     }
   });
 });
 
+mobileMenu?.addEventListener('click', (event) => {
+  if (event.target === mobileMenu) {
+    toggleMenu(false);
+  }
+});
+
 window.addEventListener('resize', () => {
   if (window.innerWidth > 767 && mobileMenu?.classList.contains('open')) {
-    mobileMenu.classList.remove('open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    mobileMenu.setAttribute('aria-hidden', 'true');
+    toggleMenu(false);
   }
 });
 
