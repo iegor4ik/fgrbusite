@@ -37,6 +37,35 @@ const pool = new Pool({
   database: process.env.PGDATABASE || 'fgrbu_db',
 });
 
+const ACTIVE_VISITOR_TTL_MS = 60_000;
+const activeVisitors = new Map();
+
+function getClientIdentifier(req) {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const ip = Array.isArray(forwardedFor)
+    ? forwardedFor[0]
+    : typeof forwardedFor === 'string'
+      ? forwardedFor.split(',')[0].trim()
+      : req.socket?.remoteAddress || req.ip || 'unknown';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+  return `${ip}:${userAgent}`;
+}
+
+function trackVisitor(req, res, next) {
+  activeVisitors.set(getClientIdentifier(req), Date.now());
+  next();
+}
+
+function getOnlineUsersCount() {
+  const cutoff = Date.now() - ACTIVE_VISITOR_TTL_MS;
+  for (const [id, seenAt] of activeVisitors.entries()) {
+    if (seenAt < cutoff) {
+      activeVisitors.delete(id);
+    }
+  }
+  return activeVisitors.size;
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let destination = NEWS_UPLOAD_ROOT;
@@ -118,6 +147,7 @@ function buildCompetitionRow(row) {
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+app.use(trackVisitor);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.use(express.static(path.join(__dirname, '..', 'Frontend')));
 
@@ -333,6 +363,24 @@ function sanitizeText(value) {
 function resolveUploadPath(urlPath) {
   return path.join(__dirname, '..', String(urlPath).replace(/^\/+/, ''));
 }
+
+app.get('/api/admin/dashboard', async (req, res) => {
+  try {
+    const [newsResult, galleryResult] = await Promise.all([
+      pool.query('SELECT COUNT(*)::int AS count FROM news'),
+      pool.query('SELECT COUNT(*)::int AS count FROM gallery_photos'),
+    ]);
+
+    res.json({
+      news_count: newsResult.rows[0]?.count ?? 0,
+      gallery_photo_count: galleryResult.rows[0]?.count ?? 0,
+      online_users: getOnlineUsersCount(),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні статистики.' });
+  }
+});
 
 app.get('/api/news', async (req, res) => {
   try {
@@ -1035,6 +1083,28 @@ app.put('/api/calendar/years/:id', uploadPdf.single('pdf_file'), async (req, res
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Не вдалося оновити рік календаря.' });
+  }
+});
+
+app.delete('/api/calendar/years/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const current = await pool.query('SELECT pdf_file FROM calendar_years WHERE id = $1', [id]);
+    if (!current.rows.length) {
+      return res.status(404).json({ message: 'Рік календаря не знайдено.' });
+    }
+
+    const pdfFile = current.rows[0].pdf_file;
+    await pool.query('DELETE FROM calendar_years WHERE id = $1', [id]);
+
+    if (pdfFile) {
+      fs.unlink(resolveUploadPath(pdfFile), () => {});
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося видалити рік календаря.' });
   }
 });
 

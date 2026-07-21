@@ -60,6 +60,7 @@
             <button type="button" id="searchEventBtn" class="secondary-btn">Пошук події</button>
             <button type="button" id="editEventBtn" class="secondary-btn">Редагувати подію</button>
             <button type="button" id="newCalendarYearBtn" class="secondary-btn">Новий рік</button>
+            <button type="button" id="editCalendarYearBtn" class="secondary-btn">Редагувати рік</button>
           </div>
           <p class="section-note">Керування календарем змагань: створюйте події, шукайте, редагуйте та додавайте роки календаря.</p>
         </section>
@@ -180,6 +181,44 @@
             <div class="form-actions">
               <button type="submit" class="accent-btn">Створити рік</button>
               <button type="button" id="cancelYearBtn" class="cancel-btn">Скасувати</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="news-form-panel hidden" id="yearManagementPanel">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Рік</p>
+              <h2>Редагування років календаря</h2>
+            </div>
+          </div>
+          <p class="section-note">Оберіть рік, щоб оновити PDF або видалити його разом із подіями цього року.</p>
+          <div id="yearManagementList" class="admin-news-list"></div>
+
+          <form id="yearEditForm" class="news-form">
+            <input type="hidden" id="yearEditId" />
+            <div class="form-row">
+              <label>
+                Рік
+                <input id="yearEditValue" type="number" min="1900" readonly />
+              </label>
+            </div>
+            <div class="form-row">
+              <label class="cover-label">
+                PDF календаря (опціонально)
+                <input id="yearEditPdfInput" type="file" accept="application/pdf" />
+              </label>
+              <div>
+                <div id="yearEditPdfInfo" class="section-note">Файл не додано.</div>
+                <label class="checkbox-label hidden" id="removeYearPdfLabel">
+                  <input type="checkbox" id="removeYearPdfCheckbox" /> Видалити існуючий PDF
+                </label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="accent-btn">Зберегти PDF</button>
+              <button type="button" id="cancelYearEditBtn" class="cancel-btn">Скасувати</button>
+              <button type="button" id="deleteYearBtn" class="delete-btn hidden">Видалити рік</button>
             </div>
           </form>
         </section>

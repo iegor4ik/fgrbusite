@@ -23,6 +23,7 @@ const createEventBtn = document.getElementById('createEventBtn');
 const searchEventBtn = document.getElementById('searchEventBtn');
 const editEventBtn = document.getElementById('editEventBtn');
 const newCalendarYearBtn = document.getElementById('newCalendarYearBtn');
+const editCalendarYearBtn = document.getElementById('editCalendarYearBtn');
 
 const eventFormPanel = document.getElementById('eventFormPanel');
 const eventForm = document.getElementById('eventForm');
@@ -47,11 +48,22 @@ const eventSearchYear = document.getElementById('eventSearchYear');
 const eventResultsList = document.getElementById('eventResultsList');
 
 const yearFormPanel = document.getElementById('yearFormPanel');
+const yearManagementPanel = document.getElementById('yearManagementPanel');
 const yearForm = document.getElementById('yearForm');
 const yearInput = document.getElementById('yearInput');
 const yearPdfInput = document.getElementById('yearPdfInput');
 const cancelYearBtn = document.getElementById('cancelYearBtn');
 const largestYearDisplay = document.getElementById('largestYearDisplay');
+const yearManagementList = document.getElementById('yearManagementList');
+const yearEditForm = document.getElementById('yearEditForm');
+const yearEditIdInput = document.getElementById('yearEditId');
+const yearEditValueInput = document.getElementById('yearEditValue');
+const yearEditPdfInput = document.getElementById('yearEditPdfInput');
+const yearEditPdfInfo = document.getElementById('yearEditPdfInfo');
+const removeYearPdfLabel = document.getElementById('removeYearPdfLabel');
+const removeYearPdfCheckbox = document.getElementById('removeYearPdfCheckbox');
+const cancelYearEditBtn = document.getElementById('cancelYearEditBtn');
+const deleteYearBtn = document.getElementById('deleteYearBtn');
 
 let competitions = [];
 let activeEditId = null;
@@ -129,7 +141,7 @@ function renderWeightCategories() {
 }
 
 function setPanelVisibility(panelToShow) {
-  [eventFormPanel, eventSearchPanel, yearFormPanel].forEach((panel) => {
+  [eventFormPanel, eventSearchPanel, yearFormPanel, yearManagementPanel].forEach((panel) => {
     if (!panel) return;
     panel.classList.toggle('hidden', panel !== panelToShow);
   });
@@ -139,6 +151,7 @@ let activeCalendarYearId = null;
 let activeCalendarYearYear = null;
 const calendarYearMap = new Map();
 let editingCalendarYearId = null;
+let calendarYears = [];
 
 function resetEventForm() {
   eventIdInput.value = '';
@@ -155,6 +168,57 @@ function resetEventForm() {
   eventDescriptionInput.value = '';
   deleteEventBtn.classList.add('hidden');
   editingCalendarYearId = null;
+}
+
+function resetYearEditForm() {
+  yearEditIdInput.value = '';
+  yearEditValueInput.value = '';
+  yearEditPdfInput.value = '';
+  yearEditPdfInfo.textContent = 'Файл не додано.';
+  removeYearPdfCheckbox.checked = false;
+  removeYearPdfLabel.classList.add('hidden');
+  deleteYearBtn.classList.add('hidden');
+}
+
+function populateYearEditForm(yearItem = null) {
+  resetYearEditForm();
+  if (!yearItem) return;
+
+  yearEditIdInput.value = yearItem.id;
+  yearEditValueInput.value = yearItem.year;
+  if (yearItem.pdf_file) {
+    yearEditPdfInfo.textContent = 'Існуючий PDF додано.';
+    removeYearPdfLabel.classList.remove('hidden');
+  }
+  deleteYearBtn.classList.remove('hidden');
+}
+
+function renderYearManagementList(years) {
+  calendarYears = years || [];
+  if (!yearManagementList) return;
+
+  if (!calendarYears.length) {
+    yearManagementList.innerHTML = '<div class="empty-state"><h3>Років не знайдено</h3><p>Створіть перший рік календаря.</p></div>';
+    return;
+  }
+
+  yearManagementList.innerHTML = calendarYears
+    .map((year) => `
+      <div class="admin-news-card">
+        <div class="news-card-head">
+          <div>
+            <p class="news-card-category">Календар</p>
+            <h4>${year.year}</h4>
+          </div>
+          <span class="news-card-date">${year.pdf_file ? 'PDF є' : 'PDF відсутній'}</span>
+        </div>
+        <div class="admin-news-actions">
+          <button type="button" data-action="select-year" data-id="${year.id}">Вибрати</button>
+          <button type="button" data-action="delete-year" data-id="${year.id}">Видалити</button>
+        </div>
+      </div>
+    `)
+    .join('');
 }
 
 function setEventFormValues(event = null) {
@@ -394,6 +458,12 @@ editEventBtn.addEventListener('click', () => {
 
 newCalendarYearBtn.addEventListener('click', () => {
   setPanelVisibility(yearFormPanel);
+  resetYearEditForm();
+});
+
+editCalendarYearBtn.addEventListener('click', () => {
+  setPanelVisibility(yearManagementPanel);
+  renderYearManagementList(calendarYears);
 });
 
 cancelEventBtn.addEventListener('click', (e) => {
@@ -402,9 +472,15 @@ cancelEventBtn.addEventListener('click', (e) => {
 });
 
 yearForm.addEventListener('submit', saveCalendarYear);
+yearEditForm.addEventListener('submit', saveCalendarYearEdit);
 cancelYearBtn.addEventListener('click', (e) => {
   e.preventDefault();
   setPanelVisibility(null);
+});
+cancelYearEditBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  setPanelVisibility(null);
+  resetYearEditForm();
 });
 
 eventForm.addEventListener('submit', saveCalendarEvent);
@@ -415,6 +491,37 @@ deleteEventBtn.addEventListener('click', async (e) => {
   if (!eventId) return;
   if (!confirm('Ви дійсно хочете видалити цю подію?')) return;
   await deleteCalendarEvent(eventId);
+});
+
+deleteYearBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const yearId = yearEditIdInput.value;
+  if (!yearId) return;
+  if (!confirm('Ви дійсно хочете видалити цей рік календаря? Це також видалить події цього року.')) return;
+  await deleteCalendarYear(yearId);
+});
+
+yearManagementList.addEventListener('click', async (e) => {
+  const button = e.target.closest('button');
+  if (!button) return;
+
+  const action = button.dataset.action;
+  const yearId = button.dataset.id;
+  if (!yearId) return;
+
+  const yearItem = calendarYears.find((item) => String(item.id) === String(yearId));
+  if (!yearItem) return;
+
+  if (action === 'select-year') {
+    populateYearEditForm(yearItem);
+    setPanelVisibility(yearManagementPanel);
+    return;
+  }
+
+  if (action === 'delete-year') {
+    if (!confirm('Ви дійсно хочете видалити цей рік календаря? Це також видалить події цього року.')) return;
+    await deleteCalendarYear(yearId);
+  }
 });
 
 async function loadCalendarYears() {
@@ -429,22 +536,25 @@ async function loadCalendarYears() {
 }
 
 function fillYearSelects(years) {
+  calendarYears = years || [];
   calendarYearMap.clear();
-  years.forEach((year) => {
+  calendarYears.forEach((year) => {
     calendarYearMap.set(String(year.year), year.id);
   });
 
   if (eventSearchYear) {
-    eventSearchYear.innerHTML = '<option value="">Усі роки</option>' + years
+    eventSearchYear.innerHTML = '<option value="">Усі роки</option>' + calendarYears
       .map((year) => `<option value="${year.year}">${year.year}</option>`)
       .join('');
   }
   if (largestYearDisplay) {
-    const maxYearItem = years.reduce((max, item) => (item.year > max.year ? item : max), years[0] || { year: '—', id: null });
+    const maxYearItem = calendarYears.reduce((max, item) => (item.year > max.year ? item : max), calendarYears[0] || { year: '—', id: null });
     activeCalendarYearId = maxYearItem.id;
     activeCalendarYearYear = maxYearItem.year;
     largestYearDisplay.textContent = activeCalendarYearYear;
   }
+
+  renderYearManagementList(calendarYears);
 }
 
 async function loadCalendarEvents(query = '', year = '') {
@@ -504,6 +614,66 @@ async function saveCalendarYear(event) {
   } catch (error) {
     console.error('Error saving calendar year:', error);
     alert('Не вдалося створити рік.');
+  }
+}
+
+async function saveCalendarYearEdit(event) {
+  event.preventDefault();
+  const yearId = yearEditIdInput.value;
+  const yearValue = Number(yearEditValueInput.value);
+  if (!yearId) {
+    alert('Оберіть рік для редагування.');
+    return;
+  }
+  if (!Number.isInteger(yearValue) || yearValue < 1900) {
+    alert('Вкажіть коректний рік.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('year', yearValue);
+  if (yearEditPdfInput.files[0]) {
+    formData.append('pdf_file', yearEditPdfInput.files[0]);
+  }
+  if (removeYearPdfCheckbox.checked) {
+    formData.append('remove_pdf', 'true');
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/calendar/years/${yearId}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.message || 'Не вдалося оновити рік.');
+      return;
+    }
+
+    await loadCalendarYears();
+    setPanelVisibility(yearManagementPanel);
+  } catch (error) {
+    console.error('Error updating calendar year:', error);
+    alert('Не вдалося оновити рік.');
+  }
+}
+
+async function deleteCalendarYear(id) {
+  try {
+    const response = await fetch(`${API_BASE}/calendar/years/${id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.message || 'Не вдалося видалити рік.');
+      return;
+    }
+
+    await loadCalendarYears();
+    resetYearEditForm();
+    setPanelVisibility(yearManagementPanel);
+  } catch (error) {
+    console.error('Error deleting calendar year:', error);
+    alert('Не вдалося видалити рік.');
   }
 }
 

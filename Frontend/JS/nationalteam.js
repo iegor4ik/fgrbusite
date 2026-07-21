@@ -1,167 +1,13 @@
 
 
-const coaches = [
-	{
-		id: 'coach-1',
-		role: 'Головний тренер',
-		name: 'Володимир Шацьких',
-		image: "assets/images/VolodymyrShatskih.jpg",
-		dob: '1981-07-02',
-		appointed: '',
-		city: 'Дніпро',
-		description: 'Борець греко-римського стилю, чемпіон світу 2006 року у вазі до 74 кг, Віце-чемпіон Європи 2009 року та учасник Олімпійських ігор 2004 і 2008 років. Після завершення кар’єри очолив дорослу збірну України з греко-римської боротьби. Також відомий як особистий тренер олімпійського чемпіона Жана Беленюка. Має звання заслуженого майстра спорту України та заслуженого працівника фізичної культури і спорту України. У 2024 році був нагороджений орденом «За заслуги» II ступеня.',
-	},
-	{
-		id: 'coach-2',
-		role: 'Тренер',
-		name: 'Андрій Каплуновський',
-		image: 'assets/images/Kaplunovski.webp',
-		dob: '',
-		appointed: '',
-		city: 'Харків',
-		description: 'Працює у координації підготовки національної збірної, взаємодії федерації з Міністерством молоді та спорту та організації міжнародних стартів.',
-	},
-	{
-		id: 'coach-3',
-		role: 'Старший тренер',
-		name: 'Армен Варданян',
-		image: "assets/images/vardanyan.jpg",
-		dob: '1982-11-30',
-		appointed: '',
-		city: '',
-		description: 'Український борець греко-римського стилю вірменського походження, бронзовий призер Олімпійських ігор 2008 року, чемпіон Європи 2004 та 2008 років, срібний призер чемпіонату світу 2003 року. Багаторічний лідер збірної України у категорії до 66 кг. Після завершення спортивної кар’єри працює у тренерському штабі національної команди. Має звання заслуженого майстра спорту України.',
-	},
-	{
-		id: 'coach-4',
-		role: 'Старший тренер',
-		name: 'Яшар Насіров',
-		image: "assets/images/YasharNasirov.jpg",
-		dob: '',
-		appointed: '',
-		city: 'Закарпаття',
-		description: 'Тренер з греко-римської боротьби, заслужений тренер України та один із відомих наставників Закарпаття. Працював зі спортсменами юніорської та молодіжної збірних України, а також був старшим тренером юніорської національної команди з греко-римської боротьби. Відомий підготовкою перспективних борців міжнародного рівня та розвитком школи греко-римської боротьби у Береговому.',
-	},
-];
 
-const athletes = [
-	{
-		id: 'athlete-1',
-		role: 'Спортсмен',
-		name: 'Михайло Вишневецький',
-		image: "assets/images/Vyshnevetski.jpg",
-		dob: '2002',
-		city: 'Харків',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '130 кг',
-		achievements: ['Чемпон Європи U23', 'Чемпіон України 9x'],
-	},
-	{
-		id: 'athlete-2',
-		role: 'Спортсмен',
-		name: 'Єгор Якушенко',
-		image: "assets/images/Yakushenko.jpg",
-		dob: '2006',
-		city: 'Київ',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '97 кг',
-		achievements: ['Чемпіон світу U20/U23', 'Чемпіон Європи U20/U23 x2'],
-	},
-	{
-		id: 'athlete-3',
-		role: 'Спортсмен',
-		name: 'Ярослав Фільчаков',
-		image: "assets/images/Yaroslav_Filchakov_(UKR).jpg",
-		dob: '1995',
-		city: 'Харків',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '87 кг',
-		achievements: ['Бронзовий призер чемпіонату світу', 'Віце-чемпіон Європи'],
-	},
-	{
-		id: 'athlete-4',
-		role: 'Спортсмен',
-		name: 'Руслан Абдієв',
-		image: "assets/images/Abdiev.jpg",
-		dob: '2003',
-		city: 'Харків',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '82 кг',
-		achievements: ['Віце-чемпіон світу', 'Переможець міжнародного Grand Prix'],
-	},
-	{
-		id: 'athlete-5',
-		role: 'Спортсмен',
-		name: 'Ірфан Мірзоєв',
-		image: "assets/images/Mirzoev.jpg",
-		dob: '2004',
-		city: 'АР Крим',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '77 кг',
-		achievements: ['Чемпіон світу', 'Бронзовий призер чемпіонату Європи'],
-	},
-	{
-		id: 'athlete-6',
-		role: 'Спортсмен',
-		name: 'Парвіз Насібов',
-		image: "assets/images/Parviz_Nasibov_2021_(crop).jpg",
-		dob: '1998',
-		city: 'Запоріжжя',
-		title: 'Заслужений Майстер спорту України',
-		weight: '72 кг',
-		achievements: ['Віце-чемпіон Олімпійських Ігор 2x', 'Бронзовий призер чемпіонату Європи 2x'],
-	},
-	{
-		id: 'athlete-7',
-		role: 'Спортсмен',
-		name: 'Олександр Грушин',
-		image: "assets/images/Hrushin.jpg",
-		dob: '1998',
-		city: 'Київ',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '67 кг',
-		achievements: ['Віце-Чемпіон Європи', 'Бронзовий призер чемпіонату Європи'],
-	},
-	{
-		id: 'athlete-8',
-		role: 'Спортсмен',
-		name: 'Максим Лю',
-		image: "assets/images/lyu.jpg",
-		dob: '2000',
-		city: 'Полтава',
-		title: 'Майстер спорту міжнародного класу',
-		weight: '63 кг',
-		achievements: ['Переможець міжнародного Grand Prix', 'Чемпіон України'],
-	},
-	{
-		id: 'athlete-9',
-		role: 'Спортсмен',
-		name: 'Владислав Кузько',
-		image: "assets/images/Kuzko.jpg",
-		dob: '2000',
-		city: 'Запоріжжя',
-		title: 'Майстер спорту України',
-		weight: '55 кг',
-		achievements: ['Переможець міжнародного Grand Prix', 'Чемпіон України 3x'],
-	},
-	{
-		id: 'athlete-10',
-		role: 'Спортсмен',
-		name: 'Іван Стефанський',
-		image: "assets/images/Stefanski.jpg",
-		dob: '2004',
-		city: 'Дніпро',
-		title: 'Майстер спорту України',
-		weight: '55 кг',
-		achievements: ['Переможець міжнародного Grand Prix', 'Чемпіон України'],
-	},
-];
 
 const staffMembers = [
 	{ id: 'staff-1', role: 'Державний тренер', name: 'Каплуновський Андрій Олександрович', image: 'assets/images/Kaplunovski.webp', city: '', description: 'Державний тренер національної збірної.' },
 	{ id: 'staff-2', role: 'Провідний тренер', name: 'Костенко Іван Павлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-4', role: 'Начальник команди', name: 'Полякова Тетяна Вікторівна', image: 'assets/images/Полякова Тетяна.jpeg', city: '', description: 'Начальник команди.' },
-	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/No-photo-m.png', city: '', description: 'Начальник команди.' },
+	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/Мегей Вікторія.jpeg', city: '', description: 'Начальник команди.' },
 	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-лікар.' },
 	{ id: 'staff-7', role: 'Тренер - масажист', name: 'Глухарев Ігор Владиславович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-масажист.' },
 	{ id: 'staff-8', role: 'Тренер - психолог', name: 'Курилюк Сергій Іванович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-психолог.' },
@@ -188,6 +34,20 @@ function buildDummyAthletes(prefix) {
 	return arr;
 }
 
+function buildPlaceholderRoster(teamKey, count = 10) {
+	return Array.from({ length: count }, (_, index) => ({
+		id: `${teamKey}-world-placeholder-${index + 1}`,
+		role: 'Спортсмен',
+		name: `Спортсмен ${index + 1}`,
+		image: 'assets/images/No-photo-m.png',
+		dob: '',
+		city: '',
+		title: 'Склад світу',
+		weight: '',
+		achievements: [],
+	}));
+}
+
 const teams = {
 	adult: {
 		coaches: [
@@ -206,7 +66,8 @@ const teams = {
 			{ id: 'adult-athlete-8', role: 'Спортсмен', name: 'Максим Лю', image: 'assets/Дорослі/Europe/Максим Лю (63 кг).png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
 			{ id: 'adult-athlete-9', role: 'Спортсмен', name: 'Владислав Кузько', image: 'assets/Дорослі/Europe/Владислав Кузько (60 кг).png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'adult-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/Дорослі/Europe/Іван Стефанський (55 кг).png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
-		]
+		],
+		worldAthletes: buildPlaceholderRoster('adult', 10)
 	},
 	u23: {
 		coaches: [
@@ -224,7 +85,8 @@ const teams = {
 			{ id: 'u23-athlete-8', role: 'Спортсмен', name: 'Максут Султанов', image: 'assets/u23/Europe/63кг - Максут Султанов.png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
 			{ id: 'u23-athlete-9', role: 'Спортсмен', name: 'Євген Поковба', image: 'assets/u23/Europe/60кг - Євген Поковба.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'u23-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/u23/Europe/55кг - Іван Стефанський.jpg', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
-		]
+		],
+		worldAthletes: buildPlaceholderRoster('u23', 10)
 	},
 	u20: {
 		coaches: [
@@ -242,11 +104,12 @@ const teams = {
 			{ id: 'u20-athlete-8', role: 'Спортсмен', name: 'Максут Султанов', image: 'assets/u20/Europe/Максут Султанов 63 кг.png', dob: '', city: '', title: '', weight: '63 кг', achievements: [] },
 			{ id: 'u20-athlete-9', role: 'Спортсмен', name: 'Герман Басараб', image: 'assets/u20/Europe/Герман Басараб 60 кг.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'u20-athlete-10', role: 'Спортсмен', name: 'Богдан Різниченко', image: 'assets/u20/Europe/Богдан Різниченко 55 кг.png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
-		]
+		],
+		worldAthletes: buildPlaceholderRoster('u20', 10)
 	},
 	u17: {
 		coaches: [
-			{ id: 'coach-u17-1', role: 'Старший тренер', name: 'Сергій Рутенко', image: 'assets/images/No-photo-m.png' },
+			{ id: 'coach-u17-1', role: 'Старший тренер', name: 'Сергій Рутенко', image: 'assets/u17/Coach/Сергій Рутенко.jpeg' },
 			{ id: 'coach-u17-2', role: 'Старший тренер', name: 'Караєв Бутхус', image: 'assets/u20/Coach/Бутхузі Карая старший тренер збірної.png' },
 		],
 		athletes: [
@@ -260,7 +123,19 @@ const teams = {
 			{ id: 'u17-athlete-8', role: 'Спортсмен', name: 'Шлапак Сергій', image: 'assets/u17/Europe/51 кг - ШЛАПАК Сергій.png', dob: '', city: '', title: '', weight: '51 кг', achievements: [] },
 			{ id: 'u17-athlete-9', role: 'Спортсмен', name: 'Магеррамов Тимур', image: 'assets/u17/Europe/48 кг - МАГЕРРАМОВ Тимур.png', dob: '', city: '', title: '', weight: '48 кг', achievements: [] },
 			{ id: 'u17-athlete-10', role: 'Спортсмен', name: 'Голубєв Руслан', image: 'assets/u17/Europe/45 кг - ГОЛУБЄВ Руслан.png', dob: '', city: '', title: '', weight: '45 кг', achievements: [] },
-		]
+		],
+		worldAthletes: [
+				{ id: 'u17-world-athlete-1', role: 'Спортсмен', name: 'Тимофій Приходько', image: 'assets/u17/World/Тимофій Приходько 110кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '110 кг', achievements: [] },
+				{ id: 'u17-world-athlete-2', role: 'Спортсмен', name: 'Гліб Євсєєв', image: 'assets/u17/World/Євсєєв Гліб 92кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '92 кг', achievements: [] },
+				{ id: 'u17-world-athlete-3', role: 'Спортсмен', name: 'Даниїл Мельничук', image: 'assets/u17/World/80 кг - Даниїл Мельничук.png', dob: '', city: '', title: 'Склад світу', weight: '80 кг', achievements: [] },
+				{ id: 'u17-world-athlete-4', role: 'Спортсмен', name: 'Роман Іваник', image: 'assets/u17/World/Роман Іваник 71кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '71 кг', achievements: [] },
+				{ id: 'u17-world-athlete-5', role: 'Спортсмен', name: 'Ібрагім Насібов', image: 'assets/u17/World/Ібрагім Насібов 65кг.png', dob: '', city: '', title: 'Склад світу', weight: '65 кг', achievements: [] },
+				{ id: 'u17-world-athlete-6', role: 'Спортсмен', name: 'Гамідов Рахман', image: 'assets/u17/World/Гамідов Рахман 60кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '60 кг', achievements: [] },
+				{ id: 'u17-world-athlete-7', role: 'Спортсмен', name: 'Ілля Ванжул', image: 'assets/u17/World/Ілля Ванжул 55кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '55 кг', achievements: [] },
+				{ id: 'u17-world-athlete-8', role: 'Спортсмен', name: 'Денис Кірик', image: 'assets/u17/World/Денис Кірик 51кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '51 кг', achievements: [] },
+				{ id: 'u17-world-athlete-9', role: 'Спортсмен', name: 'Тимур Магерамов', image: 'assets/u17/World/Тимур Магерамов 48кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '48 кг', achievements: [] },
+				{ id: 'u17-world-athlete-10', role: 'Спортсмен', name: 'Родіон Свіриденко', image: 'assets/u17/World/Родіон Свіриденко 45кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '45 кг', achievements: [] },
+			]
 	},
 	u15: {
 		coaches: [
@@ -278,7 +153,8 @@ const teams = {
 			{ id: 'u15-athlete-8', role: 'Спортсмен', name: 'Радіон Свириденко', image: 'assets/u15/R.Sveridenko.webp', dob: '', city: 'Запорізька обл.', title: '', weight: '44 кг', achievements: [] },
 			{ id: 'u15-athlete-9', role: 'Спортсмен', name: 'Іван Гуцол', image: 'assets/u15/I_Gutsol.webp', dob: '', city: 'Запорізька обл.', title: '', weight: '41 кг', achievements: [] },
 			{ id: 'u15-athlete-10', role: 'Спортсмен', name: 'Єгор Шевченко', image: 'assets/u15/Y.Shevchenko.webp', dob: '', city: 'Сумська обл.', title: '', weight: '38 кг', achievements: [] },
-		]
+		],
+		worldAthletes: buildPlaceholderRoster('u15', 10)
 	}
 };
 
@@ -295,9 +171,48 @@ const profilePosition = document.getElementById('profilePosition');
 const profileDetails = document.getElementById('profileDetails');
 const profileExtra = document.getElementById('profileExtra');
 const profileAchievements = document.getElementById('profileAchievements');
+const TEAM_ROSTER_STORAGE_KEY = 'fgrbu_team_roster_mode';
 
 let heroIndex = 0;
 let slideTimer = null;
+let activeTeamKey = 'adult';
+
+function getStoredRosterMode(teamKey) {
+  try {
+    const saved = localStorage.getItem(`${TEAM_ROSTER_STORAGE_KEY}:${teamKey}`);
+    return saved === 'world' ? 'world' : 'europe';
+  } catch (error) {
+    return 'europe';
+  }
+}
+
+function getTeamRosterVariants(teamKey, team) {
+  const europeSource = team.europeAthletes || team.athletes || [];
+  const worldSource = team.worldAthletes || buildPlaceholderRoster(teamKey, europeSource.length || 10);
+
+  const europeRoster = europeSource.map((athlete, index) => ({
+    ...athlete,
+    id: `${teamKey}-europe-${index + 1}`,
+    title: 'Склад Європи',
+    weight: athlete.weight || '',
+  }));
+
+  const worldRoster = worldSource.map((athlete, index) => ({
+    ...athlete,
+    id: `${teamKey}-world-${index + 1}`,
+    title: 'Склад світу',
+    weight: athlete.weight || '',
+  }));
+
+  return { europe: europeRoster, world: worldRoster };
+}
+
+function refreshCurrentTeamView() {
+  if (activeTeamKey) {
+    renderTeam(activeTeamKey);
+    buildFadeInObserver();
+  }
+}
 
 function rotateHeroSlides() {
 	if (!heroSlides || heroSlides.length === 0) return;
@@ -344,27 +259,38 @@ function renderTeam(teamKey) {
 	coachGrid.innerHTML = team.coaches.map((c) => createProfileCard(c, 'coach')).join('');
 
 	const shouldSplitGroups = ['adult', 'u23', 'u20', 'u17'].includes(teamKey);
-	const europeAthletes = team.athletes.map((a) => createProfileCard(a, 'athlete')).join('');
-	const europeMarkup = `
-		<div class="team-subgroup">
-			<div class="team-subgroup-header"><h4>Чемпіонат Європи</h4></div>
-			<div class="team-grid athletes-grid">${europeAthletes}</div>
-		</div>
-	`;
-
 	if (!shouldSplitGroups) {
-		athleteGrid.innerHTML = `<div class="team-subgroups">${europeMarkup}</div>`;
+		const roster = getTeamRosterVariants(teamKey, team).europe;
+		athleteGrid.innerHTML = `
+			<div class="team-subgroups">
+				<div class="team-subgroup">
+					<div class="team-subgroup-header"><h4>Чемпіонат Європи</h4></div>
+					<div class="team-grid athletes-grid">${roster.map((a) => createProfileCard(a, 'athlete')).join('')}</div>
+				</div>
+			</div>
+		`;
 		return;
 	}
 
-	const worldMarkup = `
-		<div class="team-subgroup">
-			<div class="team-subgroup-header"><h4>Чемпіонат світу</h4></div>
-			<div class="team-grid athletes-grid">${Array.from({ length: team.athletes.length }, (_, index) => createEmptyAthleteCard(`Спортсмен ${index + 1}`)).join('')}</div>
+	const rosterMode = getStoredRosterMode(teamKey);
+	const rosterVariants = getTeamRosterVariants(teamKey, team);
+	const primaryRoster = rosterMode === 'world' ? rosterVariants.world : rosterVariants.europe;
+	const secondaryRoster = rosterMode === 'world' ? rosterVariants.europe : rosterVariants.world;
+	const primaryLabel = rosterMode === 'world' ? 'Чемпіонат світу' : 'Чемпіонат Європи';
+	const secondaryLabel = rosterMode === 'world' ? 'Чемпіонат Європи' : 'Чемпіонат світу';
+
+	athleteGrid.innerHTML = `
+		<div class="team-subgroups">
+			<div class="team-subgroup">
+				<div class="team-subgroup-header"><h4>${primaryLabel}</h4></div>
+				<div class="team-grid athletes-grid">${primaryRoster.map((a) => createProfileCard(a, 'athlete')).join('')}</div>
+			</div>
+			<div class="team-subgroup">
+				<div class="team-subgroup-header"><h4>${secondaryLabel}</h4></div>
+				<div class="team-grid athletes-grid">${secondaryRoster.map((a) => createProfileCard(a, 'athlete')).join('')}</div>
+			</div>
 		</div>
 	`;
-
-	athleteGrid.innerHTML = `<div class="team-subgroups">${europeMarkup}${worldMarkup}</div>`;
 }
 
 function formatDate(dateString) {
@@ -413,24 +339,19 @@ function getItemById(id, type) {
 	}
 
 	if (type === 'coach') {
-		// search global coaches array first
-		let found = coaches.find((item) => item.id === id);
-		if (found) return found;
-		// then search teams' coaches
 		for (const key of Object.keys(teams)) {
-			found = (teams[key].coaches || []).find((c) => c.id === id);
+			const found = (teams[key].coaches || []).find((c) => c.id === id);
 			if (found) return found;
 		}
 		return null;
 	}
 
 	if (type === 'athlete') {
-		// search global athletes array first
-		let found = athletes.find((item) => item.id === id);
-		if (found) return found;
-		// search teams' athletes
 		for (const key of Object.keys(teams)) {
-			found = (teams[key].athletes || []).find((a) => a.id === id);
+			const team = teams[key];
+			const rosterVariants = getTeamRosterVariants(key, team);
+			const combinedRoster = [...rosterVariants.europe, ...rosterVariants.world];
+			const found = combinedRoster.find((item) => item.id === id);
 			if (found) return found;
 		}
 		return null;
@@ -491,20 +412,29 @@ function initHeroSlider() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	// initial team render
+	activeTeamKey = 'adult';
 	renderStaff();
-	renderTeam('adult');
+	renderTeam(activeTeamKey);
 
-	// setup tabs
 	document.querySelectorAll('.team-tab').forEach(btn => {
-		btn.addEventListener('click', (e) => {
+		btn.addEventListener('click', () => {
 			const team = btn.dataset.team;
+			activeTeamKey = team;
 			document.querySelectorAll('.team-tab').forEach(b => b.classList.remove('active'));
 			btn.classList.add('active');
 			renderTeam(team);
-			// rebuild fade-in observer for new elements
 			buildFadeInObserver();
 		});
+	});
+
+	window.addEventListener('storage', (event) => {
+		if (event.key && event.key.startsWith(TEAM_ROSTER_STORAGE_KEY)) {
+			refreshCurrentTeamView();
+		}
+	});
+
+	window.addEventListener('fgrbu-roster-preference-changed', () => {
+		refreshCurrentTeamView();
 	});
 
 	setupEventListeners();

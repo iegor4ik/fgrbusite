@@ -51,22 +51,33 @@
       <main class="admin-main">
         <section class="dashboard-overview">
           <h2>Огляд системи</h2>
-          <p>Тут буде відображатися загальна статистика сайту, останні дії та системні сповіщення після підключення бази даних.</p>
+          <p>Тут відображається загальна статистика сайту, кількість контенту та поточна активність користувачів.</p>
+          <p class="dashboard-status" id="dashboardStatusText">Оновлюємо статистику…</p>
         </section>
         <div class="dashboard-cards">
           <article class="dashboard-card">
             <h3>Всього новин</h3>
-            <p>24</p>
+            <p id="newsCountValue">0</p>
           </article>
           <article class="dashboard-card">
             <h3>Фото в галереї</h3>
-            <p>156</p>
+            <p id="galleryCountValue">0</p>
           </article>
           <article class="dashboard-card">
-            <h3>Найближчі змагання</h3>
-            <p>2</p>
+            <h3>Онлайн на сайті</h3>
+            <p id="onlineCountValue">0</p>
           </article>
         </div>
+
+        <section class="dashboard-team-panel">
+          <div class="dashboard-team-heading">
+            <div>
+              <h3>Склад збірної</h3>
+              <p>Підготовка видимого складу збірної для кожної вікової категорії.</p>
+            </div>
+          </div>
+          <div id="teamRosterControls"></div>
+        </section>
       </main>
     </div>
   </div>
@@ -78,5 +89,6 @@
 
 
   <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_dashboard.js" defer></script>
 </body>
 </html>
