@@ -52,7 +52,7 @@ const teams = {
 	adult: {
 		coaches: [
 			{ id: 'coach-adult-1', role: 'Головний тренер', name: 'Володимир Шацьких', image: 'assets/images/VolodymyrShatskih.jpg', city: 'Дніпро' },
-			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Сарсян', image: 'assets/images/Sarasyan.jpg', city: '' },
+			{ id: 'coach-adult-2', role: 'Старший тренер', name: 'Мурад Саргсян', image: 'assets/images/Sarasyan.jpg', city: '' },
 			{ id: 'coach-adult-3', role: 'Старший тренер', name: 'Яшар Насіров', image: 'assets/images/YasharNasirov.jpg', city: 'Закарпаття' },
 		],
 		athletes: [

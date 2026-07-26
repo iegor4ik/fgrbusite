@@ -33,7 +33,7 @@ const presidiumMembers = [
   {
     id: 'president-1',
     level: 0,
-    role: 'Президент Федерації греко-римської боротьби України',
+    role: 'Президент',
     name: 'Сазонов Олег Юрійович',
     image: 'assets/images/oleg-sazonov.jpg',
     dob: '1973-08-20',
@@ -48,7 +48,7 @@ const presidiumMembers = [
   {
     id: 'vice-president-1',
     level: 3,
-    role: 'Перший віце-президент Федерації греко-римської боротьби',
+    role: 'Перший віце-президент',
     name: 'Коваль Віталій Станіславович',
     image: 'assets/images/Vitaliy_Koval\'.jpg',
     dob: '1982-07-05',
@@ -59,7 +59,7 @@ const presidiumMembers = [
   {
     id: 'honorary-1',
     level: 3,
-    role: 'Почесний президент Федерації',
+    role: 'Почесний президент',
     name: 'Кисіль Вадим Володимирович',
     image: 'assets/images/Kisil_Vadim.jpg',
     dob: '1972-05-20',
@@ -70,7 +70,7 @@ const presidiumMembers = [
   {
     id: 'honorary-2',
     level: 3,
-    role: 'Почесний президент Федерації',
+    role: 'Почесний президент',
     name: 'Камач Олександр Петрович',
     image: 'assets/images/Kamch.jpg',
     dob: '1946-03-26',
@@ -81,7 +81,7 @@ const presidiumMembers = [
   {
     id: 'honorary-3',
     level: 3,
-    role: 'Почесний президент Федерації',
+    role: 'Почесний президент',
     name: 'Кравченко Олег Миколайович',
     image: 'assets/images/Kravchenko.jpg',
     dob: '1963-01-17',
@@ -92,7 +92,7 @@ const presidiumMembers = [
   {
     id: 'secretary-1',
     level: 3,
-    role: 'Генеральний секретар Федерації греко-римської боротьби',
+    role: 'Генеральний секретар',
     name: 'Каплуновський Андрій Олександрович',
     image: 'assets/images/Kaplunovski.webp',
     dob: '1982-06-21',
@@ -163,7 +163,7 @@ const presidiumMembers = [
     id: 'vp-5',
     level: 3,
     role: 'Віце-президент',
-    name: 'Варданян Вартан Володимирович',
+    name: 'Варданян Вардан Володимирович',
     image: 'assets/images/Варданян Вардан Володимирович.jpg.jpeg',
     dob: '1981-07-28',
     city: 'Київ',
@@ -211,7 +211,7 @@ const presidiumMembers = [
   {
     id: 'member-1',
     level: 3,
-    role: 'Член Президіуму Федерації',
+    role: 'Член Президії',
     name: 'Калашников Андрій Миколайович',
     image: 'assets/images/Kalashnikov.webp',
     dob: '1964-11-20',
@@ -222,7 +222,7 @@ const presidiumMembers = [
     {
     id: 'member-2',
     level: 3,
-    role: 'Член Президіуму Федерації',
+    role: 'Член Президії',
     name: 'Смишляєв Олександр Вікторович',
     image: 'assets/images/Смишляєв Олександр Вікторович.jpg.jpeg',
     dob: '',
