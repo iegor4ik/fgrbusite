@@ -8,8 +8,8 @@ const staffMembers = [
 	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-4', role: 'Начальник команди', name: 'Полякова Тетяна Вікторівна', image: 'assets/images/Полякова Тетяна.jpeg', city: '', description: 'Начальник команди.' },
 	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/Мегей Вікторія.jpeg', city: '', description: 'Начальник команди.' },
-	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-лікар.' },
-	{ id: 'staff-7', role: 'Тренер - масажист', name: 'Глухарев Ігор Владиславович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-масажист.' },
+	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/Melshkho.webp', city: '', description: 'Тренер-лікар.' },
+	{ id: 'staff-7', role: 'Тренер - масажист', name: 'Глухарев Ігор Владиславович', image: 'assets/images/Glyharev.webp', city: '', description: 'Тренер-масажист.' },
 	{ id: 'staff-8', role: 'Тренер - психолог', name: 'Курилюк Сергій Іванович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-психолог.' },
 ];
 
@@ -71,7 +71,7 @@ const teams = {
 	},
 	u23: {
 		coaches: [
-			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.jpg' },
+			{ id: 'coach-u23-1', role: 'Старший тренер', name: 'Армен Варданян', image: 'assets/images/vardanyan.webp' },
 			{ id: 'coach-u23-2', role: 'Старший тренер', name: 'Теміров Ленур', image: 'assets/images/Timirov.webp' },
 		],
 		athletes: [
@@ -90,7 +90,7 @@ const teams = {
 	},
 	u20: {
 		coaches: [
-			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євгеній', image: 'assets/u20/Coach/Євген Мягкий старший тренер збірної.png' },
+			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євген', image: 'assets/u20/Coach/Євген Мягкий старший тренер збірної.png' },
 			{ id: 'coach-u20-2', role: 'Старший тренер', name: 'Бутхузі Карая', image: 'assets/u20/Coach/Бутхузі Карая старший тренер збірної.png' },
 		],
 		athletes: [
@@ -105,7 +105,18 @@ const teams = {
 			{ id: 'u20-athlete-9', role: 'Спортсмен', name: 'Герман Басараб', image: 'assets/u20/Europe/Герман Басараб 60 кг.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'u20-athlete-10', role: 'Спортсмен', name: 'Богдан Різниченко', image: 'assets/u20/Europe/Богдан Різниченко 55 кг.png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
 		],
-		worldAthletes: buildPlaceholderRoster('u20', 10)
+		worldAthletes: [
+				{ id: 'u20-world-athlete-1', role: 'Спортсмен', name: 'Іван Янковський', image: 'assets/u20/Europe/Іван Янковський 130 кг.png', dob: '', city: '', title: 'Склад світу', weight: '130 кг', achievements: [] },
+				{ id: 'u20-world-athlete-2', role: 'Спортсмен', name: 'Єгор Якушенко', image: 'assets/u20/Europe/Єгор Якушенко 97 кг.png', dob: '', city: '', title: 'Склад світу', weight: '97 кг', achievements: [] },
+				{ id: 'u20-world-athlete-3', role: 'Спортсмен', name: 'Владислав Солодчук', image: 'assets/u20/Europe/Владислав Солодчук 87 кг.png', dob: '', city: '', title: 'Склад світу', weight: '87 кг', achievements: [] },
+				{ id: 'u20-world-athlete-4', role: 'Спортсмен', name: 'Кирило Угрік', image: 'assets/images/No-photo-m.png', dob: '', city: '', title: 'Склад світу', weight: '82 кг', achievements: [] },
+				{ id: 'u20-world-athlete-5', role: 'Спортсмен', name: 'Нестор Баран', image: 'assets/images/No-photo-m.png', dob: '', city: '', title: 'Склад світу', weight: '77 кг', achievements: [] },
+				{ id: 'u20-world-athlete-6', role: 'Спортсмен', name: 'Дмитро Дем’яновський', image: 'assets/u20/Europe/Дмитро Демʼяновський 72 кг.png', dob: '', city: '', title: 'Склад світу', weight: '72 кг', achievements: [] },
+				{ id: 'u20-world-athlete-7', role: 'Спортсмен', name: 'Денис Ковшун', image: 'assets/images/No-photo-m.png', dob: '', city: '', title: 'Склад світу', weight: '67 кг', achievements: [] },
+				{ id: 'u20-world-athlete-8', role: 'Спортсмен', name: 'Максут Султанов', image: 'assets/u20/Europe/Максут Султанов 63 кг.png', dob: '', city: '', title: 'Склад світу', weight: '63 кг', achievements: [] },
+				{ id: 'u20-world-athlete-9', role: 'Спортсмен', name: 'Назар Бабінський', image: 'assets/images/No-photo-m.png', dob: '', city: '', title: 'Склад світу', weight: '60 кг', achievements: [] },
+				{ id: 'u20-world-athlete-10', role: 'Спортсмен', name: 'Денис Кірик', image: 'assets/u17/World/Денис Кірик 51кг.jpeg', dob: '', city: '', title: 'Склад світу', weight: '55 кг', achievements: [] },
+			]
 	},
 	u17: {
 		coaches: [
