@@ -67,7 +67,18 @@ const teams = {
 			{ id: 'adult-athlete-9', role: 'Спортсмен', name: 'Владислав Кузько', image: 'assets/Дорослі/Europe/Владислав Кузько (60 кг).png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'adult-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/Дорослі/Europe/Іван Стефанський (55 кг).png', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
 		],
-		worldAthletes: buildPlaceholderRoster('adult', 10)
+		worldAthletes: [
+				{ id: 'adult-world-athlete-1', role: 'Спортсмен', name: 'Михайло Вишнивецький', image: 'assets/Дорослі/Europe/Михайло Вишнивецький (130 кг).png', dob: '', city: '', title: 'Склад світу', weight: '130 кг', achievements: [] },
+				{ id: 'adult-world-athlete-2', role: 'Спортсмен', name: 'Владлен Козлюк', image: 'assets/Дорослі/Europe/Владлен Козлюк (97 кг).png', dob: '', city: '', title: 'Склад світу', weight: '97 кг', achievements: [] },
+				{ id: 'adult-world-athlete-3', role: 'Спортсмен', name: 'Ярослав Фільчаков', image: 'assets/Дорослі/Europe/Ярослав Фільчаков (87 кг).png', dob: '', city: '', title: 'Склад світу', weight: '87 кг', achievements: [] },
+				{ id: 'adult-world-athlete-4', role: 'Спортсмен', name: 'Микита Політаєв', image: 'assets/Дорослі/World/Політаєв Микита.png', dob: '', city: '', title: 'Склад світу', weight: '82 кг', achievements: [] },
+				{ id: 'adult-world-athlete-5', role: 'Спортсмен', name: 'Олег Халілов', image: 'assets/Дорослі/World/Халілов Олег.png', dob: '', city: '', title: 'Склад світу', weight: '77 кг', achievements: [] },
+				{ id: 'adult-world-athlete-6', role: 'Спортсмен', name: 'Парвіз Насібов', image: 'assets/Дорослі/World/Насібов Парвіз.png', dob: '', city: '', title: 'Склад світу', weight: '72 кг', achievements: [] },
+				{ id: 'adult-world-athlete-7', role: 'Спортсмен', name: 'Олександр Грушин', image: 'assets/Дорослі/Europe/Олександр Грушин (67 кг).png', dob: '', city: '', title: 'Склад світу', weight: '67 кг', achievements: [] },
+				{ id: 'adult-world-athlete-8', role: 'Спортсмен', name: 'Максим Лю', image: 'assets/Дорослі/Europe/Максим Лю (63 кг).png', dob: '', city: '', title: 'Склад світу', weight: '63 кг', achievements: [] },
+				{ id: 'adult-world-athlete-9', role: 'Спортсмен', name: 'Владислав Кузько', image: 'assets/Дорослі/Europe/Владислав Кузько (60 кг).png', dob: '', city: '', title: 'Склад світу', weight: '60 кг', achievements: [] },
+				{ id: 'adult-world-athlete-10', role: 'Спортсмен', name: 'Корюн Саградян', image: 'assets/Дорослі/World/Корюн Саградян.png', dob: '', city: '', title: 'Склад світу', weight: '55 кг', achievements: [] },
+			]
 	},
 	u23: {
 		coaches: [
@@ -86,7 +97,18 @@ const teams = {
 			{ id: 'u23-athlete-9', role: 'Спортсмен', name: 'Євген Поковба', image: 'assets/u23/Europe/60кг - Євген Поковба.png', dob: '', city: '', title: '', weight: '60 кг', achievements: [] },
 			{ id: 'u23-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/u23/Europe/55кг - Іван Стефанський.jpg', dob: '', city: '', title: '', weight: '55 кг', achievements: [] },
 		],
-		worldAthletes: buildPlaceholderRoster('u23', 10)
+		worldAthletes: [
+				{ id: 'u23-world-athlete-1', role: 'Спортсмен', name: 'Іван Янковський', image: 'assets/u23/Europe/130кг - Іван Янковський.png', dob: '', city: '', title: 'Склад світу', weight: '130 кг', achievements: [] },
+				{ id: 'u23-world-athlete-2', role: 'Спортсмен', name: 'Єгор Якушенко', image: 'assets/u23/Europe/97кг - Єгор Якушенко.png', dob: '', city: '', title: 'Склад світу', weight: '97 кг', achievements: [] },
+				{ id: 'u23-world-athlete-3', role: 'Спортсмен', name: 'Іван Чмир', image: 'assets/u23/World/Чмир Іван.png', dob: '', city: '', title: 'Склад світу', weight: '87 кг', achievements: [] },
+				{ id: 'u23-world-athlete-4', role: 'Спортсмен', name: 'Сеймур Мамедов', image: 'assets/u23/World/Мамедов Сеймур.png', dob: '', city: '', title: 'Склад світу', weight: '82 кг', achievements: [] },
+				{ id: 'u23-world-athlete-5', role: 'Спортсмен', name: 'Ірфан Мірзоєв', image: 'assets/u23/Europe/77кг - Ірфан Мірзоєв.png', dob: '', city: '', title: 'Склад світу', weight: '77 кг', achievements: [] },
+				{ id: 'u23-world-athlete-6', role: 'Спортсмен', name: 'Дмитро Васильєв', image: 'assets/u23/Europe/72кг - Дмитро Васильєв.png', dob: '', city: '', title: 'Склад світу', weight: '72 кг', achievements: [] },
+				{ id: 'u23-world-athlete-7', role: 'Спортсмен', name: 'Імед Худжадзе', image: 'assets/u23/Europe/67кг - Імед Худжадзе.png', dob: '', city: '', title: 'Склад світу', weight: '67 кг', achievements: [] },
+				{ id: 'u23-world-athlete-8', role: 'Спортсмен', name: 'Артем Лиско', image: 'assets/u23/World/Лисько Артем.png', dob: '', city: '', title: 'Склад світу', weight: '63 кг', achievements: [] },
+				{ id: 'u23-world-athlete-9', role: 'Спортсмен', name: 'Євген Поковба', image: 'assets/u23/Europe/60кг - Євген Поковба.png', dob: '', city: '', title: 'Склад світу', weight: '60 кг', achievements: [] },
+				{ id: 'u23-world-athlete-10', role: 'Спортсмен', name: 'Іван Стефанський', image: 'assets/u23/Europe/55кг - Іван Стефанський.jpg', dob: '', city: '', title: 'Склад світу', weight: '55 кг', achievements: [] },
+			]
 	},
 	u20: {
 		coaches: [
@@ -165,7 +187,7 @@ const teams = {
 			{ id: 'u15-athlete-9', role: 'Спортсмен', name: 'Іван Гуцол', image: 'assets/u15/I_Gutsol.webp', dob: '', city: 'Запорізька обл.', title: '', weight: '41 кг', achievements: [] },
 			{ id: 'u15-athlete-10', role: 'Спортсмен', name: 'Єгор Шевченко', image: 'assets/u15/Y.Shevchenko.webp', dob: '', city: 'Сумська обл.', title: '', weight: '38 кг', achievements: [] },
 		],
-		worldAthletes: buildPlaceholderRoster('u15', 10)
+		
 	}
 };
 
