@@ -42,7 +42,7 @@ function buildPlaceholderRoster(teamKey, count = 10) {
 		image: 'assets/images/No-photo-m.png',
 		dob: '',
 		city: '',
-		title: 'Склад світу',
+		title: '',
 		weight: '',
 		achievements: [],
 	}));
@@ -220,24 +220,33 @@ function getStoredRosterMode(teamKey) {
 }
 
 function getTeamRosterVariants(teamKey, team) {
-  const europeSource = team.europeAthletes || team.athletes || [];
-  const worldSource = team.worldAthletes || buildPlaceholderRoster(teamKey, europeSource.length || 10);
+	const europeSource = team.europeAthletes || team.athletes || [];
+	const worldSource = team.worldAthletes || buildPlaceholderRoster(teamKey, europeSource.length || 10);
 
-  const europeRoster = europeSource.map((athlete, index) => ({
-    ...athlete,
-    id: `${teamKey}-europe-${index + 1}`,
-    title: 'Склад Європи',
-    weight: athlete.weight || '',
-  }));
+	function parseWeight(w) {
+		if (!w) return Infinity;
+		const m = String(w).match(/(\d{1,3})/);
+		return m ? parseInt(m[1], 10) : Infinity;
+	}
 
-  const worldRoster = worldSource.map((athlete, index) => ({
-    ...athlete,
-    id: `${teamKey}-world-${index + 1}`,
-    title: 'Склад світу',
-    weight: athlete.weight || '',
-  }));
+	const sortedEurope = [...europeSource].sort((a, b) => parseWeight(a.weight) - parseWeight(b.weight));
+	const sortedWorld = [...worldSource].sort((a, b) => parseWeight(a.weight) - parseWeight(b.weight));
 
-  return { europe: europeRoster, world: worldRoster };
+	const europeRoster = sortedEurope.map((athlete, index) => ({
+		...athlete,
+		id: `${teamKey}-europe-${index + 1}`,
+		title: '',
+		weight: athlete.weight || '',
+	}));
+
+	const worldRoster = sortedWorld.map((athlete, index) => ({
+		...athlete,
+		id: `${teamKey}-world-${index + 1}`,
+		title: '',
+		weight: athlete.weight || '',
+	}));
+
+	return { europe: europeRoster, world: worldRoster };
 }
 
 function refreshCurrentTeamView() {
@@ -257,7 +266,7 @@ function rotateHeroSlides() {
 
 function createProfileCard(item, type) {
 	if (type === 'athlete') {
-		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="athlete">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.title || item.role || ''}</p>\n        <p>${item.weight || ''}</p>\n      </div>\n    </button>\n  `;
+		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="athlete">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.title || ''}</p>\n        <p>${item.weight || ''}</p>\n      </div>\n    </button>\n  `;
 	}
 
 	if (type === 'staff') {
@@ -275,7 +284,7 @@ function createEmptyAthleteCard(label = 'Очікується') {
 		image: 'assets/images/No-photo-m.png',
 		dob: '',
 		city: '',
-		title: 'Спортсмен',
+		title: '',
 		weight: '',
 		achievements: [],
 	}, 'athlete');
