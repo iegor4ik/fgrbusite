@@ -85,71 +85,20 @@
         <div class="regions-grid">
           <!-- Map -->
           <div class="map-wrapper">
-            <svg class="ukraine-map" viewBox="0 0 1545.703 1038.492" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Карта України">
+            <svg class="ukraine-map" viewBox="0 0 1000 669" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Карта України">
               <title>Інтерактивна карта регіонів України</title>
-              <image href="assets/Ukraine_location_map.svg" x="0" y="0" width="1545.703" height="1038.492" preserveAspectRatio="xMidYMid meet" />
               <defs>
                 <style>
-                  .oblast { cursor: pointer; fill: #FFD500; stroke: rgba(255, 255, 255, 0.85); stroke-width: 2; pointer-events: all; transition: fill 0.25s ease, filter 0.25s ease, stroke 0.25s ease; }
+                  #mapFallbackImage { pointer-events: none; }
+                  g[data-region] { cursor: pointer; pointer-events: visiblePainted; }
+                  .oblast { cursor: pointer; fill: #FFD500; stroke: rgba(255, 255, 255, 0.85); stroke-width: 2; pointer-events: visiblePainted; transition: fill 0.25s ease, filter 0.25s ease, stroke 0.25s ease; }
                   .oblast:hover { fill: #FFF28F; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4)); }
                   .oblast.active { fill: #FFF1A3; stroke: rgba(255, 255, 255, 1); filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.65)); }
                   .oblast-label { display: none; }
                 </style>
               </defs>
-              <g>
-                <!-- Волинська -->
-                <g data-region="volyn"><circle class="oblast" cx="325.0" cy="220.6" r="12"/></g>
-                <!-- Рівненська -->
-                <g data-region="rivne"><circle class="oblast" cx="380.5" cy="260.0" r="12"/></g>
-                <!-- Житомирська -->
-                <g data-region="zhytomyr"><circle class="oblast" cx="586.0" cy="303.5" r="12"/></g>
-                <!-- Чернігівська -->
-                <g data-region="chernihiv"><circle class="oblast" cx="801.1" cy="180.9" r="12"/></g>
-                <!-- Сумська -->
-                <g data-region="sumy"><circle class="oblast" cx="1034.7" cy="230.9" r="12"/></g>
-                <!-- Луганська -->
-                <g data-region="luhansk"><circle class="oblast" cx="1430.4" cy="495.2" r="12"/></g>
-                <!-- Львівська -->
-                <g data-region="lviv"><circle class="oblast" cx="213.2" cy="333.5" r="12"/></g>
-                <!-- Тернопільська -->
-                <g data-region="ternopil"><circle class="oblast" cx="341.0" cy="363.5" r="12"/></g>
-                <!-- Хмельницька -->
-                <g data-region="khmelnytsky"><circle class="oblast" cx="448.3" cy="400.3" r="12"/></g>
-                <!-- Вінницька -->
-                <g data-region="vinnytsia"><circle class="oblast" cx="564.2" cy="441.4" r="12"/></g>
-                <!-- Чернівецька -->
-                <g data-region="chernivtsi"><circle class="oblast" cx="350.0" cy="538.7" r="12"/></g>
-                <!-- Закарпатська -->
-                <g data-region="zakarpattia"><circle class="oblast" cx="150.6" cy="520.3" r="12"/></g>
-                <!-- Івано-Франківська -->
-                <g data-region="ivano_frankivsk"><circle class="oblast" cx="271.4" cy="469.9" r="12"/></g>
-                <!-- Київська -->
-                <g data-region="kyiv_oblast"><circle class="oblast" cx="726.5" cy="363.5" r="12"/></g>
-                <!-- м. Київ -->
-                <g data-region="kyiv_city"><circle class="oblast" cx="729.9" cy="280.0" r="12"/></g>
-                <!-- Черкаська -->
-                <g data-region="cherkasy"><circle class="oblast" cx="841.1" cy="391.2" r="12"/></g>
-                <!-- Полтавська -->
-                <g data-region="poltava"><circle class="oblast" cx="1014.0" cy="390.9" r="12"/></g>
-                <!-- Харківська -->
-                <g data-region="kharkiv"><circle class="oblast" cx="1200.7" cy="374.3" r="12"/></g>
-                <!-- Донецька -->
-                <g data-region="donetsk"><circle class="oblast" cx="1297.4" cy="577.7" r="12"/></g>
-                <!-- Кіровоградська -->
-                <g data-region="kirovohrad"><circle class="oblast" cx="881.1" cy="493.8" r="12"/></g>
-                <!-- Дніпропетровська -->
-                <g data-region="dnipropetrovsk"><circle class="oblast" cx="1090.2" cy="505.7" r="12"/></g>
-                <!-- Запорізька -->
-                <g data-region="zaporizhzhia"><circle class="oblast" cx="1127.9" cy="620.5" r="12"/></g>
-                <!-- Одеська -->
-                <g data-region="odesa"><circle class="oblast" cx="741.9" cy="778.9" r="12"/></g>
-                <!-- Миколаївська -->
-                <g data-region="mykolaiv"><circle class="oblast" cx="822.4" cy="716.9" r="12"/></g>
-                <!-- Херсонська -->
-                <g data-region="kherson"><circle class="oblast" cx="908.3" cy="724.3" r="12"/></g>
-                <!-- Крим -->
-                <g data-region="crimea"><circle class="oblast" cx="990.6" cy="985.5" r="12"/></g>
-              </g>
+              <image id="mapFallbackImage" href="assets/Ukraine_location_map.svg" xlink:href="assets/Ukraine_location_map.svg" x="0" y="0" width="1000" height="669" preserveAspectRatio="xMidYMid meet" />
+              <g id="map-content"></g>
             </svg>
           </div>
 

@@ -26,10 +26,16 @@ const memberBio = document.getElementById('memberBio');
 // INITIALIZATION
 // ============================================================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   if (typeof regionsData === 'undefined') {
     console.error('regions-data.js not loaded');
     return;
+  }
+
+  try {
+    await loadMapSvg();
+  } catch (error) {
+    console.error('Failed to load Ukraine map SVG:', error);
   }
 
   // Setup SVG interactions
@@ -50,32 +56,127 @@ document.addEventListener('DOMContentLoaded', function() {
 // MAP INTERACTION SETUP
 // ============================================================================
 
+async function loadMapSvg() {
+  if (!mapSvg) return;
+
+  let svgText = null;
+  try {
+    const response = await fetch('assets/Ukraine_location_map.svg');
+    if (response.ok) {
+      svgText = await response.text();
+    } else {
+      throw new Error(`Unable to fetch map SVG: ${response.status}`);
+    }
+  } catch (fetchError) {
+    try {
+      svgText = await loadSvgWithXhr('assets/Ukraine_location_map.svg');
+    } catch (xhrError) {
+      console.error('SVG load failed:', fetchError, xhrError);
+      return;
+    }
+  }
+
+  if (!svgText) return;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgText, 'image/svg+xml');
+  const importedSvg = doc.querySelector('svg');
+
+  if (!importedSvg) {
+    console.error('Failed to parse SVG document');
+    return;
+  }
+
+  const importedViewBox = importedSvg.getAttribute('viewBox') || importedSvg.getAttribute('viewbox');
+  if (importedViewBox) {
+    mapSvg.setAttribute('viewBox', importedViewBox);
+  }
+
+  mapSvg.innerHTML = importedSvg.innerHTML;
+
+  const regionGroups = mapSvg.querySelectorAll('g[data-region]');
+  if (regionGroups.length === 0) {
+    console.error('No interactive regions found after SVG injection');
+  }
+
+  regionGroups.forEach(group => {
+    group.style.pointerEvents = 'all';
+    group.style.cursor = 'pointer';
+    const shapes = Array.from(group.querySelectorAll('path, polygon, circle, rect, ellipse'));
+    shapes.forEach(shape => {
+      shape.classList.add('oblast');
+      shape.style.pointerEvents = 'all';
+    });
+  });
+}
+
+function loadSvgWithXhr(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'text';
+    xhr.onload = () => {
+      if (xhr.status === 200 || xhr.status === 0) {
+        resolve(xhr.responseText);
+      } else {
+        reject(new Error(`XHR failed: ${xhr.status}`));
+      }
+    };
+    xhr.onerror = () => reject(new Error('XHR network error'));
+    xhr.send();
+  });
+}
+
+function getInteractiveShape(group) {
+  return group.querySelector('path, polygon, circle, rect, ellipse');
+}
+
 function setupMapInteractions() {
   const svgGroups = mapSvg.querySelectorAll('g[data-region]');
 
   svgGroups.forEach(group => {
     const regionId = group.getAttribute('data-region');
-    const oblast = group.querySelector('.oblast');
+    const shapes = Array.from(group.querySelectorAll('path, polygon, circle, rect, ellipse'));
+    if (shapes.length === 0) return;
 
-    if (!oblast) return;
+    group.setAttribute('tabindex', '0');
+    group.setAttribute('role', 'button');
+    group.setAttribute('aria-label', `Виберіть регіон: ${getRegionName(regionId)}`);
+    group.style.cursor = 'pointer';
+    group.style.pointerEvents = 'visiblePainted';
 
-    // Mouse events
-    oblast.addEventListener('click', () => selectRegion(regionId));
-    oblast.addEventListener('mouseenter', () => {
-      oblast.style.cursor = 'pointer';
-    });
-
-    // Keyboard accessibility
-    oblast.setAttribute('tabindex', '0');
-    oblast.setAttribute('role', 'button');
-    oblast.setAttribute('aria-label', `Виберіть регіон: ${getRegionName(regionId)}`);
-
-    oblast.addEventListener('keydown', (e) => {
+    group.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         selectRegion(regionId);
       }
     });
+
+    shapes.forEach(shape => {
+      shape.classList.add('oblast');
+      shape.style.pointerEvents = 'visiblePainted';
+      shape.setAttribute('tabindex', '0');
+      shape.setAttribute('role', 'button');
+      shape.setAttribute('aria-label', `Виберіть регіон: ${getRegionName(regionId)}`);
+      shape.addEventListener('click', () => selectRegion(regionId));
+      shape.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectRegion(regionId);
+        }
+      });
+    });
+  });
+
+  mapSvg.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const group = target.closest('g[data-region]');
+    if (!group || !mapSvg.contains(group)) return;
+    const regionId = group.getAttribute('data-region');
+    if (regionId) {
+      selectRegion(regionId);
+    }
   });
 }
 
@@ -257,11 +358,13 @@ function highlightMapRegion(regionId) {
 
   const group = mapSvg.querySelector(`g[data-region="${regionId}"]`);
   if (group) {
-    const oblast = group.querySelector('.oblast');
-    if (oblast) {
-      oblast.classList.add('active');
-      oblast.focus();
-    }
+    const shapes = Array.from(group.querySelectorAll('path, polygon, circle, rect, ellipse'));
+    shapes.forEach(shape => {
+      shape.classList.add('active');
+      if (shape instanceof SVGGraphicsElement) {
+        shape.focus();
+      }
+    });
   }
 }
 
