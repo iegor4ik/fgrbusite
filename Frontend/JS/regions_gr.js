@@ -215,6 +215,9 @@ function selectRegion(regionId) {
     return;
   }
 
+  const regionPageSlug = regionId;
+  const regionPageUrl = `./regions/${regionPageSlug}.html`;
+
   currentSelectedRegion = regionId;
   updateUrlState(regionId);
   highlightMapRegion(regionId);
@@ -226,6 +229,8 @@ function selectRegion(regionId) {
   if (window.innerWidth < 1120) {
     panelContent.scrollTop = 0;
   }
+
+  window.location.href = regionPageUrl;
 }
 
 // ============================================================================

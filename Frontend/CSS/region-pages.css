@@ -1,0 +1,348 @@
+:root {
+  color-scheme: light;
+  --region-accent: #ffd500;
+  --region-accent-strong: #d11f2f;
+  --region-surface: #ffffff;
+  --region-surface-muted: #f7f7f7;
+  --region-text: #1e1e1e;
+  --region-text-soft: #5b6470;
+  --region-border: rgba(30, 30, 30, 0.08);
+}
+
+body {
+  background: #f7f7f7;
+  color: var(--region-text);
+}
+
+.region-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(255, 213, 0, 0.08) 0%, rgba(255, 255, 255, 0) 32%);
+}
+
+.region-hero {
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 1.5rem 3.5rem;
+  background:
+    linear-gradient(135deg, rgba(17, 24, 39, 0.7) 0%, rgba(209, 31, 47, 0.7) 100%),
+    radial-gradient(circle at top left, rgba(255, 213, 0, 0.4), transparent 45%);
+  color: #fff;
+}
+
+.region-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('../assets/images/BNY_banner.jpg') center/cover no-repeat;
+  opacity: 0.2;
+}
+
+.region-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+}
+
+.region-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.region-hero h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.region-hero__meta {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.9);
+}
+
+.region-content {
+  max-width: 1160px;
+  margin: -2rem auto 0;
+  padding: 0 1.25rem 4rem;
+}
+
+.region-overview {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.25rem;
+  align-items: stretch;
+  margin-bottom: 2rem;
+}
+
+.region-card,
+.region-placeholder-card {
+  background: var(--region-surface);
+  border: 1px solid var(--region-border);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.region-placeholder-card {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(145deg, rgba(255,213,0,0.16), rgba(255,255,255,1));
+}
+
+.region-placeholder-card .placeholder-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: rgba(209,31,47,0.12);
+  color: var(--region-accent-strong);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+}
+
+.region-picture {
+  width: 100%;
+  min-height: 260px;
+  object-fit: cover;
+  display: block;
+  background: #ececec;
+}
+
+.region-card__body {
+  padding: 1.5rem;
+}
+
+.region-card__body h2,
+.region-presidium h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+}
+
+.region-card__body p,
+.region-presidium p {
+  margin: 0;
+  color: var(--region-text-soft);
+  line-height: 1.7;
+}
+
+.region-presidium {
+  background: var(--region-surface);
+  border: 1px solid var(--region-border);
+  border-radius: 24px;
+  padding: 1.6rem;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+}
+
+.presidium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.presidium-card {
+  background: linear-gradient(180deg, #fff 0%, #fcfcfc 100%);
+  border: 1px solid rgba(209,31,47,0.1);
+  border-radius: 18px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  text-align: center;
+}
+
+.presidium-card:hover,
+.presidium-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(209,31,47,0.35);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  outline: none;
+}
+
+.presidium-card__photo {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 3px solid rgba(255,213,0,0.7);
+  margin-bottom: 0.8rem;
+  background: #efefef;
+}
+
+.presidium-card__name {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.35rem;
+}
+
+.presidium-card__role {
+  color: var(--region-accent-strong);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.presidium-card__meta {
+  color: var(--region-text-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.region-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.region-actions a,
+.region-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(209,31,47,0.15);
+  color: var(--region-accent-strong);
+  background: rgba(209,31,47,0.06);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.member-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.member-modal.active {
+  display: flex;
+}
+
+.member-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 12, 18, 0.7);
+}
+
+.member-modal__dialog {
+  position: relative;
+  max-width: 700px;
+  width: 100%;
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  z-index: 1;
+}
+
+.member-modal__content {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+}
+
+.member-modal__photo {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+  background: #eee;
+}
+
+.member-modal__body {
+  padding: 1.5rem;
+}
+
+.member-modal__close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  border: 0;
+  background: rgba(255,255,255,0.95);
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.member-modal__name {
+  margin: 0 0 0.4rem;
+  font-size: 1.3rem;
+}
+
+.member-modal__role {
+  margin: 0 0 1rem;
+  color: var(--region-accent-strong);
+  font-weight: 700;
+}
+
+.member-modal__details {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  color: var(--region-text-soft);
+}
+
+.member-modal__details strong {
+  color: var(--region-text);
+}
+
+.member-modal__bio {
+  margin: 0;
+  color: var(--region-text-soft);
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .region-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .member-modal__content {
+    grid-template-columns: 1fr;
+  }
+
+  .member-modal__photo {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .region-hero {
+    min-height: 280px;
+    padding-top: 4rem;
+  }
+
+  .region-content {
+    padding: 0 1rem 3rem;
+  }
+
+  .region-presidium {
+    padding: 1.2rem;
+  }
+}

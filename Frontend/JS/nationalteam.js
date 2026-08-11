@@ -112,7 +112,7 @@ const teams = {
 	},
 	u20: {
 		coaches: [
-			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євген', image: 'assets/u20/Coach/Євген Мягкий старший тренер збірної.png' },
+			{ id: 'coach-u20-1', role: 'Старший тренер', name: 'Мягкий Євген', image: 'assets/images/Мягкий Євген.png' },
 			{ id: 'coach-u20-2', role: 'Старший тренер', name: 'Бутхузі Карая', image: 'assets/u20/Coach/Бутхузі Карая старший тренер збірної.png' },
 		],
 		athletes: [
