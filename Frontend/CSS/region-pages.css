@@ -361,7 +361,7 @@ body {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.75rem;
 }
 
 .member-modal.active {
@@ -378,6 +378,7 @@ body {
   position: relative;
   max-width: 700px;
   width: 100%;
+  max-height: calc(100dvh - 1.5rem);
   background: var(--region-surface);
   border-radius: 24px;
   overflow: hidden;
@@ -388,6 +389,7 @@ body {
 .member-modal__content {
   display: grid;
   grid-template-columns: minmax(180px, 220px) 1fr;
+  max-height: calc(100dvh - 1.5rem);
 }
 
 .member-modal__photo {
@@ -400,6 +402,9 @@ body {
 
 .member-modal__body {
   padding: 1.5rem;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   color: var(--region-text);
 }
 
@@ -469,7 +474,7 @@ body {
 
 .club-modal__trainers {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.65rem;
 }
 
@@ -540,11 +545,15 @@ body {
   }
 
   .member-modal__photo {
-    height: 180px;
+    height: 150px;
     min-height: 0;
   }
 
   .club-modal__trainers {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .member-modal__body {
+    padding: 1rem;
   }
 }
