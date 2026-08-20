@@ -97,6 +97,12 @@ async function loadMapSvg() {
   }
 
   regionGroups.forEach(group => {
+    const sourceRegion = group.getAttribute('data-region');
+    if (sourceRegion === 'kyiv_city') {
+      group.setAttribute('data-region', 'kyiv_oblast');
+    } else if (sourceRegion === 'kyiv_oblast') {
+      group.setAttribute('data-region', 'kyiv_city');
+    }
     const shape = group.querySelector('path, polygon, circle, rect, ellipse');
     if (shape?.id === 'UA30') {
       group.setAttribute('data-region', 'kyiv_oblast');

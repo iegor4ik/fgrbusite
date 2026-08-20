@@ -591,7 +591,8 @@ function openClubModal(club, fallbackPhoto) {
 async function loadRegionMap(container, slug, title) {
   if (!container) return;
   try {
-    const response = await fetch(`../assets/regions-svg/${slug}.svg`);
+    const mapSlug = slug === 'kyiv_city' ? 'kyiv_oblast' : slug === 'kyiv_oblast' ? 'kyiv_city' : slug;
+    const response = await fetch(`../assets/regions-svg/${mapSlug}.svg`);
     if (!response.ok) throw new Error('Region SVG not found');
     const source = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
     const sourceGroup = source.querySelector('g');
@@ -627,7 +628,7 @@ function initRegionPage() {
         const rawName = String(region.name || '').toLocaleLowerCase('uk-UA');
         const normalized = normalizeRegionKey(region.name);
         if (slug === 'kyiv_city') return rawName === 'київська фгрб';
-        if (slug === 'kyiv_oblast') return normalized === 'київська';
+        if (slug === 'kyiv_oblast') return rawName === 'київська областна фгрб';
         return regionSlugFromName(region.name) === slug;
       });
       if (target) renderDatabaseRegionPage(target, slug);
