@@ -20,6 +20,8 @@ const COMPETITIONS_ROOT = path.join(UPLOAD_ROOT, 'competitions');
 const CALENDAR_ROOT = path.join(UPLOAD_ROOT, 'calendar');
 const CALENDAR_YEAR_PDFS_ROOT = path.join(CALENDAR_ROOT, 'years');
 const CALENDAR_EVENT_PDFS_ROOT = path.join(CALENDAR_ROOT, 'events');
+const REGIONS_ROOT = path.join(UPLOAD_ROOT, 'regions');
+const CLUBS_ROOT = path.join(UPLOAD_ROOT, 'clubs');
 const CALENDAR_DATA_ROOT = path.join(__dirname);
 fs.mkdirSync(NEWS_UPLOAD_ROOT, { recursive: true });
 fs.mkdirSync(GALLERY_COVERS_ROOT, { recursive: true });
@@ -28,6 +30,8 @@ fs.mkdirSync(DOCUMENTS_ROOT, { recursive: true });
 fs.mkdirSync(COMPETITIONS_ROOT, { recursive: true });
 fs.mkdirSync(CALENDAR_YEAR_PDFS_ROOT, { recursive: true });
 fs.mkdirSync(CALENDAR_EVENT_PDFS_ROOT, { recursive: true });
+fs.mkdirSync(REGIONS_ROOT, { recursive: true });
+fs.mkdirSync(CLUBS_ROOT, { recursive: true });
 
 const pool = new Pool({
   host: process.env.PGHOST || 'localhost',
@@ -83,6 +87,10 @@ const storage = multer.diskStorage({
       destination = CALENDAR_YEAR_PDFS_ROOT;
     } else if (req.path.includes('/calendar/events') || req.path.includes('/calendar/event')) {
       destination = CALENDAR_EVENT_PDFS_ROOT;
+    } else if (req.path.includes('/regions')) {
+      destination = REGIONS_ROOT;
+    } else if (req.path.includes('/clubs')) {
+      destination = CLUBS_ROOT;
     }
     cb(null, destination);
   },
@@ -328,6 +336,31 @@ async function ensureSchema() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS regions (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    photo TEXT NOT NULL,
+    president TEXT,
+    president_photo TEXT,
+    clubs_dyussh JSONB NOT NULL DEFAULT '[]'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS clubs_dyussh (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    photo TEXT NOT NULL,
+    city TEXT,
+    gym_addresses JSONB NOT NULL DEFAULT '[]'::jsonb,
+    trainers JSONB NOT NULL DEFAULT '[]'::jsonb,
+    contacts JSONB NOT NULL DEFAULT '[]'::jsonb,
+    region_id INTEGER REFERENCES regions(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query(`ALTER TABLE clubs_dyussh ADD COLUMN IF NOT EXISTS contacts JSONB NOT NULL DEFAULT '[]'::jsonb;`);
 }
 
 function buildNewsRow(row) {
@@ -353,6 +386,35 @@ function buildGalleryPhotoRow(row) {
     image_path: row.image_path,
     upload_date: row.upload_date,
     sort_order: row.sort_order,
+  };
+}
+
+function buildRegionRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    photo: row.photo,
+    president: row.president,
+    president_photo: row.president_photo,
+    clubs_dyussh: row.clubs_dyussh || [],
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+function buildClubRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    photo: row.photo,
+    city: row.city,
+    gym_addresses: row.gym_addresses || [],
+    trainers: row.trainers || [],
+    contacts: row.contacts || [],
+    region_id: row.region_id,
+    region_name: row.region_name || null,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
   };
 }
 
@@ -767,6 +829,269 @@ app.delete('/api/documents/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Не вдалося видалити документ.' });
+  }
+});
+
+app.get('/api/regions', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.id, r.name, r.photo, r.president, r.president_photo,
+        COALESCE(
+          json_agg(json_build_object(
+            'id', c.id,
+            'name', c.name,
+            'photo', c.photo,
+            'city', c.city,
+            'gym_addresses', c.gym_addresses,
+            'trainers', c.trainers,
+            'contacts', c.contacts
+          ) ORDER BY c.name, c.id)
+          FILTER (WHERE c.id IS NOT NULL),
+          '[]'
+        ) AS clubs_dyussh,
+        r.created_at, r.updated_at
+       FROM regions r
+       LEFT JOIN clubs_dyussh c ON c.region_id = r.id
+       GROUP BY r.id
+       ORDER BY r.name ASC, r.id ASC`
+    );
+    res.json(result.rows.map(buildRegionRow));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні регіонів.' });
+  }
+});
+
+app.get('/api/regions/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.id, r.name, r.photo, r.president, r.president_photo,
+        COALESCE(
+          json_agg(json_build_object(
+            'id', c.id,
+            'name', c.name,
+            'photo', c.photo,
+            'city', c.city,
+            'gym_addresses', c.gym_addresses,
+            'trainers', c.trainers,
+            'contacts', c.contacts
+          ) ORDER BY c.name, c.id)
+          FILTER (WHERE c.id IS NOT NULL),
+          '[]'
+        ) AS clubs_dyussh,
+        r.created_at, r.updated_at
+       FROM regions r
+       LEFT JOIN clubs_dyussh c ON c.region_id = r.id
+       WHERE r.id = $1
+       GROUP BY r.id`,
+      [req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
+    res.json(buildRegionRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні регіону.' });
+  }
+});
+
+app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
+  try {
+    const name = req.body.name?.trim();
+    const photoFile = req.files?.photo?.[0];
+    if (!name || !photoFile) return res.status(400).json({ message: 'Вкажіть назву регіону та додайте фото.' });
+    const photo = `/uploads/regions/${photoFile.filename}`;
+    const presidentPhoto = req.files?.president_photo?.[0]
+      ? `/uploads/regions/${req.files.president_photo[0].filename}`
+      : null;
+    const result = await pool.query(
+      'INSERT INTO regions (name, photo, president, president_photo) VALUES ($1, $2, $3, $4) RETURNING id, name, photo, president, president_photo, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto]
+    );
+    res.status(201).json(buildRegionRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити регіон.' });
+  }
+});
+
+app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
+  try {
+    const currentResult = await pool.query('SELECT * FROM regions WHERE id = $1', [req.params.id]);
+    if (!currentResult.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
+    const current = currentResult.rows[0];
+    const name = req.body.name?.trim();
+    if (!name) return res.status(400).json({ message: 'Вкажіть назву регіону.' });
+    const newPhoto = req.files?.photo?.[0];
+    const newPresidentPhoto = req.files?.president_photo?.[0];
+    const photo = newPhoto ? `/uploads/regions/${newPhoto.filename}` : current.photo;
+    let presidentPhoto = newPresidentPhoto ? `/uploads/regions/${newPresidentPhoto.filename}` : current.president_photo;
+    if (req.body.remove_president_photo === 'true') presidentPhoto = null;
+    const result = await pool.query(
+      'UPDATE regions SET name = $1, photo = $2, president = $3, president_photo = $4, updated_at = now() WHERE id = $5 RETURNING id, name, photo, president, president_photo, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, req.params.id]
+    );
+    if (newPhoto && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
+    if ((newPresidentPhoto || req.body.remove_president_photo === 'true') && current.president_photo) fs.unlink(resolveUploadPath(current.president_photo), () => {});
+    res.json(buildRegionRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося оновити регіон.' });
+  }
+});
+
+app.delete('/api/regions/:id', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT photo, president_photo FROM regions WHERE id = $1', [req.params.id]);
+    if (!result.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
+    await pool.query('DELETE FROM regions WHERE id = $1', [req.params.id]);
+    [result.rows[0].photo, result.rows[0].president_photo].filter(Boolean).forEach((filePath) => fs.unlink(resolveUploadPath(filePath), () => {}));
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося видалити регіон.' });
+  }
+});
+
+app.get('/api/clubs', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT c.id, c.name, c.photo, c.city, c.gym_addresses, c.trainers, c.contacts, c.region_id,
+        r.name AS region_name, c.created_at, c.updated_at
+       FROM clubs_dyussh c
+       LEFT JOIN regions r ON r.id = c.region_id
+       ORDER BY c.name ASC, c.id ASC`
+    );
+    res.json(result.rows.map(buildClubRow));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні клубів.' });
+  }
+});
+
+app.get('/api/clubs/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT c.id, c.name, c.photo, c.city, c.gym_addresses, c.trainers, c.contacts, c.region_id,
+        r.name AS region_name, c.created_at, c.updated_at
+       FROM clubs_dyussh c
+       LEFT JOIN regions r ON r.id = c.region_id
+       WHERE c.id = $1`,
+      [req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ message: 'Клуб не знайдено.' });
+    res.json(buildClubRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні клубу.' });
+  }
+});
+
+function parseClubArray(value, fallback = []) {
+  if (!value) return fallback;
+  try {
+    const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function getClubFiles(files) {
+  return (files || []).reduce((map, file) => {
+    map[file.fieldname] = file;
+    return map;
+  }, {});
+}
+
+function buildClubTrainers(value, filesByField) {
+  return parseClubArray(value).map((trainer) => {
+    const name = sanitizeText(trainer.name || '').trim();
+    if (!name) return null;
+    const uploadedPhoto = trainer.photo_field ? filesByField[trainer.photo_field] : null;
+    return {
+      name,
+      photo: uploadedPhoto ? `/uploads/clubs/${uploadedPhoto.filename}` : (trainer.photo || null),
+    };
+  }).filter(Boolean);
+}
+
+async function getClubPayload(req, current = null) {
+  const filesByField = getClubFiles(req.files);
+  const name = req.body.name?.trim();
+  const photoFile = filesByField.photo;
+  if (!name || (!current && !photoFile)) return { error: 'Вкажіть назву клубу та додайте фото.' };
+
+  const regionId = req.body.region_id ? Number(req.body.region_id) : null;
+  if (regionId !== null) {
+    const region = await pool.query('SELECT id FROM regions WHERE id = $1', [regionId]);
+    if (!region.rows.length) return { error: 'Обрана область не знайдена.' };
+  }
+
+  return {
+    name: sanitizeText(name),
+    photo: photoFile ? `/uploads/clubs/${photoFile.filename}` : current.photo,
+    city: req.body.city?.trim() ? sanitizeText(req.body.city) : null,
+    gymAddresses: parseClubArray(req.body.gym_addresses).map((address) => sanitizeText(address).trim()).filter(Boolean),
+    trainers: buildClubTrainers(req.body.trainers, filesByField),
+    contacts: parseClubArray(req.body.contacts).map((contact) => sanitizeText(contact).trim()).filter(Boolean),
+    regionId,
+    photoFile,
+  };
+}
+
+app.post('/api/clubs', upload.any(), async (req, res) => {
+  try {
+    const payload = await getClubPayload(req);
+    if (payload.error) return res.status(400).json({ message: payload.error });
+    const result = await pool.query(
+      `INSERT INTO clubs_dyussh (name, photo, city, gym_addresses, trainers, contacts, region_id)
+       VALUES ($1, $2, $3, $4::jsonb, $5::jsonb, $6::jsonb, $7)
+       RETURNING id, name, photo, city, gym_addresses, trainers, contacts, region_id, created_at, updated_at`,
+      [payload.name, payload.photo, payload.city, JSON.stringify(payload.gymAddresses), JSON.stringify(payload.trainers), JSON.stringify(payload.contacts), payload.regionId]
+    );
+    res.status(201).json(buildClubRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити клуб.' });
+  }
+});
+
+app.put('/api/clubs/:id', upload.any(), async (req, res) => {
+  try {
+    const currentResult = await pool.query('SELECT * FROM clubs_dyussh WHERE id = $1', [req.params.id]);
+    if (!currentResult.rows.length) return res.status(404).json({ message: 'Клуб не знайдено.' });
+    const current = currentResult.rows[0];
+    const payload = await getClubPayload(req, current);
+    if (payload.error) return res.status(400).json({ message: payload.error });
+    const result = await pool.query(
+      `UPDATE clubs_dyussh
+      SET name = $1, photo = $2, city = $3, gym_addresses = $4::jsonb, trainers = $5::jsonb, contacts = $6::jsonb, region_id = $7, updated_at = now()
+      WHERE id = $8
+      RETURNING id, name, photo, city, gym_addresses, trainers, contacts, region_id, created_at, updated_at`,
+          [payload.name, payload.photo, payload.city, JSON.stringify(payload.gymAddresses), JSON.stringify(payload.trainers), JSON.stringify(payload.contacts), payload.regionId, req.params.id]
+    );
+    if (payload.photoFile && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
+    const oldTrainerPhotos = (current.trainers || []).map((trainer) => trainer.photo).filter(Boolean);
+    const newTrainerPhotos = payload.trainers.map((trainer) => trainer.photo).filter(Boolean);
+    oldTrainerPhotos.filter((photo) => !newTrainerPhotos.includes(photo)).forEach((photo) => fs.unlink(resolveUploadPath(photo), () => {}));
+    res.json(buildClubRow(result.rows[0]));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося оновити клуб.' });
+  }
+});
+
+app.delete('/api/clubs/:id', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT photo, trainers FROM clubs_dyussh WHERE id = $1', [req.params.id]);
+    if (!result.rows.length) return res.status(404).json({ message: 'Клуб не знайдено.' });
+    await pool.query('DELETE FROM clubs_dyussh WHERE id = $1', [req.params.id]);
+    const trainerPhotos = (result.rows[0].trainers || []).map((trainer) => trainer.photo);
+    [result.rows[0].photo, ...trainerPhotos].filter(Boolean).forEach((photo) => fs.unlink(resolveUploadPath(photo), () => {}));
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося видалити клуб.' });
   }
 });
 

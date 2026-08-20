@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін - Клуби та ДЮСШ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (saved === null && prefersDark)) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" href="./assets/icons/fgrb-logo-m.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="./assets/icons/fgrb-logo-m.png" />
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін - Клуби та ДЮСШ</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div>
+          <div class="sidebar-header"><span class="sidebar-title">Меню</span></div>
+          <nav class="sidebar-nav">
+            <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+            <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+            <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+            <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+            <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+          </nav>
+        </div>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+      <main class="admin-main">
+        <section class="dashboard-overview">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Адмін</p>
+              <h2>Клуби та ДЮСШ</h2>
+            </div>
+            <button class="accent-btn" id="newClubBtn" type="button">Новий клуб</button>
+          </div>
+          <p>Додавайте, редагуйте та видаляйте клуби і дитячо-юнацькі спортивні школи.</p>
+        </section>
+        <section class="dashboard-cards" id="clubsList" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+          <p>Завантаження...</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="clubModal" class="modal" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h3 id="modalTitle">Додати клуб</h3>
+      <form id="clubForm" class="album-form">
+        <div class="form-group">
+          <label>Назва клубу / ДЮСШ *<input type="text" name="name" required /></label>
+        </div>
+        <div class="form-group">
+          <label>Фото клубу *<input type="file" name="photo" accept="image/*" /></label>
+          <img id="clubPreview" class="cover-preview" alt="" hidden />
+          <small id="photoHint">Обов’язково для нового клубу.</small>
+        </div>
+        <div class="form-group">
+          <label>Місто<input type="text" name="city" /></label>
+        </div>
+        <div class="form-group">
+          <label>Федерація / область<select name="region_id" id="regionSelect"><option value="">Не обрано</option></select></label>
+        </div>
+        <div class="form-group">
+          <div class="admin-panel-header compact-panel-header">
+            <strong>Адреси залів</strong>
+            <button type="button" class="add-album-btn" id="addAddressBtn">+ Додати</button>
+          </div>
+          <div id="addressesList" class="dynamic-fields"></div>
+        </div>
+        <div class="form-group">
+          <div class="admin-panel-header compact-panel-header">
+            <strong>Тренери</strong>
+            <button type="button" class="add-album-btn" id="addTrainerBtn">+ Додати</button>
+          </div>
+          <div id="trainersList" class="dynamic-fields"></div>
+        </div>
+        <div class="form-group">
+          <div class="admin-panel-header compact-panel-header">
+            <strong>Контактна інформація</strong>
+            <button type="button" class="add-album-btn" id="addContactBtn">+ Додати</button>
+          </div>
+          <div id="contactsList" class="dynamic-fields"></div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="accent-btn">Зберегти</button>
+          <button type="button" id="cancelClubBtn" class="cancel-btn">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему"><span class="theme-icon">🌙</span></button>
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_clubs.js" defer></script>
+</body>
+</html>

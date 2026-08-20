@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Полтавська область — Федерація греко-римської боротьби України</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../CSS/style.css" />
+  <link rel="stylesheet" href="../CSS/regions.css" />
+  <link rel="stylesheet" href="../CSS/region-pages.css" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
+        if (shouldBeDark) {
+          document.body.classList.add('dark-theme');
+          document.documentElement.classList.add('dark-theme');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" href="../assets/icons/fgrb-logo-m.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="../assets/icons/fgrb-logo-m.png" />
+</head>
+<body class="region-page" data-region-slug="poltava">
+  <header class="site-header">
+    <div class="container header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="sr-only">Відкрити меню</span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <a href="../index.html" class="brand-logo" aria-label="Логотип Федерації">
+        <img src="../assets/icons/fgrb-logo-m.png" alt="Логотип Федерації греко-римської боротьби України" class="resp-img-placeholder">
+      </a>
+      <nav class="desktop-nav">
+        <a href="../federation.html">Федерація</a>
+        <a href="../calendar.html">Календар</a>
+        <a href="../news.html">Новини</a>
+        <a href="../gallery.html">Галерея</a>
+        <a href="../nationalteam.html">Збірна</a>
+        <a href="../documents.html">Документи</a>
+      </nav>
+      <div class="brand-text">
+        <p class="brand-subtitle">Офіційний сайт</p>
+        <h1>Федерація греко-римської боротьби України</h1>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="../index.html">Головна</a></li>
+        <li><a href="../federation.html">Федерація</a></li>
+        <li><a href="../presidium.html">Президіум</a></li>
+        <li><a href="../calendar.html">Календар</a></li>
+        <li><a href="../news.html">Новини</a></li>
+        <li><a href="../gallery.html">Галерея</a></li>
+        <li><a href="../nationalteam.html">Збірна</a></li>
+        <li><a href="../documents.html">Документи</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="region-hero">
+      <div class="region-hero__content">
+        <div class="region-eyebrow" id="regionBadge">Регіональний офіс</div>
+        <h1 id="regionHeroTitle">Полтавська область</h1>
+        <p class="region-hero__meta" id="regionHeroSubtitle">Регіональна сторінка Федерації греко-римської боротьби України</p>
+      </div>
+    </section>
+
+    <section class="region-content">
+      <div class="region-overview">
+        <div class="region-card">
+          <div class="region-card__body">
+            <h2 id="regionName">Полтавська область</h2>
+            <p id="regionDescription">Місцеві клуби та регіональні спортивні ініціативи в рамках федерації.</p>
+            <div class="region-actions">
+              <a href="../regions_gr.html">Повернутися до карти</a>
+              <a href="../federation.html">Про федерацію</a>
+            </div>
+          </div>
+        </div>
+        <div class="region-placeholder-card">
+          <div class="placeholder-badge">Банер буде додано пізніше</div>
+          <h3>Фото регіону</h3>
+          <p>Тут згодом розмістимо реальне фото або банер по регіону.</p>
+        </div>
+      </div>
+
+      <section class="region-presidium">
+        <h2>Президія та представництво</h2>
+        <p>Підтримка регіональних клубів, тренерів і спортивних ініціатив.</p>
+        <div class="presidium-grid" id="regionPresidiumList"></div>
+      </section>
+
+      <section class="region-presidium" style="margin-top: 1.25rem;">
+        <h2>Клуби та контакти</h2>
+        <p>Набір блоків для подальшого наповнення інформацією про клуби, адреси та телефони тренерів.</p>
+        <div class="presidium-grid">
+          <article class="presidium-card">
+            <div class="presidium-card__name">Клуб 1</div>
+            <div class="presidium-card__role">Адреса</div>
+            <div class="presidium-card__meta">Інформація буде додана пізніше.</div>
+          </article>
+          <article class="presidium-card">
+            <div class="presidium-card__name">Клуб 2</div>
+            <div class="presidium-card__role">Тренер</div>
+            <div class="presidium-card__meta">Контакти та номери будуть оновлені.</div>
+          </article>
+          <article class="presidium-card">
+            <div class="presidium-card__name">Клуб 3</div>
+            <div class="presidium-card__role">Контактна інформація</div>
+            <div class="presidium-card__meta">Розділ буде наповнений наступним етапом.</div>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="member-modal" id="memberModal" aria-hidden="true">
+    <div class="member-modal__backdrop" id="memberModalOverlay"></div>
+    <div class="member-modal__dialog">
+      <button class="member-modal__close" id="memberModalClose" aria-label="Закрити профіль">×</button>
+      <div class="member-modal__content">
+        <img class="member-modal__photo" id="memberModalPhoto" src="../assets/images/No-photo-m.png" alt="Фото" />
+        <div class="member-modal__body">
+          <h3 class="member-modal__name" id="memberModalTitle"></h3>
+          <p class="member-modal__role" id="memberModalRole"></p>
+          <div class="member-modal__details" id="memberModalDetails"></div>
+          <p class="member-modal__bio" id="memberModalBio"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" data-observe>
+    <div class="container footer-grid">
+      <div>
+        <h4>Федерація греко-римської боротьби України</h4>
+        <p>Контактний центр: +380 44 284 3840</p>
+        <p>Пошта: grecoromanwrestlingukraine@gmail.com</p>
+      </div>
+      <div>
+        <h4>Соціальні мережі</h4>
+        <ul class="social-list">
+          <li><a href="https://www.instagram.com/ukr_wrestling?igsh=MTd3eWVtNzN0b3Q5NA==">Instagram</a></li>
+          <li><a href="https://www.facebook.com/greco.rome/?locale=uk_UA">Facebook</a></li>
+          <li><a href="https://www.youtube.com/@gr.wrestling_ukraine">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 Федерація греко-римської боротьби України. Всі права захищені.</p>
+      </div>
+    </div>
+    <a href="../login.html" class="dev-login-link">Вхід для розробника</a>
+  </footer>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <script src="../JS/main.js" defer></script>
+  <script src="../JS/region-pages.js" defer></script>
+</body>
+</html>

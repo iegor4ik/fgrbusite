@@ -1,18 +1,65 @@
 // ==============================================================
 // THEME SYSTEM - NO FLASH INITIALIZATION
 // ==============================================================
-(function() {
+function initializeTheme() {
   const savedTheme = localStorage.getItem('theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
-  if (isDark) {
-    document.body.classList.add('dark-theme');
-  }
-})();
+  document.documentElement.classList.toggle('dark-theme', isDark);
+  document.body.classList.toggle('dark-theme', isDark);
+}
+
+document.addEventListener('DOMContentLoaded', initializeTheme);
 
 // ==============================================================
-// MENU TOGGLE
+// REGIONAL PAGE HEADER
 // ==============================================================
+function ensureRegionalHeader() {
+  if (!document.body.classList.contains('region-page')) return;
+
+  const headerInner = document.querySelector('.region-page .header-inner');
+  if (!headerInner) return;
+
+  if (!headerInner.querySelector('.desktop-nav')) {
+    const nav = document.createElement('nav');
+    nav.className = 'desktop-nav';
+    nav.innerHTML = '<a href="../federation.html">Федерація</a><a href="../calendar.html">Календар</a><a href="../news.html">Новини</a><a href="../gallery.html">Галерея</a><a href="../nationalteam.html">Збірна</a><a href="../documents.html">Документи</a>';
+    headerInner.insertBefore(nav, headerInner.querySelector('.brand-text'));
+  }
+
+  if (!document.getElementById('menuToggle')) {
+    const toggle = document.createElement('button');
+    toggle.className = 'menu-toggle';
+    toggle.id = 'menuToggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', 'mobileMenu');
+    toggle.innerHTML = '<span class="sr-only">Відкрити меню</span><span class="bar"></span><span class="bar"></span><span class="bar"></span>';
+    headerInner.prepend(toggle);
+  }
+
+  if (!document.getElementById('mobileMenu')) {
+    const mobileMenu = document.createElement('nav');
+    mobileMenu.className = 'mobile-menu';
+    mobileMenu.id = 'mobileMenu';
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    mobileMenu.innerHTML = '<ul><li><a href="../index.html">Головна</a></li><li><a href="../federation.html">Федерація</a></li><li><a href="../presidium.html">Президіум</a></li><li><a href="../calendar.html">Календар</a></li><li><a href="../news.html">Новини</a></li><li><a href="../gallery.html">Галерея</a></li><li><a href="../nationalteam.html">Збірна</a></li><li><a href="../documents.html">Документи</a></li></ul>';
+    document.querySelector('.region-page .site-header').appendChild(mobileMenu);
+  }
+
+  if (!document.getElementById('themeToggle')) {
+    const themeToggle = document.createElement('button');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.id = 'themeToggle';
+    themeToggle.setAttribute('aria-label', 'Перемкнути тему');
+    themeToggle.innerHTML = '<span class="theme-icon">🌙</span>';
+    document.body.appendChild(themeToggle);
+  }
+}
+
+ensureRegionalHeader();
+
+// MENU TOGGLE
+// ============================================================== 
 const menuToggle = document.getElementById('menuToggle');
 const mobileMenu = document.getElementById('mobileMenu');
 const menuList = mobileMenu?.querySelector('ul');
@@ -122,8 +169,22 @@ document.querySelectorAll('[data-observe]').forEach((element) => {
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = themeToggle?.querySelector('.theme-icon');
 
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+  document.documentElement.classList.toggle('dark-theme', isDark);
+  document.body.classList.toggle('dark-theme', isDark);
+  if (themeIcon) {
+    themeIcon.textContent = isDark ? '☀️' : '🌙';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initializeTheme);
+
 function setTheme(isDark) {
   document.body.classList.toggle('dark-theme', isDark);
+  document.documentElement.classList.toggle('dark-theme', isDark);
   if (themeIcon) {
     themeIcon.textContent = isDark ? '☀️' : '🌙';
   }

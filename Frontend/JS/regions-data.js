@@ -262,13 +262,13 @@ const regionsData = {
   // ========================================================================
   kyiv_oblast: {
     id: 'kyiv_oblast',
-    name: 'м. Київ',
-    nameShort: 'Київ',
+    name: 'Київська область',
+    nameShort: 'Київ обл.',
     code: 'UA-32',
     flag: 'assets/images/No-photo-m.png',
     presidium: [
       {
-        id: 'kyiv_city-delegate-mykolenko',
+        id: 'kyiv_oblast-delegate-mykolenko',
         fullName: 'Миколенко Максим',
         position: 'Делегат',
         phone: '',
@@ -277,7 +277,7 @@ const regionsData = {
         photo: 'assets/images/No-photo-m.png',
       },
       {
-        id: 'kyiv_city-member-smyshliaev',
+        id: 'kyiv_oblast-member-smyshliaev',
         fullName: 'Смишляєв Олександр',
         position: 'Член президії',
         phone: '',
@@ -360,13 +360,13 @@ const regionsData = {
   // ========================================================================
   kyiv_city: {
     id: 'kyiv_city',
-    name: 'Київська область',
-    nameShort: 'Київ обл.',
+    name: 'м. Київ',
+    nameShort: 'Київ',
     code: 'UA-80',
     flag: 'assets/images/No-photo-m.png',
     presidium: [
       {
-        id: 'kyiv_oblast-delegate-kalashnikov',
+        id: 'kyiv_city-delegate-kalashnikov',
         fullName: 'Калашніков Андрій Миколайович',
         position: 'Делегат',
         phone: '',
@@ -375,7 +375,7 @@ const regionsData = {
         photo: 'assets/images/Kalashnikov.webp',
       },
       {
-        id: 'kyiv_oblast-president-kalashnikov',
+        id: 'kyiv_city-president-kalashnikov',
         fullName: 'Калашніков Андрій Миколайович',
         position: 'Президент',
         phone: '',

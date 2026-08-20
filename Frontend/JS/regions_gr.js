@@ -1,13 +1,9 @@
 
 let currentSelectedRegion = null;
+let databaseRegions = [];
 
 const mapSvg = document.querySelector('.ukraine-map');
-const panelEmpty = document.getElementById('panelEmpty');
-const panelContent = document.getElementById('panelContent');
-const regionName = document.getElementById('regionName');
-const regionCode = document.getElementById('regionCode');
-const regionFlag = document.getElementById('regionFlag');
-const membersList = document.getElementById('membersList');
+const mapTooltip = document.getElementById('mapTooltip');
 
 // Modal elements
 const memberModal = document.getElementById('memberModal');
@@ -34,8 +30,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   try {
     await loadMapSvg();
+    await loadDatabaseRegions();
   } catch (error) {
-    console.error('Failed to load Ukraine map SVG:', error);
+    console.error('Failed to load map region data:', error);
   }
 
   // Setup SVG interactions
@@ -100,6 +97,12 @@ async function loadMapSvg() {
   }
 
   regionGroups.forEach(group => {
+    const shape = group.querySelector('path, polygon, circle, rect, ellipse');
+    if (shape?.id === 'UA30') {
+      group.setAttribute('data-region', 'kyiv_oblast');
+    } else if (shape?.id === 'UA32') {
+      group.setAttribute('data-region', 'kyiv_city');
+    }
     group.style.pointerEvents = 'all';
     group.style.cursor = 'pointer';
     const shapes = Array.from(group.querySelectorAll('path, polygon, circle, rect, ellipse'));
@@ -131,11 +134,19 @@ function getInteractiveShape(group) {
   return group.querySelector('path, polygon, circle, rect, ellipse');
 }
 
+function normalizeMapRegionId(group) {
+  const shape = getInteractiveShape(group);
+  if (shape?.id === 'UA30') return 'kyiv_oblast';
+  if (shape?.id === 'UA32') return 'kyiv_city';
+  return group.getAttribute('data-region');
+}
+
 function setupMapInteractions() {
   const svgGroups = mapSvg.querySelectorAll('g[data-region]');
 
   svgGroups.forEach(group => {
-    const regionId = group.getAttribute('data-region');
+    const regionId = normalizeMapRegionId(group);
+    group.setAttribute('data-region', regionId);
     const shapes = Array.from(group.querySelectorAll('path, polygon, circle, rect, ellipse'));
     if (shapes.length === 0) return;
 
@@ -152,6 +163,10 @@ function setupMapInteractions() {
       }
     });
 
+    group.addEventListener('pointerenter', (event) => showRegionTooltip(regionId, event));
+    group.addEventListener('pointermove', updateRegionTooltipPosition);
+    group.addEventListener('pointerleave', hideRegionTooltip);
+
     shapes.forEach(shape => {
       shape.classList.add('oblast');
       shape.style.pointerEvents = 'visiblePainted';
@@ -159,6 +174,9 @@ function setupMapInteractions() {
       shape.setAttribute('role', 'button');
       shape.setAttribute('aria-label', `Виберіть регіон: ${getRegionName(regionId)}`);
       shape.addEventListener('click', () => selectRegion(regionId));
+      shape.addEventListener('pointerenter', (event) => showRegionTooltip(regionId, event));
+      shape.addEventListener('pointermove', updateRegionTooltipPosition);
+      shape.addEventListener('pointerleave', hideRegionTooltip);
       shape.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -173,7 +191,7 @@ function setupMapInteractions() {
     if (!(target instanceof Element)) return;
     const group = target.closest('g[data-region]');
     if (!group || !mapSvg.contains(group)) return;
-    const regionId = group.getAttribute('data-region');
+    const regionId = normalizeMapRegionId(group);
     if (regionId) {
       selectRegion(regionId);
     }
@@ -210,8 +228,8 @@ function setupModalInteractions() {
 
 function selectRegion(regionId) {
   const region = regionsData[regionId];
-  if (!region) {
-    console.error(`Region not found: ${regionId}`);
+  if (!region || !getDatabaseRegion(regionId)) {
+    hideRegionTooltip();
     return;
   }
 
@@ -221,15 +239,6 @@ function selectRegion(regionId) {
   currentSelectedRegion = regionId;
   updateUrlState(regionId);
   highlightMapRegion(regionId);
-  renderPanel(region, regionId);
-
-  panelEmpty.style.display = 'none';
-  panelContent.style.display = 'block';
-
-  if (window.innerWidth < 1120) {
-    panelContent.scrollTop = 0;
-  }
-
   window.location.href = regionPageUrl;
 }
 
@@ -394,6 +403,37 @@ function getRegionName(regionId) {
   return regionId;
 }
 
+async function loadDatabaseRegions() {
+  const response = await fetch('/api/regions');
+  if (!response.ok) throw new Error(`Unable to fetch regions: ${response.status}`);
+  databaseRegions = await response.json();
+}
+
+function normalizeRegionName(name) {
+  return String(name || '')
+    .toLocaleLowerCase('uk-UA')
+    .replace(/област?на\s+фгрб$/i, '')
+    .replace(/\s+фгрб$/i, '')
+    .replace(/область$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getDatabaseRegion(regionId) {
+  const staticRegion = regionsData?.[regionId];
+  const targetName = normalizeRegionName(staticRegion?.name || getRegionName(regionId));
+  const aliases = {
+    kyiv_city: 'київська фгрб',
+    kyiv_oblast: 'київська областна фгрб',
+  };
+  const exactName = aliases[regionId];
+  if (exactName) {
+    const exactMatch = databaseRegions.find((region) => String(region.name || '').toLocaleLowerCase('uk-UA') === exactName);
+    if (exactMatch) return exactMatch;
+  }
+  return databaseRegions.find((region) => normalizeRegionName(region.name) === targetName) || null;
+}
+
 function formatDateUkrainian(dateString) {
   if (!dateString) return '';
   try {
@@ -406,6 +446,73 @@ function formatDateUkrainian(dateString) {
   } catch (e) {
     return dateString;
   }
+}
+
+function showRegionTooltip(regionId, event) {
+  if (!mapTooltip) return;
+  const region = getDatabaseRegion(regionId);
+  renderRegionTooltip(regionId, region);
+  mapTooltip.style.display = 'block';
+  mapTooltip.setAttribute('aria-hidden', 'false');
+  if (event) {
+    updateRegionTooltipPosition(event);
+  }
+}
+
+function renderRegionTooltip(regionId, region) {
+  const fallbackName = getRegionName(regionId);
+  if (!region) {
+    mapTooltip.textContent = fallbackName;
+    return;
+  }
+
+  const clubs = Array.isArray(region.clubs_dyussh) ? region.clubs_dyussh.slice(0, 3) : [];
+  const clubMarkup = clubs.length
+    ? `<ul class="map-tooltip__clubs">${clubs.map((club) => `
+        <li class="map-tooltip__club">
+          <img class="map-tooltip__club-photo" src="${escapeTooltipAttribute(club.photo || 'assets/images/No-photo-m.png')}" alt="" />
+          <span>${escapeTooltipText(club.name)}</span>
+        </li>`).join('')}</ul>`
+    : '<div class="map-tooltip__empty">Клубів ще немає</div>';
+
+  const presidentPhoto = region.president_photo || 'assets/images/No-photo-m.png';
+
+  mapTooltip.innerHTML = `
+    <div class="map-tooltip__header">
+      <img class="map-tooltip__flag" src="${escapeTooltipAttribute(region.photo)}" alt="" />
+      <strong>${escapeTooltipText(region.name)}</strong>
+    </div>
+    <div class="map-tooltip__president">
+      <img class="map-tooltip__president-photo" src="${escapeTooltipAttribute(presidentPhoto)}" alt="" />
+      <span><b>Президент:</b><br />${escapeTooltipText(region.president || 'Не вказано')}</span>
+    </div>
+    <div class="map-tooltip__clubs-title"><b>Клуби:</b></div>
+    ${clubMarkup}`;
+}
+
+function escapeTooltipText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character]));
+}
+
+function escapeTooltipAttribute(value) {
+  return escapeTooltipText(value).replace(/javascript:/gi, '');
+}
+
+function updateRegionTooltipPosition(event) {
+  if (!mapTooltip) return;
+  const offset = 14;
+  const x = Math.min(window.innerWidth - mapTooltip.offsetWidth - offset, event.clientX + offset);
+  const y = Math.min(window.innerHeight - mapTooltip.offsetHeight - offset, event.clientY + offset);
+  mapTooltip.style.left = `${x}px`;
+  mapTooltip.style.top = `${y}px`;
+}
+
+function hideRegionTooltip() {
+  if (!mapTooltip) return;
+  mapTooltip.style.display = 'none';
+  mapTooltip.setAttribute('aria-hidden', 'true');
 }
 
 // ============================================================================

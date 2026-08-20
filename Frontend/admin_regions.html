@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін - Регіони</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (saved === null && prefersDark)) {
+          const style = document.createElement('style');
+          style.textContent = 'body { background: #1A1F36; color: #F8F9FA; }';
+          document.head.appendChild(style);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" href="./assets/icons/fgrb-logo-m.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="./assets/icons/fgrb-logo-m.png" />
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін - Регіони</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div>
+          <div class="sidebar-header"><span class="sidebar-title">Меню</span></div>
+          <nav class="sidebar-nav">
+            <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+            <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+            <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+            <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+            <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+          </nav>
+        </div>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+      <main class="admin-main">
+        <section class="dashboard-overview">
+          <div class="admin-panel-header">
+            <div>
+              <p class="section-tag">Адмін</p>
+              <h2>Керування регіонами</h2>
+            </div>
+            <button class="accent-btn" id="newRegionBtn" type="button">Новий регіон</button>
+          </div>
+          <p>Додавайте та оновлюйте інформацію про регіони федерації.</p>
+        </section>
+        <section class="dashboard-cards" id="regionsList" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+          <p>Завантаження...</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="regionModal" class="modal" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h3 id="modalTitle">Додати регіон</h3>
+      <form id="regionForm" class="album-form">
+        <input type="hidden" name="id" />
+        <div class="form-group">
+          <label>Назва регіону *<input type="text" name="name" required /></label>
+        </div>
+        <div class="form-group">
+          <label>Фото регіону *<input type="file" name="photo" accept="image/*" /></label>
+          <img id="regionPreview" class="cover-preview" alt="" hidden />
+          <small id="photoHint">Обов’язково для нового регіону.</small>
+        </div>
+        <div class="form-group">
+          <label>Президент<input type="text" name="president" /></label>
+        </div>
+        <div class="form-group">
+          <label>Фото президента<input type="file" name="president_photo" accept="image/*" /></label>
+          <img id="presidentPreview" class="cover-preview" alt="" hidden />
+        </div>
+        <label class="checkbox-label" id="removePresidentPhotoLabel" hidden>
+          <input type="checkbox" name="remove_president_photo" /> Видалити фото президента
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="accent-btn">Зберегти</button>
+          <button type="button" id="cancelRegionBtn" class="cancel-btn">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Перемкнути тему"><span class="theme-icon">🌙</span></button>
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_regions.js" defer></script>
+</body>
+</html>

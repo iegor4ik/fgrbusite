@@ -9,14 +9,23 @@
   --region-border: rgba(30, 30, 30, 0.08);
 }
 
+html.dark-theme {
+  color-scheme: dark;
+  --region-surface: #171a20;
+  --region-surface-muted: #20242c;
+  --region-text: #f3f4f6;
+  --region-text-soft: #b3bac6;
+  --region-border: rgba(255, 255, 255, 0.12);
+}
+
 body {
-  background: #f7f7f7;
+  background: var(--region-surface-muted);
   color: var(--region-text);
 }
 
 .region-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, rgba(255, 213, 0, 0.08) 0%, rgba(255, 255, 255, 0) 32%);
+  background: linear-gradient(180deg, rgba(255, 213, 0, 0.1) 0%, var(--region-surface-muted) 34%);
 }
 
 .region-hero {
@@ -76,7 +85,7 @@ body {
 
 .region-content {
   max-width: 1160px;
-  margin: -2rem auto 0;
+  margin: 0 auto;
   padding: 0 1.25rem 4rem;
 }
 
@@ -89,7 +98,8 @@ body {
 }
 
 .region-card,
-.region-placeholder-card {
+.region-placeholder-card,
+.region-map-card {
   background: var(--region-surface);
   border: 1px solid var(--region-border);
   border-radius: 24px;
@@ -105,7 +115,36 @@ body {
   align-items: center;
   text-align: center;
   padding: 2rem;
-  background: linear-gradient(145deg, rgba(255,213,0,0.16), rgba(255,255,255,1));
+  background: linear-gradient(145deg, rgba(255,213,0,0.16), var(--region-surface));
+}
+
+.region-map-card {
+  min-height: 260px;
+  padding: 1rem;
+  background: linear-gradient(145deg, rgba(255,213,0,0.16), var(--region-surface));
+}
+
+.region-map-card .placeholder-badge {
+  margin: 0 0 0.75rem;
+  color: var(--region-accent-strong);
+  font-weight: 700;
+  text-align: center;
+}
+
+.region-map-frame {
+  height: 230px;
+  border-radius: 14px;
+  background: #ececec;
+  overflow: hidden;
+}
+
+.region-map-card .region-picture {
+  height: 230px;
+  min-height: 0;
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  background: #ececec;
 }
 
 .region-placeholder-card .placeholder-badge {
@@ -128,8 +167,35 @@ body {
   background: #ececec;
 }
 
+.region-picture path,
+.region-picture polygon,
+.region-picture circle,
+.region-picture rect,
+.region-picture ellipse {
+  fill: #ffd500 !important;
+  stroke: rgba(255, 255, 255, 0.9) !important;
+}
+
+.region-picture path:hover,
+.region-picture polygon:hover,
+.region-picture circle:hover,
+.region-picture rect:hover,
+.region-picture ellipse:hover {
+  fill: #fff28f !important;
+}
+
 .region-card__body {
   padding: 1.5rem;
+}
+
+.region-flag {
+  display: block;
+  width: min(260px, 100%);
+  height: 150px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  background: #ececec;
 }
 
 .region-card__body h2,
@@ -158,6 +224,13 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-top: 1.2rem;
+}
+
+.region-clubs-section .presidium-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.8rem;
 }
 
 .presidium-card {
@@ -207,6 +280,57 @@ body {
   line-height: 1.5;
 }
 
+.region-president-card {
+  width: min(260px, 100%);
+  font: inherit;
+  color: inherit;
+}
+
+.club-page-card {
+  text-align: left;
+  flex: 0 1 260px;
+  min-width: 220px;
+  padding: 0.8rem;
+  font: inherit;
+  color: inherit;
+}
+
+.club-page-card__photo {
+  display: block;
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.8rem;
+  background: #efefef;
+}
+
+.club-page-card .presidium-card__name,
+.club-page-card .presidium-card__role {
+  display: block;
+}
+
+.dark-theme .region-card,
+.dark-theme .region-placeholder-card,
+.dark-theme .region-map-card,
+.dark-theme .region-presidium {
+  background: var(--region-surface);
+}
+
+.dark-theme .presidium-card {
+  background: linear-gradient(180deg, #222730 0%, #1b1f26 100%);
+  border-color: rgba(255, 213, 0, 0.18);
+}
+
+.dark-theme .presidium-card__name {
+  color: var(--region-text);
+}
+
+.region-empty-state {
+  padding: 1rem;
+  color: var(--region-text-soft);
+}
+
 .region-actions {
   display: flex;
   flex-wrap: wrap;
@@ -253,7 +377,7 @@ body {
   position: relative;
   max-width: 700px;
   width: 100%;
-  background: #fff;
+  background: var(--region-surface);
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0,0,0,0.25);
@@ -270,11 +394,12 @@ body {
   height: 100%;
   min-height: 280px;
   object-fit: cover;
-  background: #eee;
+  background: var(--region-surface-muted);
 }
 
 .member-modal__body {
   padding: 1.5rem;
+  color: var(--region-text);
 }
 
 .member-modal__close {
@@ -282,7 +407,8 @@ body {
   top: 0.9rem;
   right: 0.9rem;
   border: 0;
-  background: rgba(255,255,255,0.95);
+  background: var(--region-surface);
+  color: var(--region-text);
   width: 40px;
   height: 40px;
   border-radius: 999px;
@@ -293,6 +419,7 @@ body {
 .member-modal__name {
   margin: 0 0 0.4rem;
   font-size: 1.3rem;
+  color: var(--region-text);
 }
 
 .member-modal__role {
@@ -306,6 +433,61 @@ body {
   gap: 0.55rem;
   margin-bottom: 1rem;
   color: var(--region-text-soft);
+}
+
+.club-modal__section {
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--region-border);
+}
+
+.club-modal__section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.club-modal__section h4 {
+  margin: 0 0 0.45rem;
+  color: var(--region-text);
+  font-size: 0.95rem;
+}
+
+.club-modal__section ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.club-modal__section li {
+  margin: 0.25rem 0;
+  color: var(--region-text-soft);
+}
+
+.club-modal__empty {
+  margin: 0;
+  color: var(--region-text-soft);
+}
+
+.club-modal__trainers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.club-modal__trainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 180px;
+  color: var(--region-text);
+  font-weight: 600;
+}
+
+.club-modal__trainer img {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #efefef;
 }
 
 .member-modal__details strong {

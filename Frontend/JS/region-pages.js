@@ -147,7 +147,7 @@ const regionPageData = {
     ]
   },
   kyiv_city: {
-    slug: 'kyiv-city',
+    slug: 'kyiv_city',
     title: 'м. Київ',
     subtitle: 'Регіональна сторінка Федерації греко-римської боротьби України',
     description: 'Київське представництво як столичний центр розвитку федерації.',
@@ -198,7 +198,7 @@ const regionPageData = {
     image: '../assets/images/BNY_banner.jpg',
     bannerLabel: 'Регіональний офіс',
     members: [
-      { fullName: 'Коваль Віталій Станіславович', role: 'Перший віце-президент', phone: '', email: '', bio: 'Перший віце-президент Федерації.', photo: '../assets/images/Vitaliy_Koval\'.jpg' }
+      { fullName: 'Коваль Віталій Станіславович', role: 'Перший віце-президент', phone: '', email: '', bio: 'Перший віце-президент Федерації.', photo: '../assets/images/Vitaliy_Koval.jpg' }
     ]
   },
   sumy: {
@@ -397,10 +397,242 @@ function openMemberModal(member) {
   }, { once: true });
 }
 
+function escapeRegionHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character]));
+}
+
+function regionSlugFromName(name) {
+  const value = String(name || '').toLocaleLowerCase('uk-UA');
+  const matches = [
+    ['крим', 'crimea'], ['вінницька', 'vinnytsia'], ['волинська', 'volyn'],
+    ['дніпропетровська', 'dnipropetrovsk'], ['донецька', 'donetsk'],
+    ['житомирська', 'zhytomyr'], ['закарпатська', 'zakarpattia'],
+    ['запорізька', 'zaporizhzhia'], ['івано-франківська', 'ivano_frankivsk'],
+    ['кіровоградська', 'kirovohrad'], ['луганська', 'luhansk'], ['львівська', 'lviv'],
+    ['миколаївська', 'mykolaiv'], ['одеська', 'odesa'], ['полтавська', 'poltava'],
+    ['рівненська', 'rivne'], ['сумська', 'sumy'], ['тернопільська', 'ternopil'],
+    ['харківська', 'kharkiv'], ['херсонська', 'kherson'], ['хмельницька', 'khmelnytsky'],
+    ['черкаська', 'cherkasy'], ['чернівецька', 'chernivtsi'], ['чернігівська', 'chernihiv'],
+  ];
+  if (value === 'київська фгрб') return 'kyiv_city';
+  if (value.includes('київська')) return 'kyiv_oblast';
+  return matches.find(([part]) => value.includes(part))?.[1] || 'region';
+}
+
+function normalizeRegionKey(name) {
+  return String(name || '')
+    .toLocaleLowerCase('uk-UA')
+    .replace(/област?на\s+фгрб$/i, '')
+    .replace(/\s+фгрб$/i, '')
+    .replace(/область$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function renderDatabaseRegionPage(region, regionId) {
+  const slug = regionSlugFromName(region.name) === 'region' ? regionId : regionSlugFromName(region.name);
+  const title = region.name;
+  const fallbackPhoto = '../assets/images/No-photo-m.png';
+  const presidentPhoto = region.president_photo || fallbackPhoto;
+  const clubs = Array.isArray(region.clubs_dyussh) ? region.clubs_dyussh : [];
+
+  document.title = `${title} — Федерація греко-римської боротьби України`;
+  document.getElementById('regionHeroTitle').textContent = title;
+  document.getElementById('regionName').textContent = title;
+  document.getElementById('regionHeroSubtitle').textContent = 'Регіональне представництво Федерації греко-римської боротьби України';
+  document.getElementById('regionDescription').textContent = 'Інформація про регіон, його президента, клуби та спортивну інфраструктуру.';
+
+  const regionBody = document.querySelector('.region-card__body');
+  if (regionBody) {
+    let flag = regionBody.querySelector('.region-flag');
+    if (!flag) {
+      flag = document.createElement('img');
+      flag.className = 'region-flag';
+      regionBody.prepend(flag);
+    }
+    flag.src = region.photo || fallbackPhoto;
+    flag.alt = `Прапор ${title}`;
+  }
+
+  const placeholder = document.querySelector('.region-placeholder-card');
+  if (placeholder) {
+    placeholder.className = 'region-map-card';
+    placeholder.innerHTML = `
+      <div class="placeholder-badge">Карта області</div>
+      <div class="region-map-frame" id="regionMapFrame" aria-label="Карта: ${escapeRegionHtml(title)}"></div>`;
+    loadRegionMap(document.getElementById('regionMapFrame'), slug, title);
+  }
+
+  const presidiumSection = document.querySelector('.region-presidium');
+  const presidiumList = document.getElementById('regionPresidiumList');
+  if (presidiumSection) {
+    presidiumSection.querySelector('h2').textContent = 'Президія регіону';
+    presidiumSection.querySelector('p').textContent = 'Керівництво регіонального представництва федерації.';
+  }
+  if (presidiumList) {
+    presidiumList.innerHTML = `
+      <button class="presidium-card region-president-card" type="button">
+        <img class="presidium-card__photo" src="${escapeRegionHtml(presidentPhoto)}" alt="Фото президента" />
+        <span class="presidium-card__name">${escapeRegionHtml(region.president || 'Не вказано')}</span>
+        <span class="presidium-card__role">Президент регіональної ФГРБ</span>
+      </button>`;
+    const presidentCard = presidiumList.querySelector('.region-president-card');
+    presidentCard?.addEventListener('click', () => openPresidentModal(region.president, presidentPhoto));
+  }
+
+  const federationLink = document.querySelector('.region-actions a[href*="federation"]');
+  if (federationLink) federationLink.textContent = 'До федерації';
+
+  let clubsSection = Array.from(document.querySelectorAll('.region-presidium'))
+    .find((section) => section.querySelector('h2')?.textContent.toLocaleLowerCase().includes('клуб'));
+  if (!clubsSection && presidiumSection) {
+    clubsSection = document.createElement('section');
+    clubsSection.className = 'region-presidium region-clubs-section';
+    presidiumSection.insertAdjacentElement('afterend', clubsSection);
+    clubsSection.innerHTML = '<h2></h2><p></p><div class="presidium-grid"></div>';
+  }
+  if (clubsSection) {
+    clubsSection.querySelector('h2').textContent = 'Клуби та ДЮСШ';
+    clubsSection.querySelector('p').textContent = clubs.length ? 'Клуби та спортивні школи регіону.' : 'У цьому регіоні клуби ще не додані.';
+    const grid = clubsSection.querySelector('.presidium-grid');
+    grid.innerHTML = clubs.length ? clubs.map((club, index) => `
+      <button class="presidium-card club-page-card" type="button" data-club-index="${index}">
+        <img class="club-page-card__photo" src="${escapeRegionHtml(club.photo || fallbackPhoto)}" alt="${escapeRegionHtml(club.name)}" />
+        <span class="presidium-card__name">${escapeRegionHtml(club.name)}</span>
+        ${club.city ? `<span class="presidium-card__role">${escapeRegionHtml(club.city)}</span>` : ''}
+      </button>`).join('') : '<div class="region-empty-state">Клубів та ДЮСШ ще немає.</div>';
+
+    grid.querySelectorAll('[data-club-index]').forEach((card) => {
+      card.addEventListener('click', () => openClubModal(clubs[Number(card.dataset.clubIndex)], fallbackPhoto));
+    });
+  }
+}
+
+function openPresidentModal(name, photo) {
+  const modal = document.getElementById('memberModal');
+  const overlay = document.getElementById('memberModalOverlay');
+  const close = document.getElementById('memberModalClose');
+  if (!modal || !overlay || !close) return;
+
+  const title = name || 'Президент регіону';
+  document.getElementById('memberModalTitle').textContent = title;
+  document.getElementById('memberModalRole').textContent = '';
+  document.getElementById('memberModalPhoto').src = photo;
+  document.getElementById('memberModalPhoto').alt = title;
+  document.getElementById('memberModalDetails').innerHTML = '';
+  document.getElementById('memberModalBio').textContent = '';
+
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  close.onclick = closeModal;
+  overlay.onclick = closeModal;
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  }, { once: true });
+}
+
+function openClubModal(club, fallbackPhoto) {
+  const modal = document.getElementById('memberModal');
+  const overlay = document.getElementById('memberModalOverlay');
+  const close = document.getElementById('memberModalClose');
+  if (!modal || !overlay || !close || !club) return;
+
+  const addresses = Array.isArray(club.gym_addresses) ? club.gym_addresses : [];
+  const trainers = Array.isArray(club.trainers) ? club.trainers : [];
+  const contacts = Array.isArray(club.contacts) ? club.contacts : [];
+  const list = (items, emptyLabel) => items.length
+    ? `<ul>${items.map((item) => `<li>${escapeRegionHtml(item)}</li>`).join('')}</ul>`
+    : `<p class="club-modal__empty">${emptyLabel}</p>`;
+  const trainerMarkup = trainers.length
+    ? `<div class="club-modal__trainers">${trainers.map((trainer) => `
+        <div class="club-modal__trainer">
+          <img src="${escapeRegionHtml(trainer.photo || fallbackPhoto)}" alt="${escapeRegionHtml(trainer.name)}" />
+          <span>${escapeRegionHtml(trainer.name)}</span>
+        </div>`).join('')}</div>`
+    : '<p class="club-modal__empty">Тренери ще не додані.</p>';
+
+  document.getElementById('memberModalTitle').textContent = club.name || 'Клуб';
+  document.getElementById('memberModalRole').textContent = club.city || 'ДЮСШ';
+  document.getElementById('memberModalPhoto').src = club.photo || fallbackPhoto;
+  document.getElementById('memberModalPhoto').alt = club.name || 'Фото клубу';
+  document.getElementById('memberModalDetails').innerHTML = `
+    <section class="club-modal__section"><h4>Адреси залів</h4>${list(addresses, 'Адреси ще не додані.')}</section>
+    <section class="club-modal__section"><h4>Тренери</h4>${trainerMarkup}</section>
+    <section class="club-modal__section"><h4>Контактна інформація</h4>${list(contacts, 'Контакти ще не додані.')}</section>`;
+  document.getElementById('memberModalBio').textContent = '';
+
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  close.onclick = closeModal;
+  overlay.onclick = closeModal;
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  }, { once: true });
+}
+
+async function loadRegionMap(container, slug, title) {
+  if (!container) return;
+  try {
+    const response = await fetch(`../assets/regions-svg/${slug}.svg`);
+    if (!response.ok) throw new Error('Region SVG not found');
+    const source = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
+    const sourceGroup = source.querySelector('g');
+    if (!sourceGroup) throw new Error('Region SVG has no shape');
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('region-picture');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Карта: ${title}`);
+    svg.setAttribute('viewBox', source.querySelector('svg')?.getAttribute('viewBox') || '0 0 1000 669');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.appendChild(document.importNode(sourceGroup, true));
+    container.replaceChildren(svg);
+
+    const shape = svg.querySelector('path, polygon, circle, rect, ellipse');
+    if (shape) {
+      const bounds = shape.getBBox();
+      const padding = Math.max(bounds.width, bounds.height) * 0.12;
+      svg.setAttribute('viewBox', `${bounds.x - padding} ${bounds.y - padding} ${bounds.width + padding * 2} ${bounds.height + padding * 2}`);
+    }
+  } catch (error) {
+    container.textContent = 'Карта області недоступна.';
+  }
+}
+
 function initRegionPage() {
   const slug = document.body.dataset.regionSlug || new URLSearchParams(window.location.search).get('region');
   if (!slug) return;
-  renderRegionPage(slug);
+  fetch('/api/regions')
+    .then((response) => response.ok ? response.json() : Promise.reject(new Error('Не вдалося завантажити регіон.')))
+    .then((regions) => {
+      const target = regions.find((region) => {
+        const rawName = String(region.name || '').toLocaleLowerCase('uk-UA');
+        const normalized = normalizeRegionKey(region.name);
+        if (slug === 'kyiv_city') return rawName === 'київська фгрб';
+        if (slug === 'kyiv_oblast') return normalized === 'київська';
+        return regionSlugFromName(region.name) === slug;
+      });
+      if (target) renderDatabaseRegionPage(target, slug);
+    })
+    .catch((error) => console.error(error));
 }
 
 document.addEventListener('DOMContentLoaded', initRegionPage);

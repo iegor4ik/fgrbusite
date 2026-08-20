@@ -100,25 +100,152 @@
 /* Main Grid */
 .regions-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Map Section */
 .map-wrapper {
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: #3b3b3b;
+  border: 1px solid #6f6f6f;
+  border-radius: 12px;
   padding: 1rem;
   overflow: hidden;
+  min-height: 620px;
+  max-height: 75vh;
 }
 
 .ukraine-map {
   width: 100%;
   height: auto;
   display: block;
+  min-height: 580px;
+  max-height: calc(75vh - 32px);
+  background: #6c6c6c;
+}
+
+.map-tooltip {
+  position: fixed;
+  z-index: 9999;
+  width: min(290px, calc(100vw - 2rem));
+  padding: 0.75rem;
+  background: rgba(20, 20, 20, 0.96);
+  color: #f8f8f8;
+  border-radius: 0.55rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  pointer-events: none;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  display: none;
+}
+
+.map-tooltip__header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.map-tooltip__flag {
+  width: 54px;
+  height: 36px;
+  flex: 0 0 54px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #777;
+}
+
+.map-tooltip__header strong {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.map-tooltip__president {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.55rem;
+}
+
+.map-tooltip__president-photo {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #777;
+}
+
+.map-tooltip__clubs-title {
+  margin-bottom: 0.2rem;
+}
+
+.map-tooltip__clubs {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.map-tooltip__clubs li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 32px;
+  overflow: hidden;
+}
+
+.map-tooltip__club-photo {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #777;
+}
+
+.map-tooltip__club span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-tooltip__empty {
+  color: rgba(248, 248, 248, 0.7);
+}
+
+.ukraine-map path,
+.ukraine-map polygon,
+.ukraine-map circle,
+.ukraine-map rect,
+.ukraine-map ellipse {
+  fill: #ffd500 !important;
+  stroke: rgba(255, 255, 255, 0.85) !important;
+  stroke-width: 1 !important;
+}
+
+.ukraine-map .oblast {
+  fill: #ffd500 !important;
+  stroke: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ukraine-map .oblast:hover {
+  fill: #fff28f !important;
+}
+
+.ukraine-map .oblast.active {
+  fill: #fff1a3 !important;
+  stroke: #ffffff !important;
+}
+
+.regions-note {
+  text-align: center;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #f5f5f5;
+  font-size: 1.05rem;
 }
 
 .map-legend {

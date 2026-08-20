@@ -20,6 +20,7 @@
         const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
         if (shouldBeDark) {
           document.body.classList.add('dark-theme');
+          document.documentElement.classList.add('dark-theme');
         }
       } catch (e) {}
     })();

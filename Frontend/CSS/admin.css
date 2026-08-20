@@ -344,6 +344,39 @@ body {
   color: #d9480f;
 }
 
+.compact-panel-header {
+  margin-bottom: 0.75rem;
+}
+
+.dynamic-fields {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.dynamic-field-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dynamic-field-row input {
+  min-width: 0;
+  flex: 1;
+}
+
+.dynamic-field-row .remove-field-btn {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.8rem;
+}
+
+.trainer-row {
+  flex-wrap: wrap;
+}
+
+.trainer-row .trainer-photo-input {
+  flex: 1 1 180px;
+}
+
 .dashboard-team-panel {
   background: var(--card-bg);
   border-radius: var(--radius);

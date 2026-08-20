@@ -17,6 +17,7 @@
         const shouldBeDark = saved === 'dark' || (saved === null && prefersDark);
         if (shouldBeDark) {
           document.body.classList.add('dark-theme');
+          document.documentElement.classList.add('dark-theme');
         }
       } catch (e) {}
     })();
@@ -84,8 +85,7 @@
       <div class="container">
         <h2 class="section-title">Виберіть регіон на карті</h2>
         
-        <div class="regions-grid">
-          <!-- Map -->
+        <div class="regions-grid single-column">
           <div class="map-wrapper">
             <svg class="ukraine-map" viewBox="0 0 1000 669" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Карта України">
               <title>Інтерактивна карта регіонів України</title>
@@ -102,27 +102,11 @@
               <image id="mapFallbackImage" href="assets/Ukraine_location_map.svg" xlink:href="assets/Ukraine_location_map.svg" x="0" y="0" width="1000" height="669" preserveAspectRatio="xMidYMid meet" />
               <g id="map-content"></g>
             </svg>
+            <div class="map-tooltip" id="mapTooltip" aria-hidden="true"></div>
           </div>
-
-          <!-- Panel -->
-          <div class="info-panel">
-            <div id="panelEmpty" class="panel-empty">
-              <p>👉 Натисніть область на карті</p>
-            </div>
-            <div id="panelContent" class="panel-content" style="display: none;">
-              <div class="region-header">
-                <img id="regionFlag" src="assets/images/image.png" alt="Прапор" class="region-flag">
-                <div class="region-title">
-                  <h3 id="regionName"></h3>
-                  <p id="regionCode" class="region-meta"></p>
-                </div>
-              </div>
-              <div class="members-container">
-                <h4>Склад президії</h4>
-                <div id="membersList" class="members"></div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <div class="regions-note">
+          <p>Натисніть область на карті, щоб перейти на сторінку регіону.</p>
         </div>
       </div>
     </section>
