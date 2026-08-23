@@ -2,6 +2,32 @@
 let currentSelectedRegion = null;
 let databaseRegions = [];
 
+const regionalCenterLabels = {
+  crimea: { name: 'Сімферополь', x: 645, y: 595 },
+  vinnytsia: { name: 'Вінниця', x: 370, y: 305 },
+  volyn: { name: 'Луцьк', x: 220, y: 155 },
+  dnipropetrovsk: { name: 'Дніпро', x: 700, y: 335 },
+  donetsk: { name: 'Донецьк', x: 825, y: 375 },
+  zhytomyr: { name: 'Житомир', x: 365, y: 200 },
+  zakarpattia: { name: 'Мукачево', x: 115, y: 340 },
+  zaporizhzhia: { name: 'Запоріжжя', x: 700, y: 385 },
+  ivano_frankivsk: { name: 'Івано-Франківськ', x: 165, y: 305 },
+  kyiv_city: { name: 'Київ', x: 470, y: 185 },
+  kyiv_oblast: { name: 'Київ', x: 555, y: 220 },
+  kirovohrad: { name: 'Кропивницький', x: 560, y: 340 },
+  luhansk: { name: 'Луганськ', x: 900, y: 315 },
+  mykolaiv: { name: 'Миколаїв', x: 530, y: 450 },
+  odesa: { name: 'Одеса', x: 475, y: 493 },
+  poltava: { name: 'Полтава', x: 660, y: 240 },
+  rivne: { name: 'Рівне', x: 265, y: 170 },
+  sumy: { name: 'Суми', x: 695, y: 170 },
+  ternopil: { name: 'Тернопіль', x: 220, y: 250 },
+  kharkiv: { name: 'Харків', x: 755, y: 220 },
+  kherson: { name: 'Херсон', x: 560, y: 480 },
+  khmelnytsky: { name: 'Хмельницький', x: 285, y: 265 },
+  cherkasy: { name: 'Черкаси', x: 525, y: 265 },
+};
+
 const mapSvg = document.querySelector('.ukraine-map');
 const mapTooltip = document.getElementById('mapTooltip');
 
@@ -117,6 +143,39 @@ async function loadMapSvg() {
       shape.style.pointerEvents = 'all';
     });
   });
+
+  renderRegionalCenterLabels();
+}
+
+function renderRegionalCenterLabels() {
+  const labelLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  labelLayer.classList.add('regional-center-labels');
+  labelLayer.setAttribute('aria-hidden', 'true');
+  const renderedCities = new Set();
+
+  Object.entries(regionalCenterLabels).forEach(([regionId, city]) => {
+    if (!Object.prototype.hasOwnProperty.call(regionsData, regionId)) return;
+    if (renderedCities.has(city.name)) return;
+    renderedCities.add(city.name);
+
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    marker.classList.add('regional-center-marker');
+    marker.setAttribute('cx', city.x);
+    marker.setAttribute('cy', city.y);
+    marker.setAttribute('r', '4');
+    marker.style.setProperty('fill', '#198754', 'important');
+    marker.style.setProperty('stroke', '#ffffff', 'important');
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.classList.add('regional-center-label');
+    label.setAttribute('x', city.x + 8);
+    label.setAttribute('y', city.y + 4);
+    label.textContent = city.name;
+
+    labelLayer.append(marker, label);
+  });
+
+  mapSvg.appendChild(labelLayer);
 }
 
 function loadSvgWithXhr(url) {
