@@ -213,7 +213,7 @@ const presidiumMembers = [
     level: 3,
     role: 'Член Президії',
     name: 'Калашников Андрій Миколайович',
-    image: 'assets/images/Kalashnikov.webp',
+    image: 'assets/images/Калашніков.jpeg',
     dob: '1964-11-20',
     city: 'Київ',
     appointed: '2023',

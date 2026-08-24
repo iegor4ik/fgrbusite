@@ -4,8 +4,8 @@
 
 const staffMembers = [
 	{ id: 'staff-1', role: 'Державний тренер', name: 'Каплуновський Андрій Олександрович', image: 'assets/images/Kaplunovski.webp', city: '', description: 'Державний тренер національної збірної.' },
-	{ id: 'staff-2', role: 'Провідний тренер', name: 'Костенко Іван Павлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
-	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/No-photo-m.png', city: '', description: 'Провідний тренер збірної.' },
+	{ id: 'staff-2', role: 'Провідний тренер', name: 'Костенко Іван Павлович', image: 'assets/images/Костенко.jpeg', city: '', description: 'Провідний тренер збірної.' },
+	{ id: 'staff-3', role: 'Провідний тренер', name: 'Волошин Віталій Михайлович', image: 'assets/images/Волошин.jpg', city: '', description: 'Провідний тренер збірної.' },
 	{ id: 'staff-4', role: 'Начальник команди', name: 'Полякова Тетяна Вікторівна', image: 'assets/images/Полякова Тетяна.jpeg', city: '', description: 'Начальник команди.' },
 	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/Мегей Вікторія.jpeg', city: '', description: 'Начальник команди.' },
 	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/Melshkho.webp', city: '', description: 'Тренер-лікар.' },
