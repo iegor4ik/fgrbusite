@@ -4,7 +4,8 @@ let databaseRegions = [];
 
 const regionalCenterLabels = {
   crimea: { name: 'Сімферополь', x: 645, y: 595 },
-  vinnytsia: { name: 'Вінниця', x: 370, y: 305 },
+  vinnytsia_city: { name: 'Вінниця', x: 370, y: 305 },
+  zhmerynka: { name: 'Жмеринка', x: 355, y: 330 },
   volyn: { name: 'Луцьк', x: 220, y: 155 },
   dnipropetrovsk: { name: 'Дніпро', x: 700, y: 335 },
   donetsk: { name: 'Донецьк', x: 825, y: 375 },
@@ -151,12 +152,12 @@ function renderRegionalCenterLabels() {
   const labelLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   labelLayer.classList.add('regional-center-labels');
   labelLayer.setAttribute('aria-hidden', 'true');
-  const renderedCities = new Set();
-
   Object.entries(regionalCenterLabels).forEach(([regionId, city]) => {
     if (!Object.prototype.hasOwnProperty.call(regionsData, regionId)) return;
-    if (renderedCities.has(city.name)) return;
-    renderedCities.add(city.name);
+
+    const isInteractiveCity = regionId === 'vinnytsia_city' || regionId === 'zhmerynka';
+    const markerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    markerGroup.classList.add('regional-center', isInteractiveCity ? 'regional-center--interactive' : 'regional-center--static');
 
     const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     marker.classList.add('regional-center-marker');
@@ -172,7 +173,24 @@ function renderRegionalCenterLabels() {
     label.setAttribute('y', city.y + 4);
     label.textContent = city.name;
 
-    labelLayer.append(marker, label);
+    markerGroup.append(marker, label);
+    if (isInteractiveCity) {
+      markerGroup.setAttribute('role', 'button');
+      markerGroup.setAttribute('tabindex', '0');
+      markerGroup.setAttribute('aria-label', `Відкрити ${getRegionName(regionId)}`);
+      markerGroup.style.pointerEvents = 'all';
+      markerGroup.addEventListener('click', () => selectRegion(regionId));
+      markerGroup.addEventListener('pointerenter', (event) => showRegionTooltip(regionId, event));
+      markerGroup.addEventListener('pointermove', updateRegionTooltipPosition);
+      markerGroup.addEventListener('pointerleave', hideRegionTooltip);
+      markerGroup.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectRegion(regionId);
+        }
+      });
+    }
+    labelLayer.append(markerGroup);
   });
 
   mapSvg.appendChild(labelLayer);
@@ -490,6 +508,8 @@ function getDatabaseRegion(regionId) {
   const aliases = {
     kyiv_city: 'київська фгрб',
     kyiv_oblast: 'київська областна фгрб',
+    vinnytsia_city: 'вінниця фгрб',
+    zhmerynka: 'фгрб м. жмеринка',
   };
   const exactName = aliases[regionId];
   if (exactName) {

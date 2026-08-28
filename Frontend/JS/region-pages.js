@@ -405,6 +405,8 @@ function escapeRegionHtml(value) {
 
 function regionSlugFromName(name) {
   const value = String(name || '').toLocaleLowerCase('uk-UA');
+  if (value.includes('жмеринка')) return 'zhmerynka';
+  if (value === 'вінниця фгрб') return 'vinnytsia_city';
   const matches = [
     ['крим', 'crimea'], ['вінницька', 'vinnytsia'], ['волинська', 'volyn'],
     ['дніпропетровська', 'dnipropetrovsk'], ['донецька', 'donetsk'],

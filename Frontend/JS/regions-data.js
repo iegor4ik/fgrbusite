@@ -65,6 +65,50 @@ const regionsData = {
   },
 
   // ========================================================================
+  // м. Вінниця
+  // ========================================================================
+  vinnytsia_city: {
+    id: 'vinnytsia_city',
+    name: 'Вінниця ФГРБ',
+    nameShort: 'Вінниця',
+    code: 'UA-05-CITY',
+    flag: 'assets/flags/Oblast/Vinnytsa_City.png',
+    presidium: [
+      {
+        id: 'vinnytsia-city-president',
+        fullName: 'Заєць Олександр Іванович',
+        position: 'Президент',
+        phone: '',
+        email: '',
+        bio: '',
+        photo: 'assets/images/No-photo-m.png',
+      },
+    ],
+  },
+
+  // ========================================================================
+  // м. Жмеринка
+  // ========================================================================
+  zhmerynka: {
+    id: 'zhmerynka',
+    name: 'ФГРБ м. Жмеринка',
+    nameShort: 'Жмеринка',
+    code: 'UA-05-ZHMER',
+    flag: 'assets/flags/Oblast/Zmerynka_City.png',
+    presidium: [
+      {
+        id: 'zhmerynka-president',
+        fullName: 'Стемповський Андрій Миколайович',
+        position: 'Президент',
+        phone: '',
+        email: '',
+        bio: '',
+        photo: 'assets/images/No-photo-m.png',
+      },
+    ],
+  },
+
+  // ========================================================================
   // Волинська область
   // ========================================================================
   volyn: {
@@ -340,12 +384,12 @@ const regionsData = {
     name: 'Львівська область',
     nameShort: 'Львів',
     code: 'UA-46',
-    flag: 'assets/images/No-photo-m.png',
+    flag: 'assets/flags/Oblast/Lviv.png',
     presidium: [
       {
         id: 'lviv-delegate-tbd',
-        fullName: 'Невідомо',
-        position: 'Делегат',
+        fullName: 'Путій Євгеній Володимирович',
+        position: 'Президент',
         phone: '',
         email: '',
         bio: '',

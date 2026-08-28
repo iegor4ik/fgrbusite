@@ -49,9 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     docs.forEach((doc) => {
       const card = document.createElement('article');
       card.className = 'dashboard-card';
+      const displayCategory = doc.category === 'інше' ? 'федерація' : doc.category;
       card.innerHTML = `
         <h3>${escapeHtml(doc.title)}</h3>
-        <p style="margin:0.25rem 0">Категорія: ${escapeHtml(doc.category)}</p>
+        <p style="margin:0.25rem 0">Категорія: ${escapeHtml(displayCategory)}</p>
         <p style="margin:0.25rem 0">Файлів: ${doc.files.length}</p>
         <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
           <button class="edit-btn">Редагувати</button>

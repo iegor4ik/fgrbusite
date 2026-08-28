@@ -1,10 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const documentIndex = document.querySelector('[data-document-index]');
+  if (documentIndex) {
+    documentIndex.innerHTML = `
+      <div class="container">
+        <section class="news-collection">
+          <h2 class="section-header">Документи</h2>
+          <p>Оберіть категорію документів.</p>
+          <div class="documents-choice-grid">
+            <a class="documents-choice-card" href="documents_federation.html"><div><h3>Федерація</h3><p>Документи федерації та інші матеріали.</p></div></a>
+            <a class="documents-choice-card" href="documents_mistry.html"><div><h3>Міністерство</h3><p>Документи міністерства.</p></div></a>
+          </div>
+        </section>
+      </div>`;
+    return;
+  }
   const container = document.getElementById('publicDocuments');
   const searchInput = document.getElementById('documentSearch');
   const categoriesEl = document.getElementById('documentCategories');
   let allDocuments = [];
-  let activeCategory = 'Усе';
   let searchTerm = '';
+  const documentScope = document.body.dataset.documentScope;
 
   async function load() {
     container.innerHTML = '<p>Завантаження...</p>';
@@ -20,7 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function getFilteredDocuments() {
     const search = searchTerm.trim().toLowerCase();
     return allDocuments.filter((doc) => {
-      const matchesCategory = activeCategory === 'Усе' || doc.category === activeCategory;
+      const matchesCategory = documentScope === 'federation'
+        ? ['федерація', 'інше'].includes(doc.category)
+        : doc.category === 'міністерство';
       const matchesSearch = !search || doc.title.toLowerCase().includes(search);
       return matchesCategory && matchesSearch;
     });
@@ -48,11 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('click', () => onCardClick(doc));
       container.appendChild(card);
     });
-  }
-
-  function updateActiveCategory(button) {
-    categoriesEl.querySelectorAll('.category-btn').forEach((btn) => btn.classList.remove('active'));
-    button.classList.add('active');
   }
 
   function escapeHtml(str) {
@@ -86,16 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchInput) {
     searchInput.addEventListener('input', (event) => {
       searchTerm = event.target.value || '';
-      render(getFilteredDocuments());
-    });
-  }
-
-  if (categoriesEl) {
-    categoriesEl.addEventListener('click', (event) => {
-      const button = event.target.closest('.category-btn');
-      if (!button) return;
-      activeCategory = button.dataset.category || 'Усе';
-      updateActiveCategory(button);
       render(getFilteredDocuments());
     });
   }

@@ -261,6 +261,10 @@ body {
   background: #efefef;
 }
 
+.region-president-card .presidium-card__photo {
+  border-radius: 22px;
+}
+
 .presidium-card__name {
   font-weight: 700;
   color: #111827;
@@ -542,6 +546,12 @@ body {
 
   .member-modal__content {
     grid-template-columns: 1fr;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .member-modal__dialog {
+    overflow-y: auto;
   }
 
   .member-modal__photo {
@@ -555,5 +565,6 @@ body {
 
   .member-modal__body {
     padding: 1rem;
+    overflow: visible;
   }
 }

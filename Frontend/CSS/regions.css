@@ -174,7 +174,7 @@
   height: 38px;
   flex: 0 0 38px;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 10px;
   background: #777;
 }
 
@@ -240,6 +240,15 @@
 
 .regional-center-labels {
   pointer-events: none;
+}
+
+.regional-center--static {
+  pointer-events: none;
+}
+
+.regional-center--interactive {
+  cursor: pointer;
+  pointer-events: all;
 }
 
 .regional-center-marker {

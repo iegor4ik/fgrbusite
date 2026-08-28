@@ -704,6 +704,8 @@ app.post('/api/gallery/albums/:id/photos', upload.array('photos', 50), async (re
 });
 
 // Documents API
+const DOCUMENT_CATEGORIES = new Set(['федерація', 'міністерство', 'інше']);
+
 app.get('/api/documents', async (req, res) => {
   try {
     const result = await pool.query(
@@ -745,6 +747,7 @@ app.post('/api/documents', uploadDocs.array('files', 20), async (req, res) => {
   try {
     const { title, category } = req.body;
     if (!title || !category) return res.status(400).json({ message: 'Заповніть заголовок та категорію.' });
+    if (!DOCUMENT_CATEGORIES.has(category)) return res.status(400).json({ message: 'Оберіть коректну категорію документа.' });
     const files = req.files || [];
     if (!files.length) return res.status(400).json({ message: 'Додайте хоча б один PDF файл.' });
 
@@ -775,6 +778,7 @@ app.put('/api/documents/:id', uploadDocs.array('files', 20), async (req, res) =>
 
     const safeTitle = title?.trim() ? sanitizeText(title) : current.rows[0].title;
     const safeCategory = category?.trim() ? sanitizeText(category) : current.rows[0].category;
+    if (!DOCUMENT_CATEGORIES.has(safeCategory)) return res.status(400).json({ message: 'Оберіть коректну категорію документа.' });
     await pool.query('UPDATE documents SET title = $1, category = $2, updated_at = now() WHERE id = $3', [safeTitle, safeCategory, id]);
 
     // Handle deletion of individual files (expects JSON array or comma-separated ids)
