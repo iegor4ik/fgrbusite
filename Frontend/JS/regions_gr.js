@@ -26,6 +26,9 @@ const regionalCenterLabels = {
   kherson: { name: 'Херсон', x: 560, y: 480 },
   khmelnytsky: { name: 'Хмельницький', x: 285, y: 265 },
   cherkasy: { name: 'Черкаси', x: 525, y: 265 },
+  lviv: { name: 'Львів', x: 140, y: 230 },
+  chernihiv: { name: 'Чернігів', x: 490, y: 120 },
+  chernivtsi: { name: 'Чернівці', x: 225, y: 360 },
 };
 
 const mapSvg = document.querySelector('.ukraine-map');
