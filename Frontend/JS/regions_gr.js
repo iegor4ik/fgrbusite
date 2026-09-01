@@ -14,7 +14,6 @@ const regionalCenterLabels = {
   zaporizhzhia: { name: 'Запоріжжя', x: 700, y: 385 },
   ivano_frankivsk: { name: 'Івано-Франківськ', x: 165, y: 305 },
   kyiv_city: { name: 'Київ', x: 470, y: 185 },
-  kyiv_oblast: { name: 'Київ', x: 555, y: 220 },
   kirovohrad: { name: 'Кропивницький', x: 560, y: 340 },
   luhansk: { name: 'Луганськ', x: 900, y: 315 },
   mykolaiv: { name: 'Миколаїв', x: 530, y: 450 },
