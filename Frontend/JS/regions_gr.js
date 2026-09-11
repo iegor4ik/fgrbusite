@@ -5,7 +5,6 @@ let databaseRegions = [];
 const regionalCenterLabels = {
   crimea: { name: 'Сімферополь', x: 645, y: 595 },
   vinnytsia_city: { name: 'Вінниця', x: 370, y: 305 },
-  zhmerynka: { name: 'Жмеринка', x: 355, y: 330 },
   volyn: { name: 'Луцьк', x: 220, y: 155 },
   dnipropetrovsk: { name: 'Дніпро', x: 700, y: 335 },
   donetsk: { name: 'Донецьк', x: 825, y: 375 },

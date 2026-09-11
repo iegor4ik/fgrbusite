@@ -488,7 +488,9 @@ function renderDatabaseRegionPage(region, regionId) {
   if (federationLink) federationLink.textContent = 'До федерації';
 
   let clubsSection = Array.from(document.querySelectorAll('.region-presidium'))
-    .find((section) => section.querySelector('h2')?.textContent.toLocaleLowerCase().includes('клуб'));
+    .find((section) => section.classList.contains('region-clubs-section')
+      || section.querySelector('h2')?.textContent.toLocaleLowerCase().includes('клуб')
+      || (section !== presidiumSection && !section.querySelector('#regionPresidiumList')));
   if (!clubsSection && presidiumSection) {
     clubsSection = document.createElement('section');
     clubsSection.className = 'region-presidium region-clubs-section';
