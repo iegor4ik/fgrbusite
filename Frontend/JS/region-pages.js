@@ -433,9 +433,24 @@ function normalizeRegionKey(name) {
     .trim();
 }
 
+function getRegionDisplayName(name, regionId) {
+  const specialNames = {
+    kyiv_city: 'м. Київ',
+    kyiv_oblast: 'Київська область',
+    vinnytsia_city: 'м. Вінниця',
+    zhmerynka: 'м. Жмеринка',
+  };
+  if (specialNames[regionId]) return specialNames[regionId];
+
+  return String(name || '')
+    .replace(/\s+ФГРБ$/iu, '')
+    .replace(/областна$/iu, 'область')
+    .trim();
+}
+
 function renderDatabaseRegionPage(region, regionId) {
   const slug = regionSlugFromName(region.name) === 'region' ? regionId : regionSlugFromName(region.name);
-  const title = region.name;
+  const title = getRegionDisplayName(region.name, regionId);
   const fallbackPhoto = '../assets/images/No-photo-m.png';
   const presidentPhoto = region.president_photo || fallbackPhoto;
   const clubs = Array.isArray(region.clubs_dyussh) ? region.clubs_dyussh : [];
@@ -478,7 +493,6 @@ function renderDatabaseRegionPage(region, regionId) {
       <button class="presidium-card region-president-card" type="button">
         <img class="presidium-card__photo" src="${escapeRegionHtml(presidentPhoto)}" alt="Фото президента" />
         <span class="presidium-card__name">${escapeRegionHtml(region.president || 'Не вказано')}</span>
-        <span class="presidium-card__role">Президент регіональної ФГРБ</span>
       </button>`;
     const presidentCard = presidiumList.querySelector('.region-president-card');
     presidentCard?.addEventListener('click', () => openPresidentModal(region.president, presidentPhoto));
@@ -625,6 +639,8 @@ async function loadRegionMap(container, slug, title) {
 function initRegionPage() {
   const slug = document.body.dataset.regionSlug || new URLSearchParams(window.location.search).get('region');
   if (!slug) return;
+  const regionBadge = document.getElementById('regionBadge');
+  if (regionBadge) regionBadge.textContent = 'Боротьба в регіонах';
   fetch('/api/regions')
     .then((response) => response.ok ? response.json() : Promise.reject(new Error('Не вдалося завантажити регіон.')))
     .then((regions) => {
