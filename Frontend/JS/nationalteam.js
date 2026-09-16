@@ -10,7 +10,7 @@ const staffMembers = [
 	{ id: 'staff-5', role: 'Начальник команди', name: 'Мегей Вікторія Леонідівна', image: 'assets/images/Мегей Вікторія.jpeg', city: '', description: 'Начальник команди.' },
 	{ id: 'staff-6', role: 'Тренер - лікар', name: 'Мелешко Олександр Вікторович', image: 'assets/images/Melshkho.webp', city: '', description: 'Тренер-лікар.' },
 	{ id: 'staff-7', role: 'Тренер - масажист', name: 'Глухарев Ігор Владиславович', image: 'assets/images/Glyharev.webp', city: '', description: 'Тренер-масажист.' },
-	{ id: 'staff-8', role: 'Тренер - психолог', name: 'Курилюк Сергій Іванович', image: 'assets/images/No-photo-m.png', city: '', description: 'Тренер-психолог.' },
+	{ id: 'staff-8', role: 'Тренер - психолог', name: 'Курилюк Сергій Іванович', image: 'assets/images/Психолог, Курилюк.JPG.jpeg', city: '', description: 'Тренер-психолог.' },
 ];
 
 // ---------------------------------------------------------------------------
