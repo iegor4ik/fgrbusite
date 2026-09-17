@@ -498,8 +498,41 @@ function renderDatabaseRegionPage(region, regionId) {
     presidentCard?.addEventListener('click', () => openPresidentModal(region.president, presidentPhoto));
   }
 
-  const federationLink = document.querySelector('.region-actions a[href*="federation"]');
-  if (federationLink) federationLink.textContent = 'До федерації';
+  const actions = document.querySelector('.region-actions');
+  if (actions) {
+    let federationLink = actions.querySelector('.region-website-link');
+    let websiteHint = actions.querySelector('.region-website-hint');
+    if (!federationLink) {
+      federationLink = actions.querySelector('a[href*="federation"]') || document.createElement('a');
+      federationLink.classList.add('region-website-link');
+    }
+    if (!websiteHint) {
+      websiteHint = document.createElement('p');
+      websiteHint.className = 'region-website-hint';
+      actions.prepend(websiteHint);
+    }
+    federationLink.textContent = 'Сайт федерації';
+    if (region.website) {
+      federationLink.href = region.website;
+      federationLink.target = '_blank';
+      federationLink.rel = 'noopener noreferrer';
+      federationLink.onclick = null;
+      federationLink.hidden = false;
+      websiteHint.hidden = true;
+    } else {
+      federationLink.href = '#';
+      federationLink.removeAttribute('target');
+      federationLink.removeAttribute('rel');
+      federationLink.onclick = (event) => {
+        event.preventDefault();
+        window.alert('Сайт федерації для цього регіону ще не вказано.');
+      };
+      federationLink.hidden = false;
+      websiteHint.hidden = true;
+    }
+    const mapLink = actions.querySelector('a[href*="regions_gr"]');
+    if (mapLink) actions.append(federationLink, mapLink);
+  }
 
   let clubsSection = Array.from(document.querySelectorAll('.region-presidium'))
     .find((section) => section.classList.contains('region-clubs-section')

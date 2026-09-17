@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS regions (
   photo TEXT NOT NULL,
   president TEXT,
   president_photo TEXT,
+  website TEXT,
   clubs_dyussh JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()

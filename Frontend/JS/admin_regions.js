@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTitle.textContent = region ? 'Редагувати регіон' : 'Додати регіон';
     form.name.value = region?.name || '';
     form.president.value = region?.president || '';
+    form.website.value = region?.website || '';
     if (region) {
       setPreview(regionPreview, region.photo);
       setPreview(presidentPreview, region.president_photo);
@@ -126,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = new FormData();
     data.append('name', form.name.value.trim());
     data.append('president', form.president.value.trim());
+    data.append('website', form.website.value.trim());
     if (form.photo.files?.[0]) data.append('photo', form.photo.files[0]);
     if (form.president_photo.files?.[0]) data.append('president_photo', form.president_photo.files[0]);
     if (form.remove_president_photo.checked) data.append('remove_president_photo', 'true');

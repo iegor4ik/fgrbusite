@@ -343,10 +343,12 @@ async function ensureSchema() {
     photo TEXT NOT NULL,
     president TEXT,
     president_photo TEXT,
+    website TEXT,
     clubs_dyussh JSONB NOT NULL DEFAULT '[]'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
+  await pool.query('ALTER TABLE regions ADD COLUMN IF NOT EXISTS website TEXT;');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS clubs_dyussh (
     id SERIAL PRIMARY KEY,
@@ -396,6 +398,7 @@ function buildRegionRow(row) {
     photo: row.photo,
     president: row.president,
     president_photo: row.president_photo,
+    website: row.website,
     clubs_dyussh: row.clubs_dyussh || [],
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -839,7 +842,7 @@ app.delete('/api/documents/:id', async (req, res) => {
 app.get('/api/regions', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.name, r.photo, r.president, r.president_photo,
+      `SELECT r.id, r.name, r.photo, r.president, r.president_photo, r.website,
         COALESCE(
           json_agg(json_build_object(
             'id', c.id,
@@ -869,7 +872,7 @@ app.get('/api/regions', async (req, res) => {
 app.get('/api/regions/:id', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.name, r.photo, r.president, r.president_photo,
+      `SELECT r.id, r.name, r.photo, r.president, r.president_photo, r.website,
         COALESCE(
           json_agg(json_build_object(
             'id', c.id,
@@ -907,9 +910,13 @@ app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
     const presidentPhoto = req.files?.president_photo?.[0]
       ? `/uploads/regions/${req.files.president_photo[0].filename}`
       : null;
+    const website = req.body.website?.trim() || null;
+    if (website && !/^https?:\/\//i.test(website)) {
+      return res.status(400).json({ message: 'Посилання на сайт має починатися з http:// або https://.' });
+    }
     const result = await pool.query(
-      'INSERT INTO regions (name, photo, president, president_photo) VALUES ($1, $2, $3, $4) RETURNING id, name, photo, president, president_photo, clubs_dyussh, created_at, updated_at',
-      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto]
+      'INSERT INTO regions (name, photo, president, president_photo, website) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, photo, president, president_photo, website, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website]
     );
     res.status(201).json(buildRegionRow(result.rows[0]));
   } catch (error) {
@@ -929,10 +936,14 @@ app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { nam
     const newPresidentPhoto = req.files?.president_photo?.[0];
     const photo = newPhoto ? `/uploads/regions/${newPhoto.filename}` : current.photo;
     let presidentPhoto = newPresidentPhoto ? `/uploads/regions/${newPresidentPhoto.filename}` : current.president_photo;
+    const website = req.body.website?.trim() || null;
+    if (website && !/^https?:\/\//i.test(website)) {
+      return res.status(400).json({ message: 'Посилання на сайт має починатися з http:// або https://.' });
+    }
     if (req.body.remove_president_photo === 'true') presidentPhoto = null;
     const result = await pool.query(
-      'UPDATE regions SET name = $1, photo = $2, president = $3, president_photo = $4, updated_at = now() WHERE id = $5 RETURNING id, name, photo, president, president_photo, clubs_dyussh, created_at, updated_at',
-      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, req.params.id]
+      'UPDATE regions SET name = $1, photo = $2, president = $3, president_photo = $4, website = $5, updated_at = now() WHERE id = $6 RETURNING id, name, photo, president, president_photo, website, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website, req.params.id]
     );
     if (newPhoto && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
     if ((newPresidentPhoto || req.body.remove_president_photo === 'true') && current.president_photo) fs.unlink(resolveUploadPath(current.president_photo), () => {});
