@@ -2536,9 +2536,10 @@ button {
 /* Visual calendar layout (months grid) */
 .visual-calendar-panel {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
   gap: 1.5rem;
   align-items: start;
+  justify-items: center;
   padding: 1.25rem;
   border-radius: 20px;
   background: #071a31;
@@ -2548,6 +2549,9 @@ button {
 
 /* Month card - large rounded panels that contain events */
 .calendar-month-card {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -2575,6 +2579,7 @@ button {
 
 .calendar-month-events {
   display: grid;
+  min-width: 0;
   gap: 1.1rem;
   margin: 0;
   padding-bottom: 0.25rem;
@@ -2582,6 +2587,11 @@ button {
 
 /* Individual event inside month card — mimic the screenshot 66 style */
 .calendar-month-event {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 1.15rem 1.25rem;
   border-radius: 16px;
   border: 1px solid #d8e1e8;
@@ -2593,6 +2603,33 @@ button {
   margin: 0;
 }
 
+.calendar-month-event.is-cancelled::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: rgba(245, 247, 248, 0.3);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+.calendar-event-cancelled-label {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  color: rgba(209, 31, 47, 0.88);
+  font-size: clamp(1.05rem, 2vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-28deg) scale(0.86);
+  pointer-events: none;
+}
+
 .calendar-month-event:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 8, 24, 0.28);
@@ -2602,16 +2639,20 @@ button {
 
 .event-meta {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
 }
 
 .event-date {
+  min-width: 0;
   color: #38536c;
   font-size: 0.88rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .event-badge {
@@ -2658,6 +2699,8 @@ button {
   font-size: 1rem;
   color: #102943;
   line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .calendar-month-event p {
@@ -2665,6 +2708,8 @@ button {
   color: #52697d;
   font-size: 0.92rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .calendar-event-modal {

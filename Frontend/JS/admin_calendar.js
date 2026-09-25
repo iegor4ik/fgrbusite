@@ -39,6 +39,7 @@ const eventRegulationInfo = document.getElementById('eventRegulationInfo');
 const removeRegulationLabel = document.getElementById('removeRegulationLabel');
 const removeRegulationCheckbox = document.getElementById('removeRegulationPdf');
 const eventDescriptionInput = document.getElementById('eventDescription');
+const eventCancelledInput = document.getElementById('eventCancelled');
 const cancelEventBtn = document.getElementById('cancelEventBtn');
 const deleteEventBtn = document.getElementById('deleteEventBtn');
 
@@ -166,6 +167,7 @@ function resetEventForm() {
   removeRegulationCheckbox.checked = false;
   removeRegulationLabel.classList.add('hidden');
   eventDescriptionInput.value = '';
+  eventCancelledInput.checked = false;
   deleteEventBtn.classList.add('hidden');
   editingCalendarYearId = null;
 }
@@ -238,6 +240,7 @@ function setEventFormValues(event = null) {
   }
   editingCalendarYearId = event.calendar_year_id || null;
   eventDescriptionInput.value = event.description || '';
+  eventCancelledInput.checked = Boolean(event.cancelled);
   deleteEventBtn.classList.remove('hidden');
 }
 
@@ -702,6 +705,7 @@ async function saveCalendarEvent(event) {
   formData.append('location', location);
   formData.append('results_url', resultsUrl);
   formData.append('description', description);
+  formData.append('cancelled', String(eventCancelledInput.checked));
   formData.append('calendar_year_id', calendarYearId);
   if (eventRegulationPdfInput.files[0]) {
     formData.append('regulation_pdf', eventRegulationPdfInput.files[0]);

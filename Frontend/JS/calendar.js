@@ -277,7 +277,8 @@ function renderVisualCalendar(months) {
           visualCalendarEvents.set(eventId, event);
           const typeValue = event.event_type || event.type || '';
           return `
-            <article class="calendar-month-event" data-event-id="${eventId}" tabindex="0">
+            <article class="calendar-month-event${event.cancelled ? ' is-cancelled' : ''}" data-event-id="${eventId}" tabindex="0">
+              ${event.cancelled ? '<span class="calendar-event-cancelled-label" aria-hidden="true">Скасовано</span>' : ''}
               <div class="event-meta">
                 <span class="event-date">${formatDateWithoutYear(event.dates)}</span>
                 <span class="event-badge ${getEventTypeClass(typeValue)}" aria-label="${getEventTypeLabel(typeValue)}">${getEventTypeLabel(typeValue)}</span>

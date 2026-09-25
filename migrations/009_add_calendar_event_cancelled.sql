@@ -1,0 +1,2 @@
+ALTER TABLE calendar_events
+  ADD COLUMN IF NOT EXISTS cancelled BOOLEAN NOT NULL DEFAULT false;

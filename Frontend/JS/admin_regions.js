@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const newRegionBtn = document.getElementById('newRegionBtn');
   const cancelBtn = document.getElementById('cancelRegionBtn');
   const regionPreview = document.getElementById('regionPreview');
+  const bannerPreview = document.getElementById('bannerPreview');
   const presidentPreview = document.getElementById('presidentPreview');
   const photoHint = document.getElementById('photoHint');
   const removePresidentPhotoLabel = document.getElementById('removePresidentPhotoLabel');
+  const removeBannerLabel = document.getElementById('removeBannerLabel');
   let editingId = null;
 
   function escapeHtml(value) {
@@ -31,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     editingId = null;
     setPreview(regionPreview, null);
+    setPreview(bannerPreview, null);
     setPreview(presidentPreview, null);
     photoHint.textContent = 'Обов’язково для нового регіону.';
     removePresidentPhotoLabel.hidden = true;
+    removeBannerLabel.hidden = true;
   }
 
   function closeModal() {
@@ -51,9 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
     form.website.value = region?.website || '';
     if (region) {
       setPreview(regionPreview, region.photo);
+      setPreview(bannerPreview, region.banner);
       setPreview(presidentPreview, region.president_photo);
       photoHint.textContent = 'Залиште порожнім, щоб зберегти поточне фото.';
       removePresidentPhotoLabel.hidden = !region.president_photo;
+      removeBannerLabel.hidden = !region.banner;
     }
     modal.hidden = false;
     modal.classList.add('active');
@@ -111,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   form.photo.addEventListener('change', () => showLocalPreview(form.photo, regionPreview));
+  form.banner.addEventListener('change', () => showLocalPreview(form.banner, bannerPreview));
   form.president_photo.addEventListener('change', () => showLocalPreview(form.president_photo, presidentPreview));
   newRegionBtn.addEventListener('click', () => openModal());
   cancelBtn.addEventListener('click', closeModal);
@@ -129,8 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
     data.append('president', form.president.value.trim());
     data.append('website', form.website.value.trim());
     if (form.photo.files?.[0]) data.append('photo', form.photo.files[0]);
+    if (form.banner.files?.[0]) data.append('banner', form.banner.files[0]);
     if (form.president_photo.files?.[0]) data.append('president_photo', form.president_photo.files[0]);
     if (form.remove_president_photo.checked) data.append('remove_president_photo', 'true');
+    if (form.remove_banner.checked) data.append('remove_banner', 'true');
     const url = editingId ? `/api/regions/${editingId}` : '/api/regions';
     const response = await fetch(url, { method: editingId ? 'PUT' : 'POST', body: data });
     if (!response.ok) {

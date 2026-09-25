@@ -234,6 +234,7 @@ function buildCalendarEventRow(row) {
     regulation_pdf: row.regulation_pdf,
     results_url: row.results_url,
     description: row.description,
+    cancelled: Boolean(row.cancelled),
     dates,
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -305,6 +306,7 @@ async function ensureSchema() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
+  await pool.query('ALTER TABLE calendar_events ADD COLUMN IF NOT EXISTS cancelled BOOLEAN NOT NULL DEFAULT false;');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS competition_weight_categories (
     id SERIAL PRIMARY KEY,
@@ -333,6 +335,7 @@ async function ensureSchema() {
     regulation_pdf TEXT,
     results_url TEXT,
     description TEXT,
+    cancelled BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
@@ -341,6 +344,7 @@ async function ensureSchema() {
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     photo TEXT NOT NULL,
+    banner TEXT,
     president TEXT,
     president_photo TEXT,
     website TEXT,
@@ -348,6 +352,7 @@ async function ensureSchema() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
+  await pool.query('ALTER TABLE regions ADD COLUMN IF NOT EXISTS banner TEXT;');
   await pool.query('ALTER TABLE regions ADD COLUMN IF NOT EXISTS website TEXT;');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS clubs_dyussh (
@@ -396,6 +401,7 @@ function buildRegionRow(row) {
     id: row.id,
     name: row.name,
     photo: row.photo,
+    banner: row.banner,
     president: row.president,
     president_photo: row.president_photo,
     website: row.website,
@@ -842,7 +848,7 @@ app.delete('/api/documents/:id', async (req, res) => {
 app.get('/api/regions', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.name, r.photo, r.president, r.president_photo, r.website,
+      `SELECT r.id, r.name, r.photo, r.banner, r.president, r.president_photo, r.website,
         COALESCE(
           json_agg(json_build_object(
             'id', c.id,
@@ -872,7 +878,7 @@ app.get('/api/regions', async (req, res) => {
 app.get('/api/regions/:id', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.name, r.photo, r.president, r.president_photo, r.website,
+      `SELECT r.id, r.name, r.photo, r.banner, r.president, r.president_photo, r.website,
         COALESCE(
           json_agg(json_build_object(
             'id', c.id,
@@ -901,12 +907,15 @@ app.get('/api/regions/:id', async (req, res) => {
   }
 });
 
-app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
+app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'banner', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
   try {
     const name = req.body.name?.trim();
     const photoFile = req.files?.photo?.[0];
     if (!name || !photoFile) return res.status(400).json({ message: 'Вкажіть назву регіону та додайте фото.' });
     const photo = `/uploads/regions/${photoFile.filename}`;
+    const banner = req.files?.banner?.[0]
+      ? `/uploads/regions/${req.files.banner[0].filename}`
+      : null;
     const presidentPhoto = req.files?.president_photo?.[0]
       ? `/uploads/regions/${req.files.president_photo[0].filename}`
       : null;
@@ -915,8 +924,8 @@ app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
       return res.status(400).json({ message: 'Посилання на сайт має починатися з http:// або https://.' });
     }
     const result = await pool.query(
-      'INSERT INTO regions (name, photo, president, president_photo, website) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, photo, president, president_photo, website, clubs_dyussh, created_at, updated_at',
-      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website]
+      'INSERT INTO regions (name, photo, banner, president, president_photo, website) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, photo, banner, president, president_photo, website, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, banner, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website]
     );
     res.status(201).json(buildRegionRow(result.rows[0]));
   } catch (error) {
@@ -925,7 +934,7 @@ app.post('/api/regions', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
   }
 });
 
-app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
+app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'banner', maxCount: 1 }, { name: 'president_photo', maxCount: 1 }]), async (req, res) => {
   try {
     const currentResult = await pool.query('SELECT * FROM regions WHERE id = $1', [req.params.id]);
     if (!currentResult.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
@@ -933,19 +942,23 @@ app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { nam
     const name = req.body.name?.trim();
     if (!name) return res.status(400).json({ message: 'Вкажіть назву регіону.' });
     const newPhoto = req.files?.photo?.[0];
+    const newBanner = req.files?.banner?.[0];
     const newPresidentPhoto = req.files?.president_photo?.[0];
     const photo = newPhoto ? `/uploads/regions/${newPhoto.filename}` : current.photo;
+    let banner = newBanner ? `/uploads/regions/${newBanner.filename}` : current.banner;
     let presidentPhoto = newPresidentPhoto ? `/uploads/regions/${newPresidentPhoto.filename}` : current.president_photo;
     const website = req.body.website?.trim() || null;
     if (website && !/^https?:\/\//i.test(website)) {
       return res.status(400).json({ message: 'Посилання на сайт має починатися з http:// або https://.' });
     }
     if (req.body.remove_president_photo === 'true') presidentPhoto = null;
+    if (req.body.remove_banner === 'true') banner = null;
     const result = await pool.query(
-      'UPDATE regions SET name = $1, photo = $2, president = $3, president_photo = $4, website = $5, updated_at = now() WHERE id = $6 RETURNING id, name, photo, president, president_photo, website, clubs_dyussh, created_at, updated_at',
-      [sanitizeText(name), photo, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website, req.params.id]
+      'UPDATE regions SET name = $1, photo = $2, banner = $3, president = $4, president_photo = $5, website = $6, updated_at = now() WHERE id = $7 RETURNING id, name, photo, banner, president, president_photo, website, clubs_dyussh, created_at, updated_at',
+      [sanitizeText(name), photo, banner, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website, req.params.id]
     );
     if (newPhoto && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
+    if ((newBanner || req.body.remove_banner === 'true') && current.banner) fs.unlink(resolveUploadPath(current.banner), () => {});
     if ((newPresidentPhoto || req.body.remove_president_photo === 'true') && current.president_photo) fs.unlink(resolveUploadPath(current.president_photo), () => {});
     res.json(buildRegionRow(result.rows[0]));
   } catch (error) {
@@ -956,10 +969,10 @@ app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { nam
 
 app.delete('/api/regions/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT photo, president_photo FROM regions WHERE id = $1', [req.params.id]);
+    const result = await pool.query('SELECT photo, banner, president_photo FROM regions WHERE id = $1', [req.params.id]);
     if (!result.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
     await pool.query('DELETE FROM regions WHERE id = $1', [req.params.id]);
-    [result.rows[0].photo, result.rows[0].president_photo].filter(Boolean).forEach((filePath) => fs.unlink(resolveUploadPath(filePath), () => {}));
+    [result.rows[0].photo, result.rows[0].banner, result.rows[0].president_photo].filter(Boolean).forEach((filePath) => fs.unlink(resolveUploadPath(filePath), () => {}));
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -1462,7 +1475,7 @@ app.get('/api/calendar/:year', async (req, res) => {
 
     const yearRow = yearResult.rows[0];
     const eventsResult = await pool.query(
-      `SELECT id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at
+      `SELECT id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, cancelled, created_at, updated_at
        FROM calendar_events
        WHERE calendar_year_id = $1
        ORDER BY COALESCE(start_date, end_date, created_at) ASC`,
@@ -1497,7 +1510,7 @@ app.get('/api/calendar/events/search', async (req, res) => {
     const { q = '', year } = req.query;
     const filters = [];
     const params = [];
-    let query = `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, c.year
+    let query = `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, e.cancelled, c.year
       FROM calendar_events e
       JOIN calendar_years c ON e.calendar_year_id = c.id`;
 
@@ -1533,7 +1546,7 @@ app.get('/api/calendar/events/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, c.year
+      `SELECT e.id, e.calendar_year_id, e.title, e.event_type, e.start_date, e.end_date, e.location, e.regulation_pdf, e.results_url, e.description, e.cancelled, c.year
        FROM calendar_events e
        JOIN calendar_years c ON e.calendar_year_id = c.id
        WHERE e.id = $1`,
@@ -1561,6 +1574,7 @@ app.post('/api/calendar/events', uploadPdf.single('regulation_pdf'), async (req,
       location,
       results_url,
       description,
+      cancelled,
       calendar_year_id,
     } = req.body;
 
@@ -1583,10 +1597,10 @@ app.post('/api/calendar/events', uploadPdf.single('regulation_pdf'), async (req,
     const endDateObj = end_date ? new Date(end_date) : null;
 
     const result = await pool.query(
-      `INSERT INTO calendar_events (calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at`,
-      [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description)]
+      `INSERT INTO calendar_events (calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, cancelled)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, cancelled, created_at, updated_at`,
+      [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description), cancelled === 'true']
     );
 
     res.status(201).json(buildCalendarEventRow(result.rows[0]));
@@ -1607,6 +1621,7 @@ app.put('/api/calendar/events/:id', uploadPdf.single('regulation_pdf'), async (r
       location,
       results_url,
       description,
+      cancelled,
       calendar_year_id,
       remove_regulation,
     } = req.body;
@@ -1649,10 +1664,10 @@ app.put('/api/calendar/events/:id', uploadPdf.single('regulation_pdf'), async (r
     const result = await pool.query(
       `UPDATE calendar_events
        SET calendar_year_id = $1, title = $2, event_type = $3, start_date = $4, end_date = $5,
-           location = $6, regulation_pdf = $7, results_url = $8, description = $9, updated_at = now()
-       WHERE id = $10
-       RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, created_at, updated_at`,
-      [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description), id]
+             location = $6, regulation_pdf = $7, results_url = $8, description = $9, cancelled = $10, updated_at = now()
+           WHERE id = $11
+           RETURNING id, calendar_year_id, title, event_type, start_date, end_date, location, regulation_pdf, results_url, description, cancelled, created_at, updated_at`,
+          [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description), cancelled === 'true', id]
     );
 
     res.json(buildCalendarEventRow(result.rows[0]));

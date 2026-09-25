@@ -30,15 +30,16 @@ body {
 
 .region-hero {
   position: relative;
-  min-height: 320px;
+  min-height: 360px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 5rem 1.5rem 3.5rem;
   background:
-    linear-gradient(135deg, rgba(17, 24, 39, 0.7) 0%, rgba(209, 31, 47, 0.7) 100%),
-    radial-gradient(circle at top left, rgba(255, 213, 0, 0.4), transparent 45%);
+    linear-gradient(135deg, rgba(17, 24, 39, 0.54) 0%, rgba(209, 31, 47, 0.54) 100%),
+    radial-gradient(circle at top left, rgba(255, 213, 0, 0.4), transparent 45%),
+    var(--region-banner-image, url('../assets/images/BNY_banner.jpg')) center/cover no-repeat;
   color: #fff;
 }
 
@@ -46,8 +47,6 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('../assets/images/BNY_banner.jpg') center/cover no-repeat;
-  opacity: 0.2;
 }
 
 .region-hero__content {

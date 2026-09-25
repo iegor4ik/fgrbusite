@@ -453,9 +453,14 @@ function renderDatabaseRegionPage(region, regionId) {
   const title = getRegionDisplayName(region.name, regionId);
   const fallbackPhoto = '../assets/images/No-photo-m.png';
   const presidentPhoto = region.president_photo || fallbackPhoto;
+  const hero = document.querySelector('.region-hero');
   const clubs = Array.isArray(region.clubs_dyussh) ? region.clubs_dyussh : [];
 
   document.title = `${title} — Федерація греко-римської боротьби України`;
+  if (hero) {
+    const bannerUrl = region.banner || '../assets/images/BNY_banner.jpg';
+    hero.style.setProperty('--region-banner-image', `url("${bannerUrl.replace(/"/g, '')}")`);
+  }
   document.getElementById('regionHeroTitle').textContent = title;
   document.getElementById('regionName').textContent = title;
   document.getElementById('regionHeroSubtitle').textContent = 'Регіональне представництво Федерації греко-римської боротьби України';
