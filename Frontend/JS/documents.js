@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <h2 class="section-header">Документи</h2>
           <p>Оберіть категорію документів.</p>
           <div class="documents-choice-grid">
-            <a class="documents-choice-card" href="documents_federation.html"><div><h3>Федерація</h3><p>Документи федерації та інші матеріали.</p></div></a>
+            <a class="documents-choice-card" href="documents_federation.html"><div><h3>Федерація</h3><p>Документи федерації.</p></div></a>
             <a class="documents-choice-card" href="documents_mistry.html"><div><h3>Міністерство</h3><p>Документи міністерства.</p></div></a>
           </div>
         </section>
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const search = searchTerm.trim().toLowerCase();
     return allDocuments.filter((doc) => {
       const matchesCategory = documentScope === 'federation'
-        ? ['федерація', 'інше'].includes(doc.category)
+        ? doc.category === 'федерація'
         : doc.category === 'міністерство';
       const matchesSearch = !search || doc.title.toLowerCase().includes(search);
       return matchesCategory && matchesSearch;
