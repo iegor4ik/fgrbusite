@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін-панель — Збірна</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+  <link rel="stylesheet" href="./CSS/admin.css" />
+  <link rel="icon" href="./assets/icons/fgrb-logo-m.png" sizes="32x32" />
+</head>
+<body>
+  <div class="admin-page">
+    <input type="checkbox" id="sidebarToggle" class="sidebar-checkbox" />
+    <header class="admin-header">
+      <label for="sidebarToggle" class="sidebar-toggle-btn" aria-label="Переключити бічну панель">☰</label>
+      <div class="admin-header-left">Адмін-панель</div>
+      <div class="admin-header-right">Офіційний сайт Федерація греко-римської боротьби України</div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header"><span class="sidebar-title">Меню</span></div>
+        <nav class="sidebar-nav">
+          <a href="admin.html"><span class="nav-icon">🏠</span><span class="nav-label">Головна (Дашборд)</span></a>
+          <a href="admin_news.html"><span class="nav-icon">📰</span><span class="nav-label">Керування новинами</span></a>
+          <a href="admin_gallery.html"><span class="nav-icon">🖼️</span><span class="nav-label">Галерея</span></a>
+          <a href="admin_calendar.html"><span class="nav-icon">📅</span><span class="nav-label">Календар змагань</span></a>
+          <a href="admin_nationalteam.html"><span class="nav-icon">🤼</span><span class="nav-label">Збірна</span></a>
+          <a href="admin_dditionally.html"><span class="nav-icon">⚙️</span><span class="nav-label">Додатково</span></a>
+        </nav>
+        <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Вийти</button>
+      </aside>
+
+      <main class="admin-main national-team-editor">
+        <section class="national-team-toolbar">
+          <p class="section-tag">Збірна</p>
+          <h2>Склад національної команди</h2>
+          <p class="section-note">Для кожного року, вікової категорії та чемпіонату можна зберегти до 10 спортсменів і потрібну кількість тренерів.</p>
+          <div class="national-team-selectors">
+            <label>Рік
+              <select id="rosterYear"></select>
+            </label>
+            <label>Вікова категорія
+              <select id="rosterAge">
+                <option value="adult">Дорослі</option>
+                <option value="u23">U23</option>
+                <option value="u20">U20</option>
+                <option value="u17">U17</option>
+                <option value="u15">U15</option>
+              </select>
+            </label>
+            <label id="rosterChampionshipLabel">Чемпіонат
+              <select id="rosterChampionship">
+                <option value="europe">Європи</option>
+                <option value="world">Світу</option>
+              </select>
+            </label>
+          </div>
+          <form id="newRosterYearForm" class="national-team-year-form">
+            <label>Створити рік збірної
+              <input id="newRosterYear" type="number" min="1900" max="2200" required placeholder="2027" />
+            </label>
+            <button type="submit" class="secondary-btn">Додати рік</button>
+          </form>
+        </section>
+
+        <section class="national-team-roster-panel">
+          <div class="roster-coach-heading">
+            <div>
+              <h2>Спортсмени</h2>
+              <p class="section-note">Заповніть потрібні картки; порожні картки не публікуються.</p>
+            </div>
+          </div>
+          <div class="roster-athlete-actions">
+            <button type="button" id="addPreviousAthleteBtn" class="secondary-btn">Додати спортсмена</button>
+            <label id="previousAthletePicker" class="previous-athlete-picker" hidden>
+              Спортсмени попереднього року
+              <select id="previousAthleteSelect">
+                <option value="">Оберіть спортсмена</option>
+              </select>
+            </label>
+          </div>
+          <div id="athleteCards" class="roster-members-grid"></div>
+          <div class="roster-coach-heading">
+            <div>
+              <h2>Тренери</h2>
+              <p class="section-note">Додавайте та прибирайте тренерів для вибраного чемпіонату.</p>
+            </div>
+            <button type="button" id="addCoachBtn" class="secondary-btn">Додати тренера</button>
+          </div>
+          <div id="coachCards" class="roster-members-grid"></div>
+          <div class="form-actions">
+            <button type="button" id="saveRosterBtn" class="accent-btn">Зберегти склад</button>
+          </div>
+          <p class="roster-message" id="rosterMessage" role="status" aria-live="polite"></p>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="./JS/main.js" defer></script>
+  <script src="./JS/admin_nationalteam.js" defer></script>
+</body>
+</html>

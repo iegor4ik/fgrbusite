@@ -430,6 +430,31 @@ body {
   flex-wrap: wrap;
 }
 
+.dashboard-roster-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-year-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.dashboard-roster-year {
+  min-width: 100px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
 .team-roster-btn {
   border: 1px solid var(--border);
   background: var(--button-secondary-bg);
@@ -449,6 +474,153 @@ body {
   background: var(--primary);
   color: var(--button-primary-text);
   border-color: var(--primary);
+}
+
+.national-team-editor {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.national-team-toolbar,
+.national-team-roster-panel {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+
+.national-team-toolbar h2,
+.national-team-roster-panel h2 {
+  margin: 0 0 1rem;
+}
+
+.national-team-selectors,
+.national-team-year-form {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.national-team-selectors label,
+.national-team-year-form label,
+.roster-member-card label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.national-team-selectors select,
+.national-team-year-form input,
+.roster-member-card input,
+.roster-member-card textarea {
+  width: 100%;
+  min-width: 160px;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.national-team-year-form {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.roster-members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.roster-member-card {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+}
+
+.roster-member-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.roster-member-card textarea {
+  resize: vertical;
+}
+
+.roster-member-card .roster-photo-preview {
+  width: 100%;
+  max-height: 190px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.roster-member-card .roster-photo-preview[hidden],
+.previous-athlete-picker[hidden] {
+  display: none;
+}
+
+.roster-member-card .roster-remove-photo {
+  display: flex;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.roster-member-card .roster-remove-photo input {
+  width: auto;
+  min-width: 0;
+}
+
+.roster-athlete-actions {
+  display: flex;
+  align-items: end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.previous-athlete-picker {
+  display: grid;
+  gap: 0.4rem;
+  min-width: min(320px, 100%);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.previous-athlete-picker select {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.roster-coach-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.roster-message {
+  min-height: 1.5rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.roster-message.is-error {
+  color: #d9480f;
 }
 
 /* Gallery Management Styles */
@@ -899,5 +1071,11 @@ body {
 @media (max-width: 900px) {
   .cover-row {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-roster-row,
+  .roster-coach-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

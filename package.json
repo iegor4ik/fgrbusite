@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "migrate": "node tools/run-migrations.js",
+    "migrate:national-team-photos": "node tools/migrate-national-team-photos.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

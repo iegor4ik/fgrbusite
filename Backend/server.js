@@ -126,6 +126,17 @@ const uploadPdf = multer({
   limits: { fileSize: 12 * 1024 * 1024 },
 });
 
+const uploadNationalTeamPhotos = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype)) {
+      return cb(new Error('Для фото дозволені лише JPG, PNG та WebP.'));
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 2 * 1024 * 1024, files: 30 },
+});
+
 function buildDocumentRow(row) {
   return {
     id: row.id,
@@ -340,6 +351,71 @@ async function ensureSchema() {
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
 
+  await pool.query(`CREATE TABLE IF NOT EXISTS national_team_years (
+    year INTEGER PRIMARY KEY CHECK (year BETWEEN 1900 AND 2200),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS national_team_entries (
+    id SERIAL PRIMARY KEY,
+    year INTEGER NOT NULL REFERENCES national_team_years(year) ON DELETE CASCADE,
+    age_category TEXT NOT NULL CHECK (age_category IN ('adult', 'u23', 'u20', 'u17', 'u15')),
+    championship TEXT NOT NULL CHECK (championship IN ('europe', 'world')),
+    member_type TEXT NOT NULL CHECK (member_type IN ('athlete', 'coach')),
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT '',
+    image TEXT NOT NULL DEFAULT '',
+    birth_date DATE,
+    city TEXT NOT NULL DEFAULT '',
+    weight TEXT NOT NULL DEFAULT '',
+    title TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    achievements JSONB NOT NULL DEFAULT '[]'::jsonb,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS national_team_photos (
+    id SERIAL PRIMARY KEY,
+    image_data BYTEA NOT NULL,
+    mime_type TEXT NOT NULL CHECK (mime_type IN ('image/jpeg', 'image/png', 'image/webp')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query(`ALTER TABLE national_team_entries
+    ADD COLUMN IF NOT EXISTS photo_id INTEGER REFERENCES national_team_photos(id) ON DELETE SET NULL;`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS national_team_entries_lookup
+    ON national_team_entries (year, age_category, championship, member_type, sort_order, id);`);
+  await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS national_team_entries_position_unique
+    ON national_team_entries (year, age_category, championship, member_type, sort_order);`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS national_team_display_settings (
+    age_category TEXT PRIMARY KEY CHECK (age_category IN ('adult', 'u23', 'u20', 'u17', 'u15')),
+    year INTEGER NOT NULL REFERENCES national_team_years(year) ON DELETE RESTRICT,
+    championship TEXT NOT NULL CHECK (championship IN ('europe', 'world')),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query("INSERT INTO national_team_years (year) VALUES (2026) ON CONFLICT (year) DO NOTHING;");
+  await pool.query(`INSERT INTO national_team_display_settings (age_category, year, championship)
+    VALUES ('adult', 2026, 'europe'), ('u23', 2026, 'europe'), ('u20', 2026, 'europe'),
+      ('u17', 2026, 'europe'), ('u15', 2026, 'europe')
+    ON CONFLICT (age_category) DO NOTHING;`);
+  const initialRosterMigration = fs.readFileSync(
+    path.join(__dirname, '..', 'migrations', '011_seed_national_team_2026.sql'),
+    'utf8'
+  );
+  await pool.query(initialRosterMigration);
+  await pool.query("DELETE FROM national_team_entries WHERE age_category = 'u15' AND championship = 'world';");
+  await pool.query("UPDATE national_team_display_settings SET championship = 'europe' WHERE age_category = 'u15' AND championship <> 'europe';");
+  await pool.query(`DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'national_team_entries_u15_europe_only') THEN
+        ALTER TABLE national_team_entries ADD CONSTRAINT national_team_entries_u15_europe_only
+          CHECK (age_category <> 'u15' OR championship = 'europe');
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'national_team_display_u15_europe_only') THEN
+        ALTER TABLE national_team_display_settings ADD CONSTRAINT national_team_display_u15_europe_only
+          CHECK (age_category <> 'u15' OR championship = 'europe');
+      END IF;
+    END $$;`);
+
   await pool.query(`CREATE TABLE IF NOT EXISTS regions (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -435,6 +511,79 @@ function resolveUploadPath(urlPath) {
   return path.join(__dirname, '..', String(urlPath).replace(/^\/+/, ''));
 }
 
+function getNewsInlineImagePaths(content) {
+  const paths = [];
+  const imageSource = /<img\b[^>]*\bsrc=["'](\/uploads\/news\/[^"']+)["']/gi;
+  for (const match of String(content || '').matchAll(imageSource)) {
+    paths.push(match[1]);
+  }
+  return paths;
+}
+
+async function cleanupUploadedFiles(filePaths) {
+  const uniquePaths = [...new Set((filePaths || []).filter((filePath) => typeof filePath === 'string' && filePath.startsWith('/uploads/')))];
+  const uploadsRoot = path.resolve(UPLOAD_ROOT) + path.sep;
+
+  for (const filePath of uniquePaths) {
+    const resolvedPath = path.resolve(resolveUploadPath(filePath));
+    if (!resolvedPath.toLowerCase().startsWith(uploadsRoot.toLowerCase())) {
+      throw new Error(`Відмова від видалення файлу поза каталогом завантажень: ${filePath}`);
+    }
+
+    const references = await pool.query(
+      `SELECT
+        EXISTS (SELECT 1 FROM news WHERE cover_image = $1 OR position($1 in content) > 0)
+        OR EXISTS (SELECT 1 FROM gallery_albums WHERE cover_image = $1)
+        OR EXISTS (SELECT 1 FROM gallery_photos WHERE image_path = $1)
+        OR EXISTS (SELECT 1 FROM document_files WHERE file_path = $1)
+        OR EXISTS (SELECT 1 FROM regions WHERE photo = $1 OR banner = $1 OR president_photo = $1)
+        OR EXISTS (
+          SELECT 1 FROM clubs_dyussh club,
+            jsonb_array_elements(
+              CASE WHEN jsonb_typeof(club.trainers) = 'array' THEN club.trainers ELSE '[]'::jsonb END
+            ) trainer
+          WHERE club.photo = $1 OR trainer->>'photo' = $1
+        )
+        OR EXISTS (SELECT 1 FROM competitions WHERE cover_image = $1)
+        OR EXISTS (SELECT 1 FROM calendar_years WHERE pdf_file = $1)
+        OR EXISTS (SELECT 1 FROM calendar_events WHERE regulation_pdf = $1)
+        OR EXISTS (SELECT 1 FROM national_team_entries WHERE image = $1)
+        AS is_referenced`,
+      [filePath]
+    );
+    if (references.rows[0].is_referenced) continue;
+
+    try {
+      await fs.promises.unlink(resolvedPath);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.error(`Не вдалося видалити завантажений файл ${filePath}:`, error);
+        throw error;
+      }
+    }
+  }
+}
+
+app.use((req, res, next) => {
+  res.once('finish', () => {
+    if (res.statusCode < 400) return;
+    const requestFiles = Array.isArray(req.files)
+      ? req.files
+      : Object.values(req.files || {}).flat();
+    const uploadedPaths = [req.file, ...requestFiles]
+      .filter((file) => file?.path)
+      .map((file) => {
+        const relativePath = path.relative(UPLOAD_ROOT, file.path);
+        if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) return null;
+        return `/uploads/${relativePath.split(path.sep).join('/')}`;
+      });
+    cleanupUploadedFiles(uploadedPaths).catch((error) => {
+      console.error('Не вдалося очистити файли невдалої операції завантаження:', error);
+    });
+  });
+  next();
+});
+
 app.get('/api/admin/dashboard', async (req, res) => {
   try {
     const [newsResult, galleryResult] = await Promise.all([
@@ -450,6 +599,362 @@ app.get('/api/admin/dashboard', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Помилка сервера при завантаженні статистики.' });
+  }
+});
+
+const NATIONAL_TEAM_AGES = ['adult', 'u23', 'u20', 'u17', 'u15'];
+const NATIONAL_TEAM_CHAMPIONSHIPS = ['europe', 'world'];
+
+app.get('/api/national-team/settings', async (req, res) => {
+  try {
+    const [yearsResult, settingsResult] = await Promise.all([
+      pool.query('SELECT year FROM national_team_years ORDER BY year DESC'),
+      pool.query('SELECT age_category, year, championship FROM national_team_display_settings'),
+    ]);
+    res.json({
+      years: yearsResult.rows.map((row) => row.year),
+      settings: Object.fromEntries(settingsResult.rows.map((row) => [row.age_category, {
+        year: row.year,
+        championship: row.championship,
+      }])),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося завантажити роки та налаштування збірної.' });
+  }
+});
+
+app.get('/api/national-team/photos/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT image_data, mime_type FROM national_team_photos WHERE id = $1',
+      [req.params.id]
+    );
+    if (!result.rows.length) {
+      return res.status(404).json({ message: 'Фото не знайдено.' });
+    }
+    res.set('Content-Type', result.rows[0].mime_type);
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(result.rows[0].image_data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося завантажити фото.' });
+  }
+});
+
+app.get('/api/national-team/roster/:year/:age', async (req, res) => {
+  try {
+    const year = Number(req.params.year);
+    const age = req.params.age;
+    if (!Number.isInteger(year) || !NATIONAL_TEAM_AGES.includes(age)) {
+      return res.status(400).json({ message: 'Невірний рік або вікова категорія.' });
+    }
+
+    const result = await pool.query(
+      `SELECT id, year, age_category, championship, member_type, name, role, image, photo_id, birth_date,
+        city, weight, title, description, achievements, sort_order
+       FROM national_team_entries
+       WHERE year = $1 AND age_category = $2
+       ORDER BY championship, member_type, sort_order, id`,
+      [year, age]
+    );
+    if (!result.rows.length) {
+      const yearResult = await pool.query('SELECT year FROM national_team_years WHERE year = $1', [year]);
+      if (!yearResult.rows.length) {
+        return res.status(404).json({ message: 'Рік збірної не знайдено.' });
+      }
+    }
+
+    const roster = {
+      europe: { athletes: [], coaches: [] },
+      world: { athletes: [], coaches: [] },
+    };
+    result.rows.forEach((row) => {
+      roster[row.championship][row.member_type === 'athlete' ? 'athletes' : 'coaches'].push({
+        ...row,
+        id: String(row.id),
+        photo_url: row.photo_id ? `/api/national-team/photos/${row.photo_id}` : '',
+        birth_date: row.birth_date ? String(row.birth_date).slice(0, 10) : '',
+      });
+    });
+    res.json({ year, age_category: age, roster });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося завантажити склад збірної.' });
+  }
+});
+
+app.get('/api/national-team/roster/:year/:age/:championship/previous-athletes', async (req, res) => {
+  try {
+    const year = Number(req.params.year);
+    const { age, championship } = req.params;
+    if (!Number.isInteger(year) || !NATIONAL_TEAM_AGES.includes(age)
+      || !NATIONAL_TEAM_CHAMPIONSHIPS.includes(championship)
+      || (age === 'u15' && championship === 'world')) {
+      return res.status(400).json({ message: 'Невірний рік, вікова категорія або чемпіонат.' });
+    }
+
+    const result = await pool.query(
+      `WITH previous_year AS (
+         SELECT MAX(year) AS year
+         FROM national_team_entries
+         WHERE year < $1 AND age_category = $2 AND championship = $3 AND member_type = 'athlete'
+       )
+       SELECT entry.id, entry.year, entry.name, entry.role, entry.image, entry.photo_id,
+         entry.birth_date, entry.city, entry.weight, entry.title, entry.description, entry.achievements
+       FROM national_team_entries entry
+       JOIN previous_year ON previous_year.year = entry.year
+       WHERE entry.age_category = $2 AND entry.championship = $3 AND entry.member_type = 'athlete'
+       ORDER BY entry.sort_order, entry.id`,
+      [year, age, championship]
+    );
+    res.json({
+      year: result.rows[0]?.year ?? null,
+      athletes: result.rows.map((row) => ({
+        ...row,
+        id: String(row.id),
+        photo_url: row.photo_id ? `/api/national-team/photos/${row.photo_id}` : '',
+        birth_date: row.birth_date ? String(row.birth_date).slice(0, 10) : '',
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося завантажити спортсменів попереднього року.' });
+  }
+});
+
+app.post('/api/admin/national-team/years', async (req, res) => {
+  try {
+    const year = Number(req.body.year);
+    if (!Number.isInteger(year) || year < 1900 || year > 2200) {
+      return res.status(400).json({ message: 'Вкажіть коректний рік від 1900 до 2200.' });
+    }
+    const result = await pool.query(
+      'INSERT INTO national_team_years (year) VALUES ($1) ON CONFLICT DO NOTHING RETURNING year',
+      [year]
+    );
+    if (!result.rows.length) {
+      return res.status(409).json({ message: 'Такий рік збірної вже існує.' });
+    }
+    await pool.query(
+      `INSERT INTO national_team_display_settings (age_category, year, championship)
+       VALUES ${NATIONAL_TEAM_AGES.map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2}, 'europe')`).join(', ')}
+       ON CONFLICT (age_category) DO NOTHING`,
+      NATIONAL_TEAM_AGES.flatMap((age) => [age, year])
+    );
+    res.status(201).json({ year: result.rows[0].year });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити рік збірної.' });
+  }
+});
+
+app.put('/api/admin/national-team/display/:age', async (req, res) => {
+  try {
+    const age = req.params.age;
+    const year = Number(req.body.year);
+    const championship = req.body.championship;
+    if (!NATIONAL_TEAM_AGES.includes(age) || !Number.isInteger(year) || !NATIONAL_TEAM_CHAMPIONSHIPS.includes(championship)
+      || (age === 'u15' && championship === 'world')) {
+      return res.status(400).json({ message: 'Невірна вікова категорія, рік або чемпіонат.' });
+    }
+    const yearResult = await pool.query('SELECT year FROM national_team_years WHERE year = $1', [year]);
+    if (!yearResult.rows.length) {
+      return res.status(404).json({ message: 'Рік збірної не знайдено.' });
+    }
+    await pool.query(
+      `UPDATE national_team_display_settings
+       SET year = $1,
+           championship = CASE WHEN age_category = $2 THEN $3 ELSE championship END,
+           updated_at = now()`,
+      [year, age, championship]
+    );
+    const settingsResult = await pool.query(
+      'SELECT age_category, year, championship FROM national_team_display_settings'
+    );
+    res.json({
+      year,
+      settings: Object.fromEntries(settingsResult.rows.map((row) => [row.age_category, {
+        year: row.year,
+        championship: row.championship,
+      }])),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося зберегти налаштування відображення збірної.' });
+  }
+});
+
+app.put(
+  '/api/admin/national-team/roster/:year/:age/:championship',
+  (req, res, next) => uploadNationalTeamPhotos.any()(req, res, (error) => {
+    if (error) {
+      const status = error.code === 'LIMIT_FILE_SIZE' || error.code === 'LIMIT_FILE_COUNT' ? 413 : 400;
+      return res.status(status).json({ message: error.message || 'Не вдалося завантажити фото.' });
+    }
+    next();
+  }),
+  async (req, res) => {
+  let client;
+  let transactionStarted = false;
+  try {
+    client = await pool.connect();
+    const year = Number(req.params.year);
+    const age = req.params.age;
+    const championship = req.params.championship;
+    if (!Number.isInteger(year) || !NATIONAL_TEAM_AGES.includes(age) || !NATIONAL_TEAM_CHAMPIONSHIPS.includes(championship)
+      || (age === 'u15' && championship === 'world')) {
+      return res.status(400).json({ message: 'Невірний рік, вікова категорія або чемпіонат.' });
+    }
+    let rosterPayload;
+    try {
+      rosterPayload = JSON.parse(req.body.roster || '');
+    } catch (error) {
+      return res.status(400).json({ message: 'Некоректні дані складу збірної.' });
+    }
+    if (!Array.isArray(rosterPayload.athletes) || !Array.isArray(rosterPayload.coaches)) {
+      return res.status(400).json({ message: 'Передайте списки спортсменів і тренерів.' });
+    }
+    const athletes = rosterPayload.athletes;
+    const coaches = rosterPayload.coaches;
+    if (athletes.length > 10 || coaches.length > 20) {
+      return res.status(400).json({ message: 'Ліміт: 10 спортсменів і 20 тренерів на чемпіонат.' });
+    }
+
+    const photoFiles = new Map();
+    for (const file of req.files || []) {
+      const match = file.fieldname.match(/^(athlete|coach)_photo_(\d+)$/);
+      if (!match) {
+        return res.status(400).json({ message: 'Некоректне поле завантаження фото.' });
+      }
+      const memberIndex = Number(match[2]);
+      const collection = match[1] === 'athlete' ? athletes : coaches;
+      if (memberIndex >= collection.length) {
+        return res.status(400).json({ message: 'Фото не відповідає картці складу.' });
+      }
+
+      const header = file.buffer.subarray(0, 12);
+      const validSignature = file.mimetype === 'image/jpeg'
+        ? header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff
+        : file.mimetype === 'image/png'
+          ? header.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+          : header.toString('ascii', 0, 4) === 'RIFF' && header.toString('ascii', 8, 12) === 'WEBP';
+      if (!validSignature) {
+        return res.status(400).json({ message: 'Файл не відповідає формату зображення.' });
+      }
+      photoFiles.set(file.fieldname, file);
+    }
+
+    function normalizeEntry(entry, memberType, uploadedPhoto) {
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+        throw new Error('Некоректна картка учасника.');
+      }
+      const values = entry;
+      const name = sanitizeText(values.name).trim();
+      const hasData = uploadedPhoto || Object.entries(values).some(
+        ([key, value]) => !['id', 'photo_id'].includes(key) && String(value || '').trim()
+      ) || Number(values.photo_id) > 0;
+      if (!hasData) return null;
+      if (!name) throw new Error('Вкажіть ім’я для кожної заповненої картки.');
+      const image = sanitizeText(values.image).trim();
+      if (image && !/^(\/?assets\/)/i.test(image)) {
+        throw new Error('Зображення має бути завантажене з пристрою.');
+      }
+      const birthDate = sanitizeText(values.birth_date).trim();
+      if (birthDate) {
+        const parsedDate = new Date(`${birthDate}T00:00:00Z`);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== birthDate) {
+          throw new Error('Невірний формат дати народження.');
+        }
+      }
+      const achievements = Array.isArray(values.achievements)
+        ? values.achievements.map(sanitizeText).filter(Boolean)
+        : [];
+      return {
+        memberType,
+        name,
+        role: sanitizeText(values.role).trim(),
+        image,
+        photoId: values.remove_photo === 'true' || values.remove_photo === true
+          ? null
+          : (Number.isInteger(Number(values.photo_id)) && Number(values.photo_id) > 0 ? Number(values.photo_id) : null),
+        removePhoto: values.remove_photo === 'true' || values.remove_photo === true,
+        uploadedPhoto,
+        birthDate: birthDate || null,
+        city: sanitizeText(values.city).trim(),
+        weight: sanitizeText(values.weight).trim(),
+        title: sanitizeText(values.title).trim(),
+        description: sanitizeText(values.description).trim(),
+        achievements,
+      };
+    }
+
+    let normalizedEntries;
+    try {
+      normalizedEntries = [
+        ...athletes.map((entry, index) => normalizeEntry(entry, 'athlete', photoFiles.get(`athlete_photo_${index}`))),
+        ...coaches.map((entry, index) => normalizeEntry(entry, 'coach', photoFiles.get(`coach_photo_${index}`))),
+      ].filter(Boolean);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    await client.query('BEGIN');
+    transactionStarted = true;
+    const yearResult = await client.query('SELECT year FROM national_team_years WHERE year = $1', [year]);
+    if (!yearResult.rows.length) {
+      await client.query('ROLLBACK');
+      transactionStarted = false;
+      return res.status(404).json({ message: 'Рік збірної не знайдено.' });
+    }
+    const currentEntries = await client.query(
+      `SELECT id, photo_id FROM national_team_entries
+       WHERE year = $1 AND age_category = $2 AND championship = $3`,
+      [year, age, championship]
+    );
+    const oldPhotoIds = currentEntries.rows.map((row) => row.photo_id).filter(Boolean);
+    await client.query(
+      'DELETE FROM national_team_entries WHERE year = $1 AND age_category = $2 AND championship = $3',
+      [year, age, championship]
+    );
+    for (const [index, entry] of normalizedEntries.entries()) {
+      let photoId = entry.photoId;
+      if (entry.uploadedPhoto) {
+        const photoResult = await client.query(
+          'INSERT INTO national_team_photos (image_data, mime_type) VALUES ($1, $2) RETURNING id',
+          [entry.uploadedPhoto.buffer, entry.uploadedPhoto.mimetype]
+        );
+        photoId = photoResult.rows[0].id;
+      }
+      await client.query(
+        `INSERT INTO national_team_entries
+          (year, age_category, championship, member_type, name, role, image, photo_id, birth_date, city,
+           weight, title, description, achievements, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+        [year, age, championship, entry.memberType, entry.name, entry.role, entry.removePhoto ? '' : entry.image,
+          photoId, entry.birthDate, entry.city, entry.weight, entry.title, entry.description,
+          JSON.stringify(entry.achievements), index]
+      );
+    }
+    if (oldPhotoIds.length) {
+      await client.query(
+        `DELETE FROM national_team_photos photo
+         WHERE photo.id = ANY($1::int[])
+           AND NOT EXISTS (SELECT 1 FROM national_team_entries WHERE photo_id = photo.id)`,
+        [oldPhotoIds]
+      );
+    }
+    await client.query('COMMIT');
+    transactionStarted = false;
+    res.json({ saved: normalizedEntries.length });
+  } catch (error) {
+    if (client && transactionStarted) {
+      await client.query('ROLLBACK');
+    }
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося зберегти склад збірної.' });
+  } finally {
+    if (client) client.release();
   }
 });
 
@@ -514,7 +1019,7 @@ app.put('/api/news/:id', upload.single('cover_image'), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, category, short_description, content, news_date } = req.body;
-    const current = await pool.query('SELECT cover_image FROM news WHERE id = $1', [id]);
+    const current = await pool.query('SELECT cover_image, content FROM news WHERE id = $1', [id]);
     if (!current.rows.length) {
       return res.status(404).json({ message: 'Новину не знайдено.' });
     }
@@ -525,6 +1030,11 @@ app.put('/api/news/:id', upload.single('cover_image'), async (req, res) => {
       'UPDATE news SET title = $1, category = $2, short_description = $3, content = $4, cover_image = $5, news_date = $6, updated_at = now() WHERE id = $7 RETURNING id, title, category, cover_image, short_description, content, news_date, created_at, updated_at',
       [title, category, short_description, safeContent, coverImage, published, id]
     );
+    const removedImages = [
+      req.file ? current.rows[0].cover_image : null,
+      ...getNewsInlineImagePaths(current.rows[0].content).filter((imagePath) => !getNewsInlineImagePaths(safeContent).includes(imagePath)),
+    ];
+    await cleanupUploadedFiles(removedImages);
     res.json(buildNewsRow(result.rows[0]));
   } catch (error) {
     console.error(error);
@@ -535,15 +1045,13 @@ app.put('/api/news/:id', upload.single('cover_image'), async (req, res) => {
 app.delete('/api/news/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT cover_image FROM news WHERE id = $1', [id]);
+    const result = await pool.query('SELECT cover_image, content FROM news WHERE id = $1', [id]);
     if (!result.rows.length) {
       return res.status(404).json({ message: 'Новину не знайдено.' });
     }
-    const coverPath = result.rows[0].cover_image;
+    const oldFiles = [result.rows[0].cover_image, ...getNewsInlineImagePaths(result.rows[0].content)];
     await pool.query('DELETE FROM news WHERE id = $1', [id]);
-    if (coverPath) {
-      fs.unlink(resolveUploadPath(coverPath), () => {});
-    }
+    await cleanupUploadedFiles(oldFiles);
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -636,9 +1144,6 @@ app.put('/api/gallery/albums/:id', upload.fields([{ name: 'cover_image', maxCoun
     const safeDescription = short_description?.trim() ? sanitizeText(short_description) : current.short_description;
     const coverFile = req.files?.cover_image?.[0];
     const coverImage = coverFile ? `/uploads/gallery/covers/${coverFile.filename}` : current.cover_image;
-    if (coverFile && current.cover_image) {
-      fs.unlink(resolveUploadPath(current.cover_image), () => {});
-    }
     const result = await pool.query(
       'UPDATE gallery_albums SET title = $1, cover_image = $2, short_description = $3, category = $4, updated_at = now() WHERE id = $5 RETURNING id, title, cover_image, short_description, category, created_at, updated_at',
       [safeTitle, coverImage, safeDescription, safeCategory, id]
@@ -655,6 +1160,7 @@ app.put('/api/gallery/albums/:id', upload.fields([{ name: 'cover_image', maxCoun
       });
       await Promise.all(insertPromises);
     }
+    if (coverFile) await cleanupUploadedFiles([current.cover_image]);
     res.json(buildGalleryAlbumRow(album));
   } catch (error) {
     console.error(error);
@@ -671,15 +1177,10 @@ app.delete('/api/gallery/albums/:id', async (req, res) => {
     }
     const photosResult = await pool.query('SELECT image_path FROM gallery_photos WHERE album_id = $1', [id]);
     await pool.query('DELETE FROM gallery_albums WHERE id = $1', [id]);
-    const coverPath = albumResult.rows[0].cover_image;
-    if (coverPath) {
-      fs.unlink(resolveUploadPath(coverPath), () => {});
-    }
-    photosResult.rows.forEach((photo) => {
-      if (photo.image_path) {
-        fs.unlink(resolveUploadPath(photo.image_path), () => {});
-      }
-    });
+    await cleanupUploadedFiles([
+      albumResult.rows[0].cover_image,
+      ...photosResult.rows.map((photo) => photo.image_path),
+    ]);
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -802,7 +1303,7 @@ app.put('/api/documents/:id', uploadDocs.array('files', 20), async (req, res) =>
     if (Array.isArray(toDelete) && toDelete.length) {
       const delRows = await pool.query('SELECT id, file_path FROM document_files WHERE id = ANY($1::int[])', [toDelete]);
       await pool.query('DELETE FROM document_files WHERE id = ANY($1::int[])', [toDelete]);
-      delRows.rows.forEach((r) => { if (r.file_path) fs.unlink(resolveUploadPath(r.file_path), () => {}); });
+      await cleanupUploadedFiles(delRows.rows.map((row) => row.file_path));
     }
 
     // Add new uploaded files
@@ -837,7 +1338,7 @@ app.delete('/api/documents/:id', async (req, res) => {
     const filesResult = await pool.query('SELECT file_path FROM document_files WHERE document_id = $1', [id]);
     await pool.query('DELETE FROM document_files WHERE document_id = $1', [id]);
     await pool.query('DELETE FROM documents WHERE id = $1', [id]);
-    filesResult.rows.forEach((r) => { if (r.file_path) fs.unlink(resolveUploadPath(r.file_path), () => {}); });
+    await cleanupUploadedFiles(filesResult.rows.map((row) => row.file_path));
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -957,9 +1458,13 @@ app.put('/api/regions/:id', upload.fields([{ name: 'photo', maxCount: 1 }, { nam
       'UPDATE regions SET name = $1, photo = $2, banner = $3, president = $4, president_photo = $5, website = $6, updated_at = now() WHERE id = $7 RETURNING id, name, photo, banner, president, president_photo, website, clubs_dyussh, created_at, updated_at',
       [sanitizeText(name), photo, banner, req.body.president?.trim() ? sanitizeText(req.body.president) : null, presidentPhoto, website, req.params.id]
     );
-    if (newPhoto && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
-    if ((newBanner || req.body.remove_banner === 'true') && current.banner) fs.unlink(resolveUploadPath(current.banner), () => {});
-    if ((newPresidentPhoto || req.body.remove_president_photo === 'true') && current.president_photo) fs.unlink(resolveUploadPath(current.president_photo), () => {});
+    await cleanupUploadedFiles([
+      newPhoto ? current.photo : null,
+      newBanner || req.body.remove_banner === 'true' ? current.banner : null,
+      newPresidentPhoto || req.body.remove_president_photo === 'true' ? current.president_photo : null,
+      newBanner ? `/uploads/regions/${newBanner.filename}` : null,
+      newPresidentPhoto ? `/uploads/regions/${newPresidentPhoto.filename}` : null,
+    ]);
     res.json(buildRegionRow(result.rows[0]));
   } catch (error) {
     console.error(error);
@@ -972,7 +1477,7 @@ app.delete('/api/regions/:id', async (req, res) => {
     const result = await pool.query('SELECT photo, banner, president_photo FROM regions WHERE id = $1', [req.params.id]);
     if (!result.rows.length) return res.status(404).json({ message: 'Регіон не знайдено.' });
     await pool.query('DELETE FROM regions WHERE id = $1', [req.params.id]);
-    [result.rows[0].photo, result.rows[0].banner, result.rows[0].president_photo].filter(Boolean).forEach((filePath) => fs.unlink(resolveUploadPath(filePath), () => {}));
+    await cleanupUploadedFiles([result.rows[0].photo, result.rows[0].banner, result.rows[0].president_photo]);
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -1098,10 +1603,10 @@ app.put('/api/clubs/:id', upload.any(), async (req, res) => {
       RETURNING id, name, photo, city, gym_addresses, trainers, contacts, region_id, created_at, updated_at`,
           [payload.name, payload.photo, payload.city, JSON.stringify(payload.gymAddresses), JSON.stringify(payload.trainers), JSON.stringify(payload.contacts), payload.regionId, req.params.id]
     );
-    if (payload.photoFile && current.photo) fs.unlink(resolveUploadPath(current.photo), () => {});
     const oldTrainerPhotos = (current.trainers || []).map((trainer) => trainer.photo).filter(Boolean);
     const newTrainerPhotos = payload.trainers.map((trainer) => trainer.photo).filter(Boolean);
-    oldTrainerPhotos.filter((photo) => !newTrainerPhotos.includes(photo)).forEach((photo) => fs.unlink(resolveUploadPath(photo), () => {}));
+    const obsoleteTrainerPhotos = oldTrainerPhotos.filter((photo) => !newTrainerPhotos.includes(photo));
+    await cleanupUploadedFiles([payload.photoFile ? current.photo : null, ...obsoleteTrainerPhotos]);
     res.json(buildClubRow(result.rows[0]));
   } catch (error) {
     console.error(error);
@@ -1115,7 +1620,7 @@ app.delete('/api/clubs/:id', async (req, res) => {
     if (!result.rows.length) return res.status(404).json({ message: 'Клуб не знайдено.' });
     await pool.query('DELETE FROM clubs_dyussh WHERE id = $1', [req.params.id]);
     const trainerPhotos = (result.rows[0].trainers || []).map((trainer) => trainer.photo);
-    [result.rows[0].photo, ...trainerPhotos].filter(Boolean).forEach((photo) => fs.unlink(resolveUploadPath(photo), () => {}));
+    await cleanupUploadedFiles([result.rows[0].photo, ...trainerPhotos]);
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -1131,7 +1636,7 @@ app.delete('/api/gallery/photos/:id', async (req, res) => {
       return res.status(404).json({ message: 'Фото не знайдено.' });
     }
     await pool.query('DELETE FROM gallery_photos WHERE id = $1', [id]);
-    fs.unlink(resolveUploadPath(result.rows[0].image_path), () => {});
+    await cleanupUploadedFiles([result.rows[0].image_path]);
     res.status(204).send();
   } catch (error) {
     console.error(error);
@@ -1262,9 +1767,6 @@ app.put('/api/competitions/:id', upload.single('cover_image'), async (req, res) 
     }
 
     const coverImage = req.file ? `/uploads/competitions/${req.file.filename}` : current.rows[0].cover_image;
-    if (req.file && current.rows[0].cover_image) {
-      fs.unlink(resolveUploadPath(current.rows[0].cover_image), () => {});
-    }
 
     const safeDescription = sanitizeContent(description || '');
     const eventDateObj = event_date ? new Date(event_date) : null;
@@ -1273,6 +1775,7 @@ app.put('/api/competitions/:id', upload.single('cover_image'), async (req, res) 
       'UPDATE competitions SET title = $1, cover_image = $2, city = $3, category = $4, event_date = $5, status = $6, description = $7, updated_at = now() WHERE id = $8 RETURNING id, title, cover_image, city, category, event_date, status, description, created_at, updated_at',
       [sanitizeText(title), coverImage, sanitizeText(city), category, eventDateObj, status, safeDescription, id]
     );
+    if (req.file) await cleanupUploadedFiles([current.rows[0].cover_image]);
 
     const competition = result.rows[0];
 
@@ -1345,9 +1848,7 @@ app.delete('/api/competitions/:id', async (req, res) => {
     const coverPath = result.rows[0].cover_image;
     await pool.query('DELETE FROM competitions WHERE id = $1', [id]);
 
-    if (coverPath) {
-      fs.unlink(resolveUploadPath(coverPath), () => {});
-    }
+    await cleanupUploadedFiles([coverPath]);
 
     res.status(204).send();
   } catch (error) {
@@ -1418,13 +1919,7 @@ app.put('/api/calendar/years/:id', uploadPdf.single('pdf_file'), async (req, res
     let pdfFile = currentRow.pdf_file;
     if (req.file) {
       pdfFile = `/uploads/calendar/years/${req.file.filename}`;
-      if (currentRow.pdf_file) {
-        fs.unlink(resolveUploadPath(currentRow.pdf_file), () => {});
-      }
     } else if (remove_pdf === 'true') {
-      if (currentRow.pdf_file) {
-        fs.unlink(resolveUploadPath(currentRow.pdf_file), () => {});
-      }
       pdfFile = null;
     }
 
@@ -1432,6 +1927,7 @@ app.put('/api/calendar/years/:id', uploadPdf.single('pdf_file'), async (req, res
       'UPDATE calendar_years SET year = $1, pdf_file = $2, updated_at = now() WHERE id = $3 RETURNING id, year, pdf_file, created_at, updated_at',
       [yearValue, pdfFile, id]
     );
+    if (req.file || remove_pdf === 'true') await cleanupUploadedFiles([currentRow.pdf_file]);
     res.json(buildCalendarYearRow(result.rows[0]));
   } catch (error) {
     console.error(error);
@@ -1447,12 +1943,10 @@ app.delete('/api/calendar/years/:id', async (req, res) => {
       return res.status(404).json({ message: 'Рік календаря не знайдено.' });
     }
 
-    const pdfFile = current.rows[0].pdf_file;
+    const events = await pool.query('SELECT regulation_pdf FROM calendar_events WHERE calendar_year_id = $1', [id]);
+    const files = [current.rows[0].pdf_file, ...events.rows.map((event) => event.regulation_pdf)];
     await pool.query('DELETE FROM calendar_years WHERE id = $1', [id]);
-
-    if (pdfFile) {
-      fs.unlink(resolveUploadPath(pdfFile), () => {});
-    }
+    await cleanupUploadedFiles(files);
 
     res.status(204).send();
   } catch (error) {
@@ -1648,13 +2142,7 @@ app.put('/api/calendar/events/:id', uploadPdf.single('regulation_pdf'), async (r
     let regulationPdf = current.rows[0].regulation_pdf;
     if (req.file) {
       regulationPdf = `/uploads/calendar/events/${req.file.filename}`;
-      if (current.rows[0].regulation_pdf) {
-        fs.unlink(resolveUploadPath(current.rows[0].regulation_pdf), () => {});
-      }
     } else if (remove_regulation === 'true') {
-      if (current.rows[0].regulation_pdf) {
-        fs.unlink(resolveUploadPath(current.rows[0].regulation_pdf), () => {});
-      }
       regulationPdf = null;
     }
 
@@ -1670,6 +2158,9 @@ app.put('/api/calendar/events/:id', uploadPdf.single('regulation_pdf'), async (r
           [calendar_year_id, sanitizeText(title), event_type, startDateObj, endDateObj, sanitizeText(location), regulationPdf, sanitizeText(results_url), sanitizeText(description), cancelled === 'true', id]
     );
 
+    if (req.file || remove_regulation === 'true') {
+      await cleanupUploadedFiles([current.rows[0].regulation_pdf]);
+    }
     res.json(buildCalendarEventRow(result.rows[0]));
   } catch (error) {
     console.error(error);
@@ -1686,9 +2177,7 @@ app.delete('/api/calendar/events/:id', async (req, res) => {
     }
     const regulationPdf = current.rows[0].regulation_pdf;
     await pool.query('DELETE FROM calendar_events WHERE id = $1', [id]);
-    if (regulationPdf) {
-      fs.unlink(resolveUploadPath(regulationPdf), () => {});
-    }
+    await cleanupUploadedFiles([regulationPdf]);
     res.status(204).send();
   } catch (error) {
     console.error(error);

@@ -204,19 +204,18 @@ const profilePosition = document.getElementById('profilePosition');
 const profileDetails = document.getElementById('profileDetails');
 const profileExtra = document.getElementById('profileExtra');
 const profileAchievements = document.getElementById('profileAchievements');
-const TEAM_ROSTER_STORAGE_KEY = 'fgrbu_team_roster_mode';
+const teamTabs = document.querySelector('.team-tabs');
 
 let heroIndex = 0;
 let slideTimer = null;
 let activeTeamKey = 'adult';
+let nationalTeamYears = [];
+let nationalTeamSettings = {};
+let databaseRosters = {};
+let databaseRosterLoaded = false;
 
 function getStoredRosterMode(teamKey) {
-  try {
-    const saved = localStorage.getItem(`${TEAM_ROSTER_STORAGE_KEY}:${teamKey}`);
-    return saved === 'world' ? 'world' : 'europe';
-  } catch (error) {
-    return 'europe';
-  }
+	return nationalTeamSettings[teamKey]?.championship === 'world' ? 'world' : 'europe';
 }
 
 function getTeamRosterVariants(teamKey, team) {
@@ -249,13 +248,6 @@ function getTeamRosterVariants(teamKey, team) {
 	return { europe: europeRoster, world: worldRoster };
 }
 
-function refreshCurrentTeamView() {
-  if (activeTeamKey) {
-    renderTeam(activeTeamKey);
-    buildFadeInObserver();
-  }
-}
-
 function rotateHeroSlides() {
 	if (!heroSlides || heroSlides.length === 0) return;
 	heroSlides.forEach((slide, index) => {
@@ -265,15 +257,21 @@ function rotateHeroSlides() {
 }
 
 function createProfileCard(item, type) {
+	const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, (character) => ({
+		'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+	})[character]);
+	const name = escapeHtml(item.name);
+	const image = escapeHtml(item.photo_url || item.image || 'assets/images/No-photo-m.png');
+
 	if (type === 'athlete') {
-		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="athlete">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.title || ''}</p>\n        <p>${item.weight || ''}</p>\n      </div>\n    </button>\n  `;
+		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${escapeHtml(item.id)}" data-type="athlete">\n      <img src="${image}" alt="${name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${name}</h4>\n        <p>${escapeHtml(item.title)}</p>\n        <p>${escapeHtml(item.weight)}</p>\n      </div>\n    </button>\n  `;
 	}
 
 	if (type === 'staff') {
-		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="staff">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
+		return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${escapeHtml(item.id)}" data-type="staff">\n      <img src="${image}" alt="${name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${name}</h4>\n        <p>${escapeHtml(item.role)}</p>\n      </div>\n    </button>\n  `;
 	}
 
-	return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${item.id}" data-type="coach">\n      <img src="${item.image}" alt="${item.name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${item.name}</h4>\n        <p>${item.role}</p>\n      </div>\n    </button>\n  `;
+	return `\n    <button class="profile-card-item fade-in-up" type="button" data-id="${escapeHtml(item.id)}" data-type="coach">\n      <img src="${image}" alt="${name}" loading="lazy" />\n      <div class="profile-card-body">\n        <h4>${name}</h4>\n        <p>${escapeHtml(item.role)}</p>\n      </div>\n    </button>\n  `;
 }
 
 function createEmptyAthleteCard(label = 'Очікується') {
@@ -298,6 +296,32 @@ function renderStaff() {
 function renderTeam(teamKey) {
 	const team = teams[teamKey];
 	if (!team) return;
+
+	if (databaseRosterLoaded && databaseRosters[teamKey]) {
+		const roster = databaseRosters[teamKey];
+		const rosterMode = teamKey === 'u15' ? 'europe' : getStoredRosterMode(teamKey);
+		const primaryKey = rosterMode;
+		const secondaryKey = rosterMode === 'world' ? 'europe' : 'world';
+		const groupHtml = (key, label) => {
+			const athletes = roster[key].athletes;
+			return `
+				<div class="team-subgroup">
+					<div class="team-subgroup-header"><h4>${label}</h4></div>
+					${athletes.length
+						? `<div class="team-grid athletes-grid">${athletes.map((athlete) => createProfileCard(athlete, 'athlete')).join('')}</div>`
+						: '<p class="section-note">Склад ще не заповнено.</p>'}
+				</div>
+			`;
+		};
+		coachGrid.innerHTML = roster[primaryKey].coaches.map((coach) => createProfileCard(coach, 'coach')).join('')
+			|| '<p class="section-note">Тренерський склад ще не заповнено.</p>';
+		athleteGrid.innerHTML = `<div class="team-subgroups">
+			${groupHtml(primaryKey, rosterMode === 'world' ? 'Чемпіонат світу' : 'Чемпіонат Європи')}
+			${teamKey === 'u15' ? '' : groupHtml(secondaryKey, rosterMode === 'world' ? 'Чемпіонат Європи' : 'Чемпіонат світу')}
+		</div>`;
+		return;
+	}
+
 	coachGrid.innerHTML = team.coaches.map((c) => createProfileCard(c, 'coach')).join('');
 
 	const shouldSplitGroups = ['adult', 'u23', 'u20', 'u17'].includes(teamKey);
@@ -335,8 +359,53 @@ function renderTeam(teamKey) {
 	`;
 }
 
+async function loadNationalTeamData() {
+	const settingsResponse = await fetch('/api/national-team/settings');
+	const settings = await settingsResponse.json();
+	if (!settingsResponse.ok) throw new Error(settings.message || 'Не вдалося завантажити роки збірної.');
+	nationalTeamYears = settings.years || [];
+	nationalTeamSettings = settings.settings || {};
+	const entries = await Promise.all(Object.keys(teams).map(async (teamKey) => {
+		const year = nationalTeamSettings[teamKey]?.year || nationalTeamYears[0];
+		if (!year) return [teamKey, { europe: { athletes: [], coaches: [] }, world: { athletes: [], coaches: [] } }];
+		const response = await fetch(`/api/national-team/roster/${year}/${teamKey}`);
+		const payload = await response.json();
+		if (!response.ok) throw new Error(payload.message || `Не вдалося завантажити склад ${teamKey}.`);
+		return [teamKey, payload.roster];
+	}));
+	databaseRosters = Object.fromEntries(entries);
+	databaseRosterLoaded = true;
+}
+
+function renderTeamYearMenus() {
+	if (!teamTabs) return;
+	teamTabs.querySelectorAll('.team-year-menu select').forEach((select) => {
+		select.innerHTML = nationalTeamYears.map((year) =>
+			`<option value="${year}" ${Number(nationalTeamSettings[select.dataset.age]?.year) === year ? 'selected' : ''}>${year}</option>`
+		).join('');
+	});
+}
+
+async function changeAllTeamYears(age, year) {
+	const championship = age === 'u15' ? 'europe' : getStoredRosterMode(age);
+	const response = await fetch(`/api/admin/national-team/display/${age}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ year: Number(year), championship }),
+	});
+	const payload = await response.json();
+	if (!response.ok) throw new Error(payload.message || 'Не вдалося змінити рік складу.');
+	nationalTeamSettings = payload.settings;
+	await loadNationalTeamData();
+	renderTeamYearMenus();
+	renderTeam(activeTeamKey);
+	buildFadeInObserver();
+}
+
 function formatDate(dateString) {
+	if (!dateString) return '—';
 	const date = new Date(dateString);
+	if (Number.isNaN(date.getTime())) return '—';
 	return date.toLocaleDateString('uk-UA', {
 		year: 'numeric',
 		month: 'long',
@@ -347,17 +416,20 @@ function formatDate(dateString) {
 function openProfile(item, type) {
 	if (!item) return;
 
-	profileImage.src = item.image;
+	profileImage.src = item.photo_url || item.image || 'assets/images/No-photo-m.png';
 	profileImage.alt = item.name;
 	profileCategory.textContent = type === 'athlete' ? 'Спортсмен' : item.role;
 	profileName.textContent = item.name;
 	profilePosition.textContent = item.role;
-	profileDetails.innerHTML = `\n      <div><span>Дата народження</span><strong>${formatDate(item.dob)}</strong></div>\n      <div><span>Місто</span><strong>${item.city}</strong></div>\n      ${type === 'athlete' ? '' : `<div><span>Рік призначення</span><strong>${item.appointed}</strong></div>`}\n    `;
+	const escapeHtml = (value) => String(value || '').replace(/[&<>"']/g, (character) => ({
+		'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+	})[character]);
+	profileDetails.innerHTML = `\n      <div><span>Дата народження</span><strong>${formatDate(item.birth_date || item.dob)}</strong></div>\n      <div><span>Місто</span><strong>${escapeHtml(item.city || '—')}</strong></div>\n      ${type === 'athlete' ? '' : `<div><span>Рік призначення</span><strong>${escapeHtml(item.appointed || '—')}</strong></div>`}\n    `;
 	profileExtra.textContent = item.description || item.title || '';
 	profileExtra.style.display = item.description || item.title ? 'block' : 'none';
 
 	if (type === 'athlete') {
-		profileAchievements.innerHTML = `\n      <h4>Досягнення</h4>\n      <ul>${item.achievements.map((achievement) => `<li>${achievement}</li>`).join('')}</ul>\n    `;
+		profileAchievements.innerHTML = `\n      <h4>Досягнення</h4>\n      <ul>${(item.achievements || []).map((achievement) => `<li>${escapeHtml(achievement)}</li>`).join('')}</ul>\n    `;
 	} else {
 		profileAchievements.innerHTML = '';
 	}
@@ -381,6 +453,12 @@ function getItemById(id, type) {
 	}
 
 	if (type === 'coach') {
+		for (const roster of Object.values(databaseRosters)) {
+			for (const championship of ['europe', 'world']) {
+				const found = roster[championship].coaches.find((coach) => coach.id === id);
+				if (found) return found;
+			}
+		}
 		for (const key of Object.keys(teams)) {
 			const found = (teams[key].coaches || []).find((c) => c.id === id);
 			if (found) return found;
@@ -389,6 +467,12 @@ function getItemById(id, type) {
 	}
 
 	if (type === 'athlete') {
+		for (const roster of Object.values(databaseRosters)) {
+			for (const championship of ['europe', 'world']) {
+				const found = roster[championship].athletes.find((athlete) => athlete.id === id);
+				if (found) return found;
+			}
+		}
 		for (const key of Object.keys(teams)) {
 			const team = teams[key];
 			const rosterVariants = getTeamRosterVariants(key, team);
@@ -456,7 +540,14 @@ function initHeroSlider() {
 window.addEventListener('DOMContentLoaded', () => {
 	activeTeamKey = 'adult';
 	renderStaff();
-	renderTeam(activeTeamKey);
+	loadNationalTeamData().then(() => {
+		renderTeamYearMenus();
+		renderTeam(activeTeamKey);
+		buildFadeInObserver();
+	}).catch((error) => {
+		console.error(error);
+		renderTeam(activeTeamKey);
+	});
 
 	document.querySelectorAll('.team-tab').forEach(btn => {
 		btn.addEventListener('click', () => {
@@ -467,16 +558,25 @@ window.addEventListener('DOMContentLoaded', () => {
 			renderTeam(team);
 			buildFadeInObserver();
 		});
-	});
 
-	window.addEventListener('storage', (event) => {
-		if (event.key && event.key.startsWith(TEAM_ROSTER_STORAGE_KEY)) {
-			refreshCurrentTeamView();
-		}
-	});
+		teamTabs?.addEventListener('click', (event) => {
+			const button = event.target.closest('.team-year-button');
+			if (!button) return;
+			const menu = button.parentElement.querySelector('.team-year-menu');
+			menu.hidden = !menu.hidden;
+			button.setAttribute('aria-expanded', String(!menu.hidden));
+		});
 
-	window.addEventListener('fgrbu-roster-preference-changed', () => {
-		refreshCurrentTeamView();
+		teamTabs?.addEventListener('change', async (event) => {
+			const select = event.target.closest('.team-year-menu select');
+			if (!select) return;
+			try {
+				await changeAllTeamYears(select.dataset.age, select.value);
+			} catch (error) {
+				window.alert(error.message);
+				renderTeamYearMenus();
+			}
+		});
 	});
 
 	setupEventListeners();

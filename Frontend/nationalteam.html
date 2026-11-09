@@ -29,6 +29,13 @@
     }
     .team-tab:hover { background: rgba(255,255,255,0.02); }
     .team-tab.active { background: #FFD24A; color: #0b1a2b; box-shadow: 0 6px 20px rgba(255,210,74,0.15); }
+    .team-tab-wrap { position: relative; display: inline-flex; align-items: center; }
+    .team-year-menu { position: absolute; z-index: 20; top: calc(100% + .4rem); right: 0; padding: .65rem; border-radius: 12px; background: var(--surface); box-shadow: 0 8px 26px rgba(0,0,0,.2); }
+    .team-year-menu[hidden] { display: none; }
+    .team-year-menu label { display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+    .team-year-menu select { padding: .5rem .7rem; border-radius: 10px; }
+    .team-year-button { border: 0; background: transparent; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+    .team-year-button:hover { color: var(--accent); }
   </style>
   <script>
     // Prevent theme flash - apply theme before page renders
@@ -105,11 +112,31 @@
     <section class="team-tabs-section">
       <div class="container">
         <div class="team-tabs" role="tablist" aria-label="Вікові категорії">
-          <button class="team-tab active" data-team="adult">Дорослі</button>
-          <button class="team-tab" data-team="u23">U23</button>
-          <button class="team-tab" data-team="u20">U20</button>
-          <button class="team-tab" data-team="u17">U17</button>
-          <button class="team-tab" data-team="u15">U15</button>
+          <div class="team-tab-wrap">
+            <button class="team-tab active" data-team="adult">Дорослі</button>
+            <button class="team-year-button" type="button" aria-label="Обрати рік для категорії Дорослі" aria-expanded="false">⋯</button>
+            <div class="team-year-menu" hidden><label>Рік <select data-age="adult"></select></label></div>
+          </div>
+          <div class="team-tab-wrap">
+            <button class="team-tab" data-team="u23">U23</button>
+            <button class="team-year-button" type="button" aria-label="Обрати рік для категорії U23" aria-expanded="false">⋯</button>
+            <div class="team-year-menu" hidden><label>Рік <select data-age="u23"></select></label></div>
+          </div>
+          <div class="team-tab-wrap">
+            <button class="team-tab" data-team="u20">U20</button>
+            <button class="team-year-button" type="button" aria-label="Обрати рік для категорії U20" aria-expanded="false">⋯</button>
+            <div class="team-year-menu" hidden><label>Рік <select data-age="u20"></select></label></div>
+          </div>
+          <div class="team-tab-wrap">
+            <button class="team-tab" data-team="u17">U17</button>
+            <button class="team-year-button" type="button" aria-label="Обрати рік для категорії U17" aria-expanded="false">⋯</button>
+            <div class="team-year-menu" hidden><label>Рік <select data-age="u17"></select></label></div>
+          </div>
+          <div class="team-tab-wrap">
+            <button class="team-tab" data-team="u15">U15</button>
+            <button class="team-year-button" type="button" aria-label="Обрати рік для категорії U15" aria-expanded="false">⋯</button>
+            <div class="team-year-menu" hidden><label>Рік <select data-age="u15"></select></label></div>
+          </div>
         </div>
       </div>
     </section>

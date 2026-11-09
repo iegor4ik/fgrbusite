@@ -1,4 +1,3 @@
-const TEAM_ROSTER_STORAGE_KEY = 'fgrbu_team_roster_mode';
 const TEAM_ROSTER_OPTIONS = [
   { key: 'adult', label: 'Дорослі', modes: ['europe', 'world'] },
   { key: 'u23', label: 'U23', modes: ['europe', 'world'] },
@@ -7,23 +6,9 @@ const TEAM_ROSTER_OPTIONS = [
   { key: 'u15', label: 'U15', modes: ['europe'] },
 ];
 
-function getStoredRosterMode(teamKey) {
-  try {
-    const saved = localStorage.getItem(`${TEAM_ROSTER_STORAGE_KEY}:${teamKey}`);
-    return saved === 'world' ? 'world' : 'europe';
-  } catch (error) {
-    return 'europe';
-  }
-}
-
-function setStoredRosterMode(teamKey, mode) {
-  try {
-    localStorage.setItem(`${TEAM_ROSTER_STORAGE_KEY}:${teamKey}`, mode);
-  } catch (error) {
-    console.warn('Не вдалося зберегти режим складу збірної', error);
-  }
-  window.dispatchEvent(new CustomEvent('fgrbu-roster-preference-changed', { detail: { teamKey, mode } }));
-}
+const TEAM_API = '/api';
+let teamSettings = {};
+let teamYears = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   const newsCountValue = document.getElementById('newsCountValue');
@@ -36,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!rosterControls) return;
 
     rosterControls.innerHTML = TEAM_ROSTER_OPTIONS.map((team) => {
-      const activeMode = getStoredRosterMode(team.key);
+      const current = teamSettings[team.key] || { year: teamYears[0], championship: 'europe' };
+      const activeMode = current.championship;
       const buttons = team.modes.map((mode) => {
         const isActive = activeMode === mode;
         const label = mode === 'world' ? 'Чемпіонат світу' : 'Чемпіонат Європи';
@@ -54,10 +40,40 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
         <div class="dashboard-roster-row">
           <div class="dashboard-roster-label">${team.label}</div>
-          <div class="dashboard-roster-buttons">${buttons}</div>
+          <div class="dashboard-roster-controls">
+            <label class="dashboard-year-label">Рік
+              <select class="dashboard-roster-year" data-team-key="${team.key}">
+                ${teamYears.map((year) => `<option value="${year}" ${Number(current.year) === year ? 'selected' : ''}>${year}</option>`).join('')}
+              </select>
+            </label>
+            <div class="dashboard-roster-buttons">${buttons}</div>
+          </div>
         </div>
       `;
     }).join('');
+  }
+
+  async function saveTeamSetting(teamKey, values) {
+    const response = await fetch(`${TEAM_API}/admin/national-team/display/${teamKey}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        year: Number(values.year),
+        championship: values.championship,
+      }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Не вдалося зберегти налаштування збірної.');
+    teamSettings = payload.settings;
+  }
+
+  async function loadTeamSettings() {
+    const response = await fetch(`${TEAM_API}/national-team/settings`);
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Не вдалося завантажити роки збірної.');
+    teamYears = payload.years || [];
+    teamSettings = payload.settings || {};
+    renderRosterControls();
   }
 
   function setLoadingState(isLoading) {
@@ -93,17 +109,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  rosterControls?.addEventListener('click', (event) => {
+  rosterControls?.addEventListener('click', async (event) => {
     const button = event.target.closest('[data-team-key][data-mode]');
     if (!button) return;
 
     const teamKey = button.dataset.teamKey;
     const mode = button.dataset.mode;
-    setStoredRosterMode(teamKey, mode);
-    renderRosterControls();
+    try {
+      await saveTeamSetting(teamKey, { ...teamSettings[teamKey], championship: mode });
+      renderRosterControls();
+    } catch (error) {
+      window.alert(error.message);
+    }
   });
 
-  renderRosterControls();
+  rosterControls?.addEventListener('change', async (event) => {
+    const select = event.target.closest('.dashboard-roster-year');
+    if (!select) return;
+    const teamKey = select.dataset.teamKey;
+    try {
+      await saveTeamSetting(teamKey, { ...teamSettings[teamKey], year: select.value });
+      renderRosterControls();
+    } catch (error) {
+      window.alert(error.message);
+      renderRosterControls();
+    }
+  });
+
+  loadTeamSettings().catch((error) => {
+    if (dashboardStatusText) {
+      dashboardStatusText.textContent = error.message;
+      dashboardStatusText.classList.add('is-error');
+    }
+  });
   loadDashboardStats();
   window.setInterval(loadDashboardStats, 10000);
 });
