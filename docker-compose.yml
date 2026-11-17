@@ -13,5 +13,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  excel-preview:
+    build:
+      context: .
+      dockerfile: Dockerfile.preview
+    image: fgrbu-excel-preview:latest
+    container_name: fgrbu_excel_preview
+    restart: unless-stopped
+    volumes:
+      - ./uploads:/data/uploads
+      - ./uploads/document-previews:/data/document-previews
+
 volumes:
   pgdata:

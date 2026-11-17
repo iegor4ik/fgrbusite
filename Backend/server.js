@@ -6,6 +6,11 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const sanitizeHtml = require('sanitize-html');
+const crypto = require('crypto');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
+
+const execFileAsync = promisify(execFile);
 
 dotenv.config();
 
@@ -103,12 +108,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Multer instance for documents (PDF only)
+// Multer instance for document attachments (PDF and Excel)
 const uploadDocs = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (file.mimetype !== 'application/pdf') {
-      return cb(new Error('Тільки PDF файли дозволені.'));
+    const extension = path.extname(file.originalname).toLowerCase();
+    const allowedMimeTypes = {
+      '.pdf': ['application/pdf'],
+      '.xls': ['application/vnd.ms-excel', 'application/octet-stream'],
+      '.xlsx': ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream'],
+    };
+    if (!allowedMimeTypes[extension] || !allowedMimeTypes[extension].includes(file.mimetype)) {
+      return cb(new Error('Дозволені лише PDF та Excel файли (.xls, .xlsx).'));
     }
     cb(null, true);
   },
@@ -142,9 +153,13 @@ function buildDocumentRow(row) {
     id: row.id,
     title: row.title,
     category: row.category,
+    folder_id: row.folder_id,
     created_at: row.created_at,
     updated_at: row.updated_at,
-    files: row.files || [],
+    files: (row.files || []).map((file) => ({
+      ...file,
+      original_name: normalizeStoredText(file.original_name),
+    })),
   };
 }
 
@@ -296,6 +311,16 @@ async function ensureSchema() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );`);
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS document_folders (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'федерація',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );`);
+  await pool.query("ALTER TABLE document_folders ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'федерація';");
+  await pool.query('ALTER TABLE documents ADD COLUMN IF NOT EXISTS folder_id INTEGER REFERENCES document_folders(id) ON DELETE SET NULL;');
 
   await pool.query(`CREATE TABLE IF NOT EXISTS document_files (
     id SERIAL PRIMARY KEY,
@@ -505,6 +530,18 @@ function buildClubRow(row) {
 
 function sanitizeText(value) {
   return sanitizeHtml(value || '', { allowedTags: [], allowedAttributes: {} });
+}
+
+function normalizeStoredText(value) {
+  const text = typeof value === 'string' ? value : '';
+  if (!/[ÃÂÐÑØÙÞß]/.test(text)) return text;
+  try {
+    const recovered = Buffer.from(text, 'latin1').toString('utf8');
+    if (recovered && !recovered.includes('\uFFFD') && /[А-Яа-яІіЇїЄєҐґ]/.test(recovered)) {
+      return recovered;
+    }
+  } catch (error) {}
+  return text;
 }
 
 function resolveUploadPath(urlPath) {
@@ -1215,16 +1252,96 @@ app.post('/api/gallery/albums/:id/photos', upload.array('photos', 50), async (re
 
 // Documents API
 const DOCUMENT_CATEGORIES = new Set(['федерація', 'міністерство', 'інше']);
+const DOCUMENT_FOLDER_CATEGORIES = new Set(['федерація', 'міністерство']);
+
+app.get('/api/document-folders', async (req, res) => {
+  try {
+    const category = req.query.category;
+    if (category !== undefined && !DOCUMENT_FOLDER_CATEGORIES.has(category)) {
+      return res.status(400).json({ message: 'Оберіть коректну категорію папок.' });
+    }
+    const result = await pool.query(
+      `SELECT f.id, f.title, f.category, f.created_at, f.updated_at,
+         COUNT(d.id) FILTER (WHERE d.category = f.category)::int AS document_count
+       FROM document_folders f
+       LEFT JOIN documents d ON d.folder_id = f.id
+       ${category === undefined ? '' : 'WHERE f.category = $1'}
+       GROUP BY f.id
+       ORDER BY f.title, f.id`,
+      category === undefined ? [] : [category]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Помилка сервера при завантаженні папок документів.' });
+  }
+});
+
+app.post('/api/document-folders', async (req, res) => {
+  try {
+    const title = typeof req.body.title === 'string' ? sanitizeText(req.body.title.trim()).trim() : '';
+    const category = req.body.category;
+    if (!title) return res.status(400).json({ message: 'Вкажіть назву папки.' });
+    if (!DOCUMENT_FOLDER_CATEGORIES.has(category)) return res.status(400).json({ message: 'Оберіть категорію папки.' });
+    const result = await pool.query(
+      'INSERT INTO document_folders (title, category) VALUES ($1, $2) RETURNING id, title, category, created_at, updated_at',
+      [title, category]
+    );
+    res.status(201).json({ ...result.rows[0], document_count: 0 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося створити папку документів.' });
+  }
+});
+
+app.put('/api/document-folders/:id', async (req, res) => {
+  try {
+    const folderId = Number(req.params.id);
+    if (!Number.isInteger(folderId) || folderId <= 0) return res.status(400).json({ message: 'Некоректний ідентифікатор папки.' });
+    const title = typeof req.body.title === 'string' ? sanitizeText(req.body.title.trim()).trim() : '';
+    if (!title) return res.status(400).json({ message: 'Вкажіть назву папки.' });
+    const result = await pool.query(
+      'UPDATE document_folders SET title = $1, updated_at = now() WHERE id = $2 RETURNING id, title, created_at, updated_at',
+      [title, folderId]
+    );
+    if (!result.rows.length) return res.status(404).json({ message: 'Папку не знайдено.' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося оновити папку документів.' });
+  }
+});
+
+app.delete('/api/document-folders/:id', async (req, res) => {
+  try {
+    const folderId = Number(req.params.id);
+    if (!Number.isInteger(folderId) || folderId <= 0) return res.status(400).json({ message: 'Некоректний ідентифікатор папки.' });
+    const result = await pool.query('DELETE FROM document_folders WHERE id = $1 RETURNING id', [folderId]);
+    if (!result.rows.length) return res.status(404).json({ message: 'Папку не знайдено.' });
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося видалити папку документів.' });
+  }
+});
 
 app.get('/api/documents', async (req, res) => {
   try {
+    const hasFolderFilter = req.query.folderId !== undefined;
+    const folderId = hasFolderFilter ? Number(req.query.folderId) : null;
+    if (hasFolderFilter && (!Number.isInteger(folderId) || folderId <= 0)) {
+      return res.status(400).json({ message: 'Некоректний ідентифікатор папки.' });
+    }
+    const folderFilter = hasFolderFilter ? 'WHERE d.folder_id = $1 AND d.category = (SELECT category FROM document_folders WHERE id = $1)' : '';
     const result = await pool.query(
-      `SELECT d.id, d.title, d.category, d.created_at, d.updated_at,
+      `SELECT d.id, d.title, d.category, d.folder_id, d.created_at, d.updated_at,
         COALESCE(json_agg(json_build_object('id', f.id, 'file_path', f.file_path, 'original_name', f.original_name) ORDER BY f.id) FILTER (WHERE f.id IS NOT NULL), '[]') AS files
        FROM documents d
        LEFT JOIN document_files f ON f.document_id = d.id
+       ${folderFilter}
        GROUP BY d.id
-       ORDER BY d.created_at DESC`
+       ORDER BY d.created_at DESC`,
+      hasFolderFilter ? [folderId] : []
     );
     res.json(result.rows.map(buildDocumentRow));
   } catch (error) {
@@ -1233,11 +1350,153 @@ app.get('/api/documents', async (req, res) => {
   }
 });
 
+async function getDocumentFileRow(fileId) {
+  const result = await pool.query(
+    'SELECT id, file_path, original_name FROM document_files WHERE id = $1',
+    [fileId]
+  );
+  if (!result.rows[0]) return null;
+  return {
+    ...result.rows[0],
+    original_name: normalizeStoredText(result.rows[0].original_name),
+  };
+}
+
+function isExcelFileName(fileName) {
+  return /\.(xls|xlsx)$/i.test(fileName || '');
+}
+
+async function convertExcelToPdf(fileId, fileRow) {
+  if (!fileRow.file_path?.startsWith('/uploads/documents/')) {
+    throw new Error('Файл документа має некоректний шлях.');
+  }
+
+  const sourcePath = path.resolve(resolveUploadPath(fileRow.file_path));
+  const documentsRoot = path.resolve(DOCUMENTS_ROOT);
+  if (!sourcePath.startsWith(`${documentsRoot}${path.sep}`) || !fs.existsSync(sourcePath)) {
+    throw new Error('Файл документа не знайдено.');
+  }
+
+  const sourceInfo = fs.statSync(sourcePath);
+  const fileHash = crypto
+    .createHash('sha256')
+    .update(`${fileId}:${sourceInfo.size}:${sourceInfo.mtimeMs}:${fileRow.original_name}`)
+    .digest('hex');
+  const previewRoot = path.join(UPLOAD_ROOT, 'document-previews');
+  fs.mkdirSync(previewRoot, { recursive: true });
+  const previewPath = path.join(previewRoot, `${fileHash}.pdf`);
+  if (fs.existsSync(previewPath)) return previewPath;
+
+  const sourceContainerPath = `/data/uploads/documents/${path.basename(sourcePath)}`;
+  const outputContainerRoot = `/data/document-previews/${fileHash}`;
+  await execFileAsync('docker', ['exec', 'fgrbu_excel_preview', 'mkdir', '-p', outputContainerRoot], { timeout: 15_000 });
+
+  try {
+    await execFileAsync(
+      'docker',
+      [
+        'exec',
+        'fgrbu_excel_preview',
+        'libreoffice',
+        '--headless',
+        '--nologo',
+        '--nodefault',
+        '--nolockcheck',
+        '--nofirststartwizard',
+        `-env:UserInstallation=file:///tmp/lo-profile-${fileHash}`,
+        '--convert-to',
+        'pdf',
+        '--outdir',
+        outputContainerRoot,
+        sourceContainerPath,
+      ],
+      { timeout: 120_000, maxBuffer: 1024 * 1024 }
+    );
+  } catch (error) {
+    const message = error.stderr?.trim() || error.message || 'Не вдалося конвертувати Excel-файл.';
+    throw new Error(`Помилка LibreOffice: ${message}`);
+  }
+
+  const outputDirectory = path.join(previewRoot, fileHash);
+  if (!fs.existsSync(outputDirectory)) throw new Error('LibreOffice не створив PDF-файл.');
+  const generatedPdf = fs.readdirSync(outputDirectory).find((fileName) => fileName.toLowerCase().endsWith('.pdf'));
+  if (!generatedPdf) throw new Error('LibreOffice не створив PDF-файл.');
+  fs.renameSync(path.join(outputDirectory, generatedPdf), previewPath);
+  fs.rmSync(outputDirectory, { recursive: true, force: true });
+  return previewPath;
+}
+
+app.get('/api/document-files/:id/preview', async (req, res) => {
+  const fileId = Number(req.params.id);
+  if (!Number.isInteger(fileId) || fileId <= 0) {
+    return res.status(400).json({ message: 'Некоректний ідентифікатор файлу.' });
+  }
+
+  try {
+    const fileRow = await getDocumentFileRow(fileId);
+    if (!fileRow) return res.status(404).json({ message: 'Файл документа не знайдено.' });
+    if (!isExcelFileName(fileRow.original_name)) {
+      return res.status(400).json({ message: 'Попередній перегляд доступний лише для Excel-файлів.' });
+    }
+
+    const previewPath = await convertExcelToPdf(fileId, fileRow);
+    const previewName = normalizeStoredText(fileRow.original_name).replace(/\.(xls|xlsx)$/i, '.pdf');
+    const asciiPreviewName = previewName.replace(/[^A-Za-z0-9_.-]/g, '_');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="${asciiPreviewName}"; filename*=UTF-8''${encodeURIComponent(previewName)}`
+    );
+    res.sendFile(previewPath);
+  } catch (error) {
+    console.error('Не вдалося створити попередній перегляд Excel-файлу:', error);
+    const unavailable = /docker|container|spawn|ENOENT/i.test(error.message || '');
+    res.status(unavailable ? 503 : 422).json({
+      message: unavailable
+        ? 'Сервіс попереднього перегляду тимчасово недоступний.'
+        : error.message || 'Не вдалося конвертувати Excel-файл.',
+    });
+  }
+});
+
+app.get('/api/document-files/:id/download', async (req, res) => {
+  const fileId = Number(req.params.id);
+  if (!Number.isInteger(fileId) || fileId <= 0) {
+    return res.status(400).json({ message: 'Некоректний ідентифікатор файлу.' });
+  }
+
+  try {
+    const fileRow = await getDocumentFileRow(fileId);
+    if (!fileRow) return res.status(404).json({ message: 'Файл документа не знайдено.' });
+    if (typeof fileRow.file_path !== 'string' || !fileRow.file_path.startsWith('/uploads/documents/')) {
+      return res.status(404).json({ message: 'Файл документа не знайдено.' });
+    }
+
+    const sourcePath = path.resolve(resolveUploadPath(fileRow.file_path));
+    const documentsRoot = path.resolve(DOCUMENTS_ROOT);
+    if (!sourcePath.startsWith(`${documentsRoot}${path.sep}`) || !fs.existsSync(sourcePath)) {
+      return res.status(404).json({ message: 'Файл документа не знайдено.' });
+    }
+
+    const safeName = fileRow.original_name.replace(/[^\w\u0400-\u04FF.-]+/g, '_');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${safeName.replace(/[^A-Za-z0-9_.-]/g, '_')}"; filename*=UTF-8''${encodeURIComponent(safeName)}`
+    );
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.sendFile(sourcePath);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Не вдалося завантажити файл документа.' });
+  }
+});
+
 app.get('/api/documents/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      `SELECT d.id, d.title, d.category, d.created_at, d.updated_at,
+      `SELECT d.id, d.title, d.category, d.folder_id, d.created_at, d.updated_at,
         COALESCE(json_agg(json_build_object('id', f.id, 'file_path', f.file_path, 'original_name', f.original_name) ORDER BY f.id) FILTER (WHERE f.id IS NOT NULL), '[]') AS files
        FROM documents d
        LEFT JOIN document_files f ON f.document_id = d.id
@@ -1255,15 +1514,23 @@ app.get('/api/documents/:id', async (req, res) => {
 
 app.post('/api/documents', uploadDocs.array('files', 20), async (req, res) => {
   try {
-    const { title, category } = req.body;
+    const { title, category, folderId } = req.body;
     if (!title || !category) return res.status(400).json({ message: 'Заповніть заголовок та категорію.' });
     if (!DOCUMENT_CATEGORIES.has(category)) return res.status(400).json({ message: 'Оберіть коректну категорію документа.' });
     const files = req.files || [];
-    if (!files.length) return res.status(400).json({ message: 'Додайте хоча б один PDF файл.' });
+    if (!files.length) return res.status(400).json({ message: 'Додайте хоча б один PDF або Excel файл.' });
 
+    const normalizedFolderId = folderId ? Number(folderId) : null;
+    if (normalizedFolderId !== null && (!Number.isInteger(normalizedFolderId) || normalizedFolderId <= 0)) {
+      return res.status(400).json({ message: 'Оберіть коректну папку документа.' });
+    }
+    if (normalizedFolderId !== null) {
+      const folder = await pool.query('SELECT id FROM document_folders WHERE id = $1 AND category = $2', [normalizedFolderId, category]);
+      if (!folder.rows.length) return res.status(400).json({ message: 'Оберіть папку з відповідною категорією документа.' });
+    }
     const insertDoc = await pool.query(
-      'INSERT INTO documents (title, category) VALUES ($1, $2) RETURNING id, title, category, created_at, updated_at',
-      [sanitizeText(title), sanitizeText(category)]
+      'INSERT INTO documents (title, category, folder_id) VALUES ($1, $2, $3) RETURNING id, title, category, folder_id, created_at, updated_at',
+      [sanitizeText(title), sanitizeText(category), normalizedFolderId]
     );
     const doc = insertDoc.rows[0];
     const insertPromises = files.map((file) => {
@@ -1282,14 +1549,24 @@ app.post('/api/documents', uploadDocs.array('files', 20), async (req, res) => {
 app.put('/api/documents/:id', uploadDocs.array('files', 20), async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, deleteFileIds } = req.body;
-    const current = await pool.query('SELECT id, title, category FROM documents WHERE id = $1', [id]);
+    const { title, category, folderId, deleteFileIds } = req.body;
+    const current = await pool.query('SELECT id, title, category, folder_id FROM documents WHERE id = $1', [id]);
     if (!current.rows.length) return res.status(404).json({ message: 'Документ не знайдено.' });
 
     const safeTitle = title?.trim() ? sanitizeText(title) : current.rows[0].title;
     const safeCategory = category?.trim() ? sanitizeText(category) : current.rows[0].category;
     if (!DOCUMENT_CATEGORIES.has(safeCategory)) return res.status(400).json({ message: 'Оберіть коректну категорію документа.' });
-    await pool.query('UPDATE documents SET title = $1, category = $2, updated_at = now() WHERE id = $3', [safeTitle, safeCategory, id]);
+    const normalizedFolderId = folderId === undefined
+      ? current.rows[0].folder_id
+      : folderId ? Number(folderId) : null;
+    if (normalizedFolderId !== null && (!Number.isInteger(normalizedFolderId) || normalizedFolderId <= 0)) {
+      return res.status(400).json({ message: 'Оберіть коректну папку документа.' });
+    }
+    if (normalizedFolderId !== null) {
+      const folder = await pool.query('SELECT id FROM document_folders WHERE id = $1 AND category = $2', [normalizedFolderId, safeCategory]);
+      if (!folder.rows.length) return res.status(400).json({ message: 'Оберіть папку з відповідною категорією документа.' });
+    }
+    await pool.query('UPDATE documents SET title = $1, category = $2, folder_id = $3, updated_at = now() WHERE id = $4', [safeTitle, safeCategory, normalizedFolderId, id]);
 
     // Handle deletion of individual files (expects JSON array or comma-separated ids)
     let toDelete = [];
@@ -1318,7 +1595,7 @@ app.put('/api/documents/:id', uploadDocs.array('files', 20), async (req, res) =>
 
     // Return updated document
     const updated = await pool.query(
-      `SELECT d.id, d.title, d.category, d.created_at, d.updated_at,
+      `SELECT d.id, d.title, d.category, d.folder_id, d.created_at, d.updated_at,
         COALESCE(json_agg(json_build_object('id', f.id, 'file_path', f.file_path, 'original_name', f.original_name) ORDER BY f.id) FILTER (WHERE f.id IS NOT NULL), '[]') AS files
        FROM documents d
        LEFT JOIN document_files f ON f.document_id = d.id

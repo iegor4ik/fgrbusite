@@ -52,9 +52,18 @@
         <section class="dashboard-overview">
           <h2>Керування документацією</h2>
           <p>Тут ви можете додавати, редагувати та видаляти документи федерації.</p>
-          <div style="margin-top:1rem; display:flex; gap:0.75rem;">
+          <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button id="createFolderBtn" class="add-album-btn" type="button">Створити папку</button>
             <button id="createBtn" class="add-album-btn">Створити документ</button>
           </div>
+        </section>
+
+        <section class="dashboard-overview">
+          <h2>Папки документів</h2>
+          <h3>Федерація</h3>
+          <div class="dashboard-cards" id="federationFoldersList" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:1rem; margin-top:1rem;"></div>
+          <h3 style="margin-top:1.5rem;">Міністерство</h3>
+          <div class="dashboard-cards" id="ministryFoldersList" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:1rem; margin-top:1rem;"></div>
         </section>
 
         <div class="dashboard-cards" id="documentsList" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem; margin-top:1rem;">
@@ -83,15 +92,46 @@
             </select>
           </label>
         </div>
+        <div class="form-group">
+          <label>Папка
+            <select name="folderId">
+              <option value="">Без папки</option>
+            </select>
+          </label>
+        </div>
         <div id="filesContainer" class="form-group">
-          <label>PDF файл
-            <input type="file" name="files" accept="application/pdf">
+          <label>Файл PDF або Excel
+            <input type="file" name="files" accept=".pdf,.xls,.xlsx,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
           </label>
         </div>
         <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
           <button type="button" id="addFileBtn" class="add-album-btn">Додати ще документ</button>
           <button type="submit" class="save-btn">Зберегти</button>
           <button type="button" id="cancelBtn" class="cancel-btn">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="folderModal" class="modal" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h3 id="folderModalTitle">Створити папку</h3>
+      <form id="folderForm" class="album-form">
+        <div class="form-group">
+          <label>Назва папки<input type="text" name="title" maxlength="160" required></label>
+        </div>
+        <div class="form-group">
+          <label>Розділ
+            <select name="category" required>
+              <option value="федерація">Федерація</option>
+              <option value="міністерство">Міністерство</option>
+            </select>
+          </label>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+          <button type="submit" class="save-btn">Зберегти</button>
+          <button type="button" id="cancelFolderBtn" class="cancel-btn">Скасувати</button>
         </div>
       </form>
     </div>
